@@ -80,6 +80,28 @@ const MAP_STYLE = {
     openmaptiles: {
       type: 'vector',
       url: 'https://tiles.openfreemap.org/planet'
+    },
+    // Free, keyless elevation tiles (AWS Open Data / Mapzen terrarium).
+    // Two identical sources: MapLibre needs separate ones for 3D terrain
+    // and for the hillshade layer.
+    'terrain-dem': {
+      type: 'raster-dem',
+      tiles: [
+        'https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png'
+      ],
+      encoding: 'terrarium',
+      tileSize: 256,
+      maxzoom: 13,
+      attribution: 'Terrain: Mapzen/AWS Open Data'
+    },
+    'hillshade-dem': {
+      type: 'raster-dem',
+      tiles: [
+        'https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png'
+      ],
+      encoding: 'terrarium',
+      tileSize: 256,
+      maxzoom: 13
     }
   },
   layers: [
@@ -100,6 +122,17 @@ const MAP_STYLE = {
       type: 'raster',
       source: 'voyager',
       layout: { visibility: 'none' }
+    },
+    {
+      id: 'terrain-hillshade',
+      type: 'hillshade',
+      source: 'hillshade-dem',
+      layout: { visibility: 'none' },
+      paint: {
+        'hillshade-shadow-color': 'rgba(66, 56, 44, 0.45)',
+        'hillshade-highlight-color': 'rgba(255, 252, 244, 0.25)',
+        'hillshade-exaggeration': 0.45
+      }
     },
     {
       id: 'base-satellite',
@@ -292,7 +325,16 @@ export function MapLibreView({
     map.touchZoomRotate.enableRotation();
     map.dragRotate.enable();
 
-    map.on('load', () => onLoadedRef.current());
+    map.on('load', () => {
+      // Real 3D terrain from the free DEM tiles. Wrapped so an engine or
+      // network refusal can never take the map down with it.
+      try {
+        map.setTerrain({ source: 'terrain-dem', exaggeration: 1.3 });
+      } catch {
+        /* terrain unavailable — map stays flat */
+      }
+      onLoadedRef.current();
+    });
     // Never let a failed tile/style fetch wedge the boot screen.
     map.on('error', () => onLoadedRef.current());
 
@@ -524,7 +566,8 @@ export function MapLibreView({
       handle.overlay.setProps({
         layers: next ? [handle.makeLayer()] : []
       });
-      // Google's photorealistic mesh replaces our flat imagery + extrusions.
+      // Google's photorealistic mesh replaces our imagery, extrusions, and
+      // DEM terrain (its mesh already includes real elevation).
       const vis = (on: boolean) => (on ? 'visible' : 'none');
       map.setLayoutProperty('base-satlabels', 'visibility', vis(!next));
       map.setPaintProperty(
@@ -532,6 +575,15 @@ export function MapLibreView({
         'fill-extrusion-opacity',
         next ? 0 : satellite ? 0.5 : 0.85
       );
+      try {
+        if (next) {
+          map.setTerrain(null);
+        } else {
+          map.setTerrain({ source: 'terrain-dem', exaggeration: 1.3 });
+        }
+      } catch {
+        /* terrain unavailable */
+      }
     } catch {
       setG3dError(true);
       setGoogle3d(false);
@@ -547,6 +599,7 @@ export function MapLibreView({
     try {
       map.setLayoutProperty('base-osm', 'visibility', vis(!next));
       map.setLayoutProperty('base-voyager', 'visibility', vis(!next));
+      map.setLayoutProperty('terrain-hillshade', 'visibility', vis(!next));
       map.setLayoutProperty('base-satellite', 'visibility', vis(next));
       map.setLayoutProperty('base-satlabels', 'visibility', vis(next));
       map.setPaintProperty(
