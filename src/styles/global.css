@@ -405,6 +405,16 @@ button {
   transform: scale(0.93);
   background: rgba(193, 0, 22, 0.25);
 }
+.ctl-sat {
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+.ctl-sat.is-on {
+  background: rgba(193, 0, 22, 0.35);
+  border-color: var(--red);
+}
 
 /* ---------- top bar ---------- */
 

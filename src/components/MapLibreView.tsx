@@ -1,17 +1,95 @@
 import { useEffect, useRef, useState } from 'react';
 import * as maplibregl from 'maplibre-gl';
-import type { Map as MLMap, Marker, LayerSpecification } from 'maplibre-gl';
+import type { Map as MLMap, Marker, StyleSpecification } from 'maplibre-gl';
 import type { Project } from '../types';
 import type { BBox } from '../lib/regions';
 
 /**
- * Real-world map engine: MapLibre GL over OpenFreeMap's "liberty" style —
- * a natural, realistic street basemap (no API key) — with 3D building
- * extrusions, a tilted cinematic camera, and Kalb-branded DOM markers.
+ * Real-world map engine: MapLibre GL with a custom style built on the most
+ * broadly reachable public tile sources — OpenStreetMap raster for the
+ * street view, Esri World Imagery for the satellite view — plus best-effort
+ * 3D building extrusions from OpenFreeMap vector tiles when reachable.
  * Tiles need internet; markers and UI still function without it.
  */
 
-const STYLE_URL = 'https://tiles.openfreemap.org/styles/liberty';
+const MAP_STYLE: StyleSpecification = {
+  version: 8,
+  sources: {
+    osm: {
+      type: 'raster',
+      tiles: ['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],
+      tileSize: 256,
+      maxzoom: 19,
+      attribution: '© OpenStreetMap contributors'
+    },
+    satellite: {
+      type: 'raster',
+      tiles: [
+        'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
+      ],
+      tileSize: 256,
+      maxzoom: 19,
+      attribution: 'Imagery © Esri, Maxar, Earthstar Geographics'
+    },
+    satlabels: {
+      type: 'raster',
+      tiles: [
+        'https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}'
+      ],
+      tileSize: 256,
+      maxzoom: 19,
+      attribution: 'Labels © Esri'
+    },
+    // Best-effort vector source for 3D buildings (skipped if unreachable).
+    openmaptiles: {
+      type: 'vector',
+      url: 'https://tiles.openfreemap.org/planet'
+    }
+  },
+  layers: [
+    {
+      id: 'bg',
+      type: 'background',
+      paint: { 'background-color': '#e9e5dd' }
+    },
+    {
+      id: 'base-streets',
+      type: 'raster',
+      source: 'osm',
+      paint: { 'raster-saturation': -0.12, 'raster-contrast': 0.02 }
+    },
+    {
+      id: 'base-satellite',
+      type: 'raster',
+      source: 'satellite',
+      layout: { visibility: 'none' }
+    },
+    {
+      id: 'base-satlabels',
+      type: 'raster',
+      source: 'satlabels',
+      layout: { visibility: 'none' }
+    },
+    {
+      id: 'kalb-3d-buildings',
+      type: 'fill-extrusion',
+      source: 'openmaptiles',
+      'source-layer': 'building',
+      minzoom: 14,
+      paint: {
+        'fill-extrusion-color': '#d9d3c8',
+        'fill-extrusion-height': [
+          'coalesce',
+          ['get', 'render_height'],
+          ['get', 'height'],
+          10
+        ],
+        'fill-extrusion-base': ['coalesce', ['get', 'render_min_height'], 0],
+        'fill-extrusion-opacity': 0.82
+      }
+    }
+  ]
+};
 
 const HOME = {
   center: [-115.155, 36.135] as [number, number],
@@ -91,6 +169,7 @@ export function MapLibreView({
   const unitsRef = useRef<MarkerUnit[]>([]);
   const [sitePopup, setSitePopup] = useState<SiteGroup | null>(null);
   const [popupPos, setPopupPos] = useState<{ x: number; y: number } | null>(null);
+  const [satellite, setSatellite] = useState(false);
 
   // Latest-callback refs so marker listeners never go stale.
   const onSelectRef = useRef(onSelect);
@@ -109,7 +188,7 @@ export function MapLibreView({
 
     const map = new maplibregl.Map({
       container,
-      style: STYLE_URL,
+      style: MAP_STYLE,
       center: HOME.center,
       zoom: HOME.zoom,
       pitch: HOME.pitch,
@@ -123,48 +202,7 @@ export function MapLibreView({
     map.touchZoomRotate.enableRotation();
     map.dragRotate.enable();
 
-    map.on('load', () => {
-      // 3D building extrusions from the vector tiles.
-      try {
-        const style = map.getStyle();
-        const src = style.sources?.openmaptiles
-          ? 'openmaptiles'
-          : Object.keys(style.sources ?? {})[0];
-        const firstSymbol = style.layers?.find(
-          (l: LayerSpecification) => l.type === 'symbol'
-        )?.id;
-        if (src) {
-          map.addLayer(
-            {
-              id: 'kalb-3d-buildings',
-              type: 'fill-extrusion',
-              source: src,
-              'source-layer': 'building',
-              minzoom: 13.5,
-              paint: {
-                'fill-extrusion-color': '#d9d3c8',
-                'fill-extrusion-height': [
-                  'coalesce',
-                  ['get', 'render_height'],
-                  ['get', 'height'],
-                  10
-                ],
-                'fill-extrusion-base': [
-                  'coalesce',
-                  ['get', 'render_min_height'],
-                  0
-                ],
-                'fill-extrusion-opacity': 0.88
-              }
-            },
-            firstSymbol
-          );
-        }
-      } catch {
-        /* style without building layer — markers still work */
-      }
-      onLoadedRef.current();
-    });
+    map.on('load', () => onLoadedRef.current());
     // Never let a failed tile/style fetch wedge the boot screen.
     map.on('error', () => onLoadedRef.current());
 
@@ -331,6 +369,26 @@ export function MapLibreView({
     mapRef.current?.flyTo({ ...HOME, duration: 1800, essential: true });
   };
 
+  const toggleSatellite = () => {
+    const map = mapRef.current;
+    if (!map) return;
+    const next = !satellite;
+    setSatellite(next);
+    const vis = (on: boolean) => (on ? 'visible' : 'none');
+    try {
+      map.setLayoutProperty('base-streets', 'visibility', vis(!next));
+      map.setLayoutProperty('base-satellite', 'visibility', vis(next));
+      map.setLayoutProperty('base-satlabels', 'visibility', vis(next));
+      map.setPaintProperty(
+        'kalb-3d-buildings',
+        'fill-extrusion-opacity',
+        next ? 0.45 : 0.82
+      );
+    } catch {
+      /* style not loaded yet */
+    }
+  };
+
   return (
     <div className="map-shell">
       <div ref={containerRef} className="map-stage" />
@@ -392,6 +450,14 @@ export function MapLibreView({
           }}
         >
           ⬒
+        </button>
+        <button
+          className={`ctl-btn ctl-sat${satellite ? ' is-on' : ''}`}
+          aria-label="Toggle satellite view"
+          aria-pressed={satellite}
+          onClick={toggleSatellite}
+        >
+          {satellite ? 'MAP' : 'SAT'}
         </button>
         <button className="ctl-btn ctl-home" aria-label="Reset view" onClick={home}>
           ⌂
