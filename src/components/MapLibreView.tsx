@@ -12,8 +12,32 @@ import type { BBox } from '../lib/regions';
  * Tiles need internet; markers and UI still function without it.
  */
 
-const MAP_STYLE: StyleSpecification = {
+/**
+ * Cinematic default: Esri World Imagery (photo-real satellite) with place
+ * labels, globe projection + atmosphere when zoomed out. Alternate "MAP"
+ * theme: CARTO Voyager (modern, minimal streets) layered OVER OpenStreetMap
+ * — if the CARTO CDN is unreachable, OSM shows through as a fallback.
+ * 3D building extrusions render best-effort from OpenFreeMap vector tiles.
+ */
+const MAP_STYLE = {
   version: 8,
+  projection: { type: 'globe' },
+  sky: {
+    'sky-color': '#8fb8de',
+    'horizon-color': '#e8dcc8',
+    'fog-color': '#f2ead9',
+    'sky-horizon-blend': 0.6,
+    'horizon-fog-blend': 0.7,
+    'fog-ground-blend': 0.6,
+    'atmosphere-blend': [
+      'interpolate',
+      ['linear'],
+      ['zoom'],
+      0, 1,
+      10, 1,
+      12, 0
+    ]
+  },
   sources: {
     osm: {
       type: 'raster',
@@ -21,6 +45,18 @@ const MAP_STYLE: StyleSpecification = {
       tileSize: 256,
       maxzoom: 19,
       attribution: '© OpenStreetMap contributors'
+    },
+    voyager: {
+      type: 'raster',
+      tiles: [
+        'https://a.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png',
+        'https://b.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png',
+        'https://c.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png',
+        'https://d.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png'
+      ],
+      tileSize: 256,
+      maxzoom: 19,
+      attribution: '© OpenStreetMap contributors © CARTO'
     },
     satellite: {
       type: 'raster',
@@ -50,25 +86,32 @@ const MAP_STYLE: StyleSpecification = {
     {
       id: 'bg',
       type: 'background',
-      paint: { 'background-color': '#e9e5dd' }
+      paint: { 'background-color': '#101418' }
     },
     {
-      id: 'base-streets',
+      id: 'base-osm',
       type: 'raster',
       source: 'osm',
-      paint: { 'raster-saturation': -0.12, 'raster-contrast': 0.02 }
+      layout: { visibility: 'none' },
+      paint: { 'raster-saturation': -0.15 }
+    },
+    {
+      id: 'base-voyager',
+      type: 'raster',
+      source: 'voyager',
+      layout: { visibility: 'none' }
     },
     {
       id: 'base-satellite',
       type: 'raster',
       source: 'satellite',
-      layout: { visibility: 'none' }
+      paint: { 'raster-saturation': 0.06, 'raster-contrast': 0.05 }
     },
     {
       id: 'base-satlabels',
       type: 'raster',
       source: 'satlabels',
-      layout: { visibility: 'none' }
+      paint: { 'raster-opacity': 0.9 }
     },
     {
       id: 'kalb-3d-buildings',
@@ -85,18 +128,21 @@ const MAP_STYLE: StyleSpecification = {
           10
         ],
         'fill-extrusion-base': ['coalesce', ['get', 'render_min_height'], 0],
-        'fill-extrusion-opacity': 0.82
+        'fill-extrusion-opacity': 0.5
       }
     }
   ]
-};
+} as unknown as StyleSpecification;
 
 const HOME = {
   center: [-115.155, 36.135] as [number, number],
-  zoom: 10.6,
-  pitch: 45,
-  bearing: -12
+  zoom: 10.7,
+  pitch: 52,
+  bearing: -14
 };
+
+/** Degrees per millisecond for the slow drone-orbit around a selection. */
+const ORBIT_SPEED = 0.0008;
 
 interface SiteGroup {
   siteId: string;
@@ -169,7 +215,29 @@ export function MapLibreView({
   const unitsRef = useRef<MarkerUnit[]>([]);
   const [sitePopup, setSitePopup] = useState<SiteGroup | null>(null);
   const [popupPos, setPopupPos] = useState<{ x: number; y: number } | null>(null);
-  const [satellite, setSatellite] = useState(false);
+  const [satellite, setSatellite] = useState(true);
+  const orbitRef = useRef<number | null>(null);
+
+  const stopOrbit = () => {
+    if (orbitRef.current !== null) {
+      cancelAnimationFrame(orbitRef.current);
+      orbitRef.current = null;
+    }
+  };
+
+  /** Slow cinematic orbit around the current center, movie drone style. */
+  const startOrbit = () => {
+    stopOrbit();
+    let last = performance.now();
+    const tick = (now: number) => {
+      const map = mapRef.current;
+      if (!map) return;
+      map.setBearing(map.getBearing() + (now - last) * ORBIT_SPEED);
+      last = now;
+      orbitRef.current = requestAnimationFrame(tick);
+    };
+    orbitRef.current = requestAnimationFrame(tick);
+  };
 
   // Latest-callback refs so marker listeners never go stale.
   const onSelectRef = useRef(onSelect);
@@ -209,6 +277,14 @@ export function MapLibreView({
     map.on('click', () => {
       setSitePopup(null);
       onBackgroundTapRef.current();
+    });
+
+    // Any manual gesture cancels the cinematic orbit.
+    const cancelOrbit = () => stopOrbit();
+    container.addEventListener('pointerdown', cancelOrbit, { capture: true });
+    container.addEventListener('wheel', cancelOrbit, {
+      capture: true,
+      passive: true
     });
 
     const syncLabels = () =>
@@ -265,6 +341,7 @@ export function MapLibreView({
       );
       el.addEventListener('click', (e) => {
         e.stopPropagation();
+        stopOrbit();
         map.flyTo({
           center: [site.lng, site.lat],
           zoom: Math.max(map.getZoom(), 15.6),
@@ -283,6 +360,13 @@ export function MapLibreView({
     unitsRef.current = units;
 
     return () => {
+      stopOrbit();
+      container.removeEventListener('pointerdown', cancelOrbit, {
+        capture: true
+      } as EventListenerOptions);
+      container.removeEventListener('wheel', cancelOrbit, {
+        capture: true
+      } as EventListenerOptions);
       units.forEach((u) => u.marker.remove());
       unitsRef.current = [];
       map.remove();
@@ -336,28 +420,39 @@ export function MapLibreView({
     const target = projects.find((p) => p.id === focusSignal.id);
     if (!target) return;
     setSitePopup(null);
+    stopOrbit();
     const w = map.getContainer().clientWidth;
     const panelW = detailOpenRef.current ? Math.min(680, w * 0.46) : 0;
     map.flyTo({
       center: [target.lng, target.lat],
-      zoom: Math.max(map.getZoom(), 16.6),
-      pitch: 58,
-      bearing: map.getBearing() + 24,
-      duration: 2400,
+      zoom: Math.max(map.getZoom(), 16.8),
+      pitch: 60,
+      bearing: map.getBearing() + 30,
+      duration: 2600,
       offset: [-panelW / 2 + 30, -20],
       essential: true
     });
+    // Once the flight lands, begin the slow movie-drone orbit.
+    map.once('moveend', () => {
+      if (detailOpenRef.current) startOrbit();
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [focusSignal]);
+
+  // Detail closed → end the orbit.
+  useEffect(() => {
+    if (!detailOpen) stopOrbit();
+  }, [detailOpen]);
 
   // ---- region quick-nav ----------------------------------------------------
   useEffect(() => {
     const map = mapRef.current;
     if (!map || !regionSignal) return;
     setSitePopup(null);
+    stopOrbit();
     map.fitBounds(regionSignal.bounds, {
       padding: { top: 120, bottom: 190, left: 120, right: 90 },
-      bearing: -12,
+      bearing: -14,
       duration: 2300,
       essential: true
     });
@@ -366,6 +461,7 @@ export function MapLibreView({
 
   const home = () => {
     setSitePopup(null);
+    stopOrbit();
     mapRef.current?.flyTo({ ...HOME, duration: 1800, essential: true });
   };
 
@@ -376,13 +472,14 @@ export function MapLibreView({
     setSatellite(next);
     const vis = (on: boolean) => (on ? 'visible' : 'none');
     try {
-      map.setLayoutProperty('base-streets', 'visibility', vis(!next));
+      map.setLayoutProperty('base-osm', 'visibility', vis(!next));
+      map.setLayoutProperty('base-voyager', 'visibility', vis(!next));
       map.setLayoutProperty('base-satellite', 'visibility', vis(next));
       map.setLayoutProperty('base-satlabels', 'visibility', vis(next));
       map.setPaintProperty(
         'kalb-3d-buildings',
         'fill-extrusion-opacity',
-        next ? 0.45 : 0.82
+        next ? 0.5 : 0.85
       );
     } catch {
       /* style not loaded yet */

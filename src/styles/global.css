@@ -111,8 +111,9 @@ button {
 
 /* ---------- Kalb markers (DOM) ---------- */
 
+/* NOTE: no `position` here — MapLibre's .maplibregl-marker rule must keep
+   position:absolute or markers pick up layout-flow offsets. */
 .km {
-  position: relative;
   width: 42px;
   height: 52px;
   cursor: pointer;
