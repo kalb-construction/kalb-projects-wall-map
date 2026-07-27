@@ -91,7 +91,7 @@ const MAP_STYLE = {
       ],
       encoding: 'terrarium',
       tileSize: 256,
-      maxzoom: 13,
+      maxzoom: 12,
       attribution: 'Terrain: Mapzen/AWS Open Data'
     },
     'hillshade-dem': {
@@ -101,7 +101,7 @@ const MAP_STYLE = {
       ],
       encoding: 'terrarium',
       tileSize: 256,
-      maxzoom: 13
+      maxzoom: 12
     }
   },
   layers: [
@@ -170,9 +170,12 @@ const MAP_STYLE = {
 const HOME = {
   center: [-115.155, 36.135] as [number, number],
   zoom: 10.7,
-  pitch: 52,
+  pitch: 47,
   bearing: -14
 };
+
+/** ?flat=1 disables 3D terrain for lower-powered hardware. */
+const FLAT_MODE = new URLSearchParams(window.location.search).has('flat');
 
 /** Degrees per millisecond for the slow drone-orbit around a selection. */
 const ORBIT_SPEED = 0.0008;
@@ -316,7 +319,11 @@ export function MapLibreView({
       zoom: HOME.zoom,
       pitch: HOME.pitch,
       bearing: HOME.bearing,
-      maxPitch: 68,
+      maxPitch: 60,
+      pixelRatio: Math.min(window.devicePixelRatio || 1, 1.5),
+      maxTileCacheSize: 2048,
+      refreshExpiredTiles: false,
+      fadeDuration: 150,
       canvasContextAttributes: { antialias: true },
       attributionControl: { compact: true }
     });
@@ -329,7 +336,9 @@ export function MapLibreView({
       // Real 3D terrain from the free DEM tiles. Wrapped so an engine or
       // network refusal can never take the map down with it.
       try {
-        map.setTerrain({ source: 'terrain-dem', exaggeration: 1.3 });
+        if (!FLAT_MODE) {
+          map.setTerrain({ source: 'terrain-dem', exaggeration: 1.3 });
+        }
       } catch {
         /* terrain unavailable — map stays flat */
       }
@@ -490,7 +499,7 @@ export function MapLibreView({
     map.flyTo({
       center: [target.lng, target.lat],
       zoom: Math.max(map.getZoom(), 16.8),
-      pitch: 60,
+      pitch: 55,
       bearing: map.getBearing() + 30,
       duration: 2600,
       offset: [-panelW / 2 + 30, -20],
@@ -578,7 +587,7 @@ export function MapLibreView({
       try {
         if (next) {
           map.setTerrain(null);
-        } else {
+        } else if (!FLAT_MODE) {
           map.setTerrain({ source: 'terrain-dem', exaggeration: 1.3 });
         }
       } catch {
@@ -674,7 +683,7 @@ export function MapLibreView({
           onClick={() => {
             const m = mapRef.current;
             if (!m) return;
-            m.easeTo({ pitch: m.getPitch() > 25 ? 0 : 58, duration: 700 });
+            m.easeTo({ pitch: m.getPitch() > 25 ? 0 : 55, duration: 700 });
           }}
         >
           ⬒
