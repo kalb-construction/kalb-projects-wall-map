@@ -7,7 +7,7 @@ export default defineConfig({
   base: './',
   plugins: [react()],
   build: {
-    target: 'es2019',
+    target: 'es2022',
     assetsInlineLimit: 0
   }
 });

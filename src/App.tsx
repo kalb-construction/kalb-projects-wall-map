@@ -3,11 +3,12 @@ import projectsData from './data/projects.json';
 import type { Filters, Project } from './types';
 import { EMPTY_FILTERS, matchesFilters } from './lib/filters';
 import { cityGroupOf } from './lib/meta';
+import { boundsOf, REGIONS, type BBox } from './lib/regions';
 import { useIdle } from './lib/useIdle';
 import { BootScreen } from './components/BootScreen';
 import { TopBar } from './components/TopBar';
-import { MapView } from './components/MapView';
-import { InsetPanels } from './components/InsetPanels';
+import { MapLibreView } from './components/MapLibreView';
+import { RegionNav } from './components/RegionNav';
 import { Dock } from './components/Dock';
 import { SearchOverlay } from './components/SearchOverlay';
 import { ProjectDetail } from './components/ProjectDetail';
@@ -15,7 +16,8 @@ import { IdleAttract } from './components/IdleAttract';
 
 const PROJECTS = projectsData as Project[];
 const IDLE_MS = 90_000;
-const BOOT_MS = 2200;
+const BOOT_MIN_MS = 1800;
+const BOOT_MAX_MS = 8000;
 
 function idFromHash(): string | null {
   const m = window.location.hash.match(/^#\/project\/(.+)$/);
@@ -23,28 +25,40 @@ function idFromHash(): string | null {
 }
 
 export default function App() {
-  const [booted, setBooted] = useState(false);
-  const [bootLeaving, setBootLeaving] = useState(false);
+  const [mapLoaded, setMapLoaded] = useState(false);
+  const [bootMinDone, setBootMinDone] = useState(false);
+  const [bootGone, setBootGone] = useState(false);
   const [filters, setFilters] = useState<Filters>(EMPTY_FILTERS);
   const [selectedId, setSelectedId] = useState<string | null>(idFromHash);
   const [focusSignal, setFocusSignal] = useState<{ id: string; n: number } | null>(
     null
   );
+  const [regionSignal, setRegionSignal] = useState<{ bounds: BBox; n: number } | null>(
+    null
+  );
   const [searchOpen, setSearchOpen] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
   const toastTimer = useRef<number | undefined>(undefined);
-  const focusCounter = useRef(0);
+  const signalCounter = useRef(0);
   const idle = useIdle(IDLE_MS);
 
-  // Branded boot sequence.
+  const bootDone = (mapLoaded && bootMinDone) || false;
+
   useEffect(() => {
-    const t1 = window.setTimeout(() => setBootLeaving(true), BOOT_MS);
-    const t2 = window.setTimeout(() => setBooted(true), BOOT_MS + 650);
+    const t1 = window.setTimeout(() => setBootMinDone(true), BOOT_MIN_MS);
+    // Hard fallback so a blocked tile server can't wedge the boot screen.
+    const t2 = window.setTimeout(() => setMapLoaded(true), BOOT_MAX_MS);
     return () => {
       window.clearTimeout(t1);
       window.clearTimeout(t2);
     };
   }, []);
+
+  useEffect(() => {
+    if (!bootDone) return;
+    const t = window.setTimeout(() => setBootGone(true), 700);
+    return () => window.clearTimeout(t);
+  }, [bootDone]);
 
   // Hash <-> selection sync (deep links like #/project/26104).
   useEffect(() => {
@@ -71,23 +85,22 @@ export default function App() {
     [visibleIds]
   );
 
-  const lvProjects = useMemo(
-    () => PROJECTS.filter((p) => p.region === 'LV'),
-    []
-  );
   const featured = useMemo(() => PROJECTS.filter((p) => p.featured), []);
   const cityCount = useMemo(
     () => new Set(PROJECTS.map((p) => `${p.city}|${p.state}`)).size,
     []
   );
 
+  const flyToBounds = useCallback((bounds: BBox) => {
+    signalCounter.current += 1;
+    setRegionSignal({ bounds, n: signalCounter.current });
+  }, []);
+
   const select = useCallback((p: Project) => {
     setSelectedId(p.id);
     window.location.hash = `#/project/${p.id}`;
-    if (p.region === 'LV') {
-      focusCounter.current += 1;
-      setFocusSignal({ id: p.id, n: focusCounter.current });
-    }
+    signalCounter.current += 1;
+    setFocusSignal({ id: p.id, n: signalCounter.current });
   }, []);
 
   const close = useCallback(() => {
@@ -96,6 +109,28 @@ export default function App() {
       history.replaceState(null, '', window.location.pathname);
     }
   }, []);
+
+  /**
+   * Filter changes from the dock. Picking a city also flies the camera to
+   * that city's projects, so Henderson / Northern Nevada / Arizona are one
+   * tap away.
+   */
+  const handleFilters = useCallback(
+    (next: Filters) => {
+      setFilters((prev) => {
+        if (next.city !== prev.city && next.city !== 'all') {
+          const matching = PROJECTS.filter((p) => cityGroupOf(p) === next.city);
+          const b = boundsOf(matching);
+          if (b) flyToBounds(b);
+        }
+        if (next.city === 'all' && prev.city !== 'all') {
+          flyToBounds(REGIONS[0].bounds);
+        }
+        return next;
+      });
+    },
+    [flyToBounds]
+  );
 
   const step = useCallback(
     (dir: 1 | -1) => {
@@ -123,18 +158,20 @@ export default function App() {
     [showToast]
   );
 
-  const showAttract = booted && idle && featured.length > 0;
+  const showAttract = bootGone && idle && featured.length > 0;
 
   return (
     <div className="app">
-      <MapView
-        projects={lvProjects}
+      <MapLibreView
+        projects={PROJECTS}
         visibleIds={visibleIds}
         selectedId={selectedId}
         detailOpen={selected !== null}
         focusSignal={focusSignal}
+        regionSignal={regionSignal}
         onSelect={select}
         onBackgroundTap={close}
+        onLoaded={() => setMapLoaded(true)}
       />
 
       <div className="vignette" aria-hidden="true" />
@@ -146,16 +183,15 @@ export default function App() {
         onSearch={() => setSearchOpen(true)}
       />
 
-      <InsetPanels
+      <RegionNav
         projects={PROJECTS}
         visibleIds={visibleIds}
-        selectedId={selectedId}
-        onSelect={select}
+        onFly={flyToBounds}
       />
 
       <Dock
         filters={filters}
-        onFilters={setFilters}
+        onFilters={handleFilters}
         shownCount={shownProjects.length}
         featured={featured}
         selectedId={selectedId}
@@ -184,7 +220,7 @@ export default function App() {
 
       {showAttract && <IdleAttract featured={featured} />}
 
-      {!booted && <BootScreen leaving={bootLeaving} />}
+      {!bootGone && <BootScreen leaving={bootDone} />}
     </div>
   );
 }

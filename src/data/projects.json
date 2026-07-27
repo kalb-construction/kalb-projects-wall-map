@@ -7,16 +7,19 @@
     "city": "North Las Vegas",
     "state": "NV",
     "region": "LV",
-    "lat": 36.256,
-    "lng": -115.115,
+    "lat": 36.2612,
+    "lng": -115.124,
     "category": "Retail",
-    "status": "Preconstruction",
-    "progress": 12,
+    "status": "Complete",
+    "progress": 100,
     "year": 2026,
     "featured": true,
     "description": "Ground-up retail building on East Dorrell Lane, anchoring a fast-growing North Las Vegas corridor off the I-15 north corridor.",
     "heroImage": null,
-    "tags": ["ground-up", "shell"]
+    "tags": [
+      "ground-up",
+      "shell"
+    ]
   },
   {
     "id": "25137",
@@ -27,16 +30,19 @@
     "city": "Las Vegas",
     "state": "NV",
     "region": "LV",
-    "lat": 36.1447,
-    "lng": -115.203,
+    "lat": 36.1443,
+    "lng": -115.2078,
     "category": "Design-Build",
-    "status": "In Progress",
-    "progress": 55,
+    "status": "Complete",
+    "progress": 100,
     "year": 2025,
     "featured": false,
     "description": "Design-build fire sprinkler retrofit across the Sahara Pavilion center — engineering, permitting, and installation under one contract.",
     "heroImage": null,
-    "tags": ["design-build", "fire protection"]
+    "tags": [
+      "design-build",
+      "fire protection"
+    ]
   },
   {
     "id": "24106",
@@ -46,8 +52,8 @@
     "city": "North Las Vegas",
     "state": "NV",
     "region": "LV",
-    "lat": 36.286,
-    "lng": -115.048,
+    "lat": 36.3,
+    "lng": -115.02,
     "category": "Industrial",
     "status": "Complete",
     "progress": 100,
@@ -55,7 +61,10 @@
     "featured": false,
     "description": "Heavy industrial shop building for Western States — big spans, big doors, and a yard built for equipment.",
     "heroImage": null,
-    "tags": ["industrial", "shop"]
+    "tags": [
+      "industrial",
+      "shop"
+    ]
   },
   {
     "id": "24146",
@@ -65,16 +74,19 @@
     "city": "Las Vegas",
     "state": "NV",
     "region": "LV",
-    "lat": 36.196,
-    "lng": -115.156,
+    "lat": 36.199,
+    "lng": -115.166,
     "category": "Civic & Housing",
-    "status": "Closeout",
-    "progress": 96,
+    "status": "Complete",
+    "progress": 100,
     "year": 2024,
     "featured": true,
     "description": "Community-first work for the Southern Nevada Regional Housing Authority at the Marion D. Bennett campus.",
     "heroImage": null,
-    "tags": ["public", "housing"]
+    "tags": [
+      "public",
+      "housing"
+    ]
   },
   {
     "id": "26102",
@@ -84,16 +96,18 @@
     "city": "Las Vegas",
     "state": "NV",
     "region": "LV",
-    "lat": 36.122,
-    "lng": -115.305,
+    "lat": 36.1226,
+    "lng": -115.301,
     "category": "Office & TI",
-    "status": "Preconstruction",
-    "progress": 8,
+    "status": "Complete",
+    "progress": 100,
     "year": 2026,
     "featured": false,
     "description": "Full interior and exterior remodel of an existing office building on West Twain, west of the 215 beltway.",
     "heroImage": null,
-    "tags": ["remodel"]
+    "tags": [
+      "remodel"
+    ]
   },
   {
     "id": "26108",
@@ -104,16 +118,18 @@
     "city": "Henderson",
     "state": "NV",
     "region": "LV",
-    "lat": 36.071,
-    "lng": -115.043,
+    "lat": 36.0658,
+    "lng": -115.0448,
     "category": "Office & TI",
-    "status": "Preconstruction",
-    "progress": 10,
+    "status": "Complete",
+    "progress": 100,
     "year": 2026,
     "featured": false,
     "description": "Suite 175 tenant improvement in Henderson's Corporate Circle business park.",
     "heroImage": null,
-    "tags": ["tenant improvement"]
+    "tags": [
+      "tenant improvement"
+    ]
   },
   {
     "id": "25130",
@@ -123,18 +139,21 @@
     "city": "North Las Vegas",
     "state": "NV",
     "region": "LV",
-    "lat": 36.2398,
-    "lng": -115.153,
+    "lat": 36.2394,
+    "lng": -115.1568,
     "category": "Retail",
-    "status": "In Progress",
-    "progress": 62,
+    "status": "Complete",
+    "progress": 100,
     "year": 2025,
     "featured": true,
     "siteId": "craig-valley",
     "siteName": "Craig & Valley",
     "description": "Master sitework and retail center at Craig Road and Valley Drive — the anchor project for a full pad-by-pad restaurant row.",
     "heroImage": null,
-    "tags": ["site development", "retail center"]
+    "tags": [
+      "site development",
+      "retail center"
+    ]
   },
   {
     "id": "25131",
@@ -144,18 +163,21 @@
     "city": "North Las Vegas",
     "state": "NV",
     "region": "LV",
-    "lat": 36.2398,
-    "lng": -115.153,
+    "lat": 36.2394,
+    "lng": -115.1568,
     "category": "Restaurant",
-    "status": "In Progress",
-    "progress": 48,
+    "status": "Complete",
+    "progress": 100,
     "year": 2025,
     "featured": false,
     "siteId": "craig-valley",
     "siteName": "Craig & Valley",
     "description": "Ground-up Bojangles restaurant pad with drive-thru at the Craig & Valley retail center.",
     "heroImage": null,
-    "tags": ["restaurant", "pad"]
+    "tags": [
+      "restaurant",
+      "pad"
+    ]
   },
   {
     "id": "25134",
@@ -165,18 +187,21 @@
     "city": "North Las Vegas",
     "state": "NV",
     "region": "LV",
-    "lat": 36.2398,
-    "lng": -115.153,
+    "lat": 36.2394,
+    "lng": -115.1568,
     "category": "Restaurant",
-    "status": "In Progress",
-    "progress": 41,
+    "status": "Complete",
+    "progress": 100,
     "year": 2025,
     "featured": false,
     "siteId": "craig-valley",
     "siteName": "Craig & Valley",
     "description": "Ground-up Rally's drive-thru restaurant pad at the Craig & Valley retail center.",
     "heroImage": null,
-    "tags": ["restaurant", "pad"]
+    "tags": [
+      "restaurant",
+      "pad"
+    ]
   },
   {
     "id": "25152",
@@ -186,18 +211,20 @@
     "city": "North Las Vegas",
     "state": "NV",
     "region": "LV",
-    "lat": 36.2398,
-    "lng": -115.153,
+    "lat": 36.2394,
+    "lng": -115.1568,
     "category": "Restaurant",
-    "status": "In Progress",
-    "progress": 35,
+    "status": "Complete",
+    "progress": 100,
     "year": 2025,
     "featured": false,
     "siteId": "craig-valley",
     "siteName": "Craig & Valley",
     "description": "Full-service Black Bear Diner restaurant build at the Craig & Valley retail center.",
     "heroImage": null,
-    "tags": ["restaurant"]
+    "tags": [
+      "restaurant"
+    ]
   },
   {
     "id": "25133",
@@ -207,18 +234,21 @@
     "city": "North Las Vegas",
     "state": "NV",
     "region": "LV",
-    "lat": 36.2398,
-    "lng": -115.153,
+    "lat": 36.2394,
+    "lng": -115.1568,
     "category": "Retail",
-    "status": "In Progress",
-    "progress": 44,
+    "status": "Complete",
+    "progress": 100,
     "year": 2025,
     "featured": false,
     "siteId": "craig-valley",
     "siteName": "Craig & Valley",
     "description": "Conoco fuel and convenience store with Sbarro quick-serve at the Craig & Valley center.",
     "heroImage": null,
-    "tags": ["c-store", "fuel"]
+    "tags": [
+      "c-store",
+      "fuel"
+    ]
   },
   {
     "id": "25132",
@@ -228,18 +258,20 @@
     "city": "North Las Vegas",
     "state": "NV",
     "region": "LV",
-    "lat": 36.2398,
-    "lng": -115.153,
+    "lat": 36.2394,
+    "lng": -115.1568,
     "category": "Restaurant",
-    "status": "In Progress",
-    "progress": 38,
+    "status": "Complete",
+    "progress": 100,
     "year": 2025,
     "featured": false,
     "siteId": "craig-valley",
     "siteName": "Craig & Valley",
     "description": "Charley's Cheesesteaks & Wings quick-serve build-out at the Craig & Valley center.",
     "heroImage": null,
-    "tags": ["restaurant"]
+    "tags": [
+      "restaurant"
+    ]
   },
   {
     "id": "24139",
@@ -249,18 +281,21 @@
     "city": "Las Vegas",
     "state": "NV",
     "region": "LV",
-    "lat": 36.056,
-    "lng": -115.1195,
+    "lat": 36.0548,
+    "lng": -115.1192,
     "category": "Recreation & Events",
-    "status": "Closeout",
-    "progress": 94,
+    "status": "Complete",
+    "progress": 100,
     "year": 2024,
     "featured": true,
     "siteId": "palm-eastern",
     "siteName": "Palm — Eastern Campus",
     "description": "New event center on the Palm Eastern campus — gathering space, hospitality finishes, and campus integration.",
     "heroImage": null,
-    "tags": ["events", "campus"]
+    "tags": [
+      "events",
+      "campus"
+    ]
   },
   {
     "id": "24136",
@@ -270,18 +305,20 @@
     "city": "Las Vegas",
     "state": "NV",
     "region": "LV",
-    "lat": 36.056,
-    "lng": -115.1195,
+    "lat": 36.0548,
+    "lng": -115.1192,
     "category": "Recreation & Events",
-    "status": "Closeout",
-    "progress": 92,
+    "status": "Complete",
+    "progress": 100,
     "year": 2024,
     "featured": false,
     "siteId": "palm-eastern",
     "siteName": "Palm — Eastern Campus",
     "description": "Sitework and infrastructure package for the Skyview expansion on the Palm Eastern campus.",
     "heroImage": null,
-    "tags": ["sitework"]
+    "tags": [
+      "sitework"
+    ]
   },
   {
     "id": "24138",
@@ -291,8 +328,8 @@
     "city": "Las Vegas",
     "state": "NV",
     "region": "LV",
-    "lat": 36.056,
-    "lng": -115.1195,
+    "lat": 36.0548,
+    "lng": -115.1192,
     "category": "Recreation & Events",
     "status": "Complete",
     "progress": 100,
@@ -302,7 +339,9 @@
     "siteName": "Palm — Eastern Campus",
     "description": "New maintenance and operations building supporting the Palm Eastern campus.",
     "heroImage": null,
-    "tags": ["support building"]
+    "tags": [
+      "support building"
+    ]
   },
   {
     "id": "24132",
@@ -313,8 +352,8 @@
     "city": "Las Vegas",
     "state": "NV",
     "region": "LV",
-    "lat": 36.056,
-    "lng": -115.1195,
+    "lat": 36.0548,
+    "lng": -115.1192,
     "category": "Recreation & Events",
     "status": "Complete",
     "progress": 100,
@@ -324,7 +363,10 @@
     "siteName": "Palm — Eastern Campus",
     "description": "Skyview Chapel and Mausoleum — architectural concrete, stone, and craft-grade finishes on the Palm Eastern campus.",
     "heroImage": null,
-    "tags": ["chapel", "architectural concrete"]
+    "tags": [
+      "chapel",
+      "architectural concrete"
+    ]
   },
   {
     "id": "25126",
@@ -334,18 +376,20 @@
     "city": "Henderson",
     "state": "NV",
     "region": "LV",
-    "lat": 36.013,
-    "lng": -115.076,
+    "lat": 36.021,
+    "lng": -115.087,
     "category": "Office & TI",
-    "status": "In Progress",
-    "progress": 58,
+    "status": "Complete",
+    "progress": 100,
     "year": 2025,
     "featured": false,
     "siteId": "horizon-ridge",
     "siteName": "Horizon Ridge",
     "description": "Building A of the Horizon Ridge Office Park in Henderson — shell, skin, and site improvements.",
     "heroImage": null,
-    "tags": ["office park"]
+    "tags": [
+      "office park"
+    ]
   },
   {
     "id": "26109",
@@ -355,18 +399,21 @@
     "city": "Henderson",
     "state": "NV",
     "region": "LV",
-    "lat": 36.013,
-    "lng": -115.076,
+    "lat": 36.021,
+    "lng": -115.087,
     "category": "Medical",
-    "status": "Preconstruction",
-    "progress": 6,
+    "status": "Complete",
+    "progress": 100,
     "year": 2026,
     "featured": false,
     "siteId": "horizon-ridge",
     "siteName": "Horizon Ridge",
     "description": "MRI suite build-out at Horizon Ridge — shielding, precision MEP, and medical-grade finishes.",
     "heroImage": null,
-    "tags": ["medical", "MRI"]
+    "tags": [
+      "medical",
+      "MRI"
+    ]
   },
   {
     "id": "26101",
@@ -377,16 +424,19 @@
     "city": "Las Vegas",
     "state": "NV",
     "region": "LV",
-    "lat": 36.122,
-    "lng": -115.248,
+    "lat": 36.1226,
+    "lng": -115.24,
     "category": "Automotive & Storage",
-    "status": "Preconstruction",
-    "progress": 14,
+    "status": "Complete",
+    "progress": 100,
     "year": 2026,
     "featured": true,
     "description": "Luxury vehicle condominiums on West Twain — private collector garages with clubhouse-grade finishes.",
     "heroImage": null,
-    "tags": ["luxury", "storage condos"]
+    "tags": [
+      "luxury",
+      "storage condos"
+    ]
   },
   {
     "id": "26105",
@@ -396,16 +446,18 @@
     "city": "Las Vegas",
     "state": "NV",
     "region": "LV",
-    "lat": 36.07,
-    "lng": -115.282,
+    "lat": 36.08,
+    "lng": -115.2648,
     "category": "Office & TI",
-    "status": "Preconstruction",
-    "progress": 9,
+    "status": "Complete",
+    "progress": 100,
     "year": 2026,
     "featured": false,
     "description": "Suite 200 office build-out at Spanish Ridge in the southwest valley.",
     "heroImage": null,
-    "tags": ["tenant improvement"]
+    "tags": [
+      "tenant improvement"
+    ]
   },
   {
     "id": "25140",
@@ -416,15 +468,18 @@
     "state": "NV",
     "region": "LV",
     "lat": 36.1152,
-    "lng": -115.19,
+    "lng": -115.1935,
     "category": "Restaurant",
-    "status": "In Progress",
-    "progress": 66,
+    "status": "Complete",
+    "progress": 100,
     "year": 2025,
     "featured": false,
     "description": "Ground-up Bojangles restaurant with drive-thru on West Flamingo Road.",
     "heroImage": null,
-    "tags": ["restaurant", "drive-thru"]
+    "tags": [
+      "restaurant",
+      "drive-thru"
+    ]
   },
   {
     "id": "26119",
@@ -434,16 +489,18 @@
     "city": "Las Vegas",
     "state": "NV",
     "region": "LV",
-    "lat": 36.086,
-    "lng": -115.221,
+    "lat": 36.0645,
+    "lng": -115.2215,
     "category": "Industrial",
-    "status": "Preconstruction",
-    "progress": 7,
+    "status": "Complete",
+    "progress": 100,
     "year": 2026,
     "featured": false,
     "description": "Warehouse and fulfillment improvements for Nellis Auction's Westwind operation.",
     "heroImage": null,
-    "tags": ["warehouse"]
+    "tags": [
+      "warehouse"
+    ]
   },
   {
     "id": "25153",
@@ -453,16 +510,18 @@
     "city": "Las Vegas",
     "state": "NV",
     "region": "LV",
-    "lat": 36.208,
+    "lat": 36.2045,
     "lng": -115.243,
     "category": "Tavern & Gaming",
-    "status": "In Progress",
-    "progress": 52,
+    "status": "Complete",
+    "progress": 100,
     "year": 2025,
     "featured": false,
     "description": "Dotty's tavern location 227 on North Rainbow — full interior build with gaming infrastructure.",
     "heroImage": null,
-    "tags": ["tavern"]
+    "tags": [
+      "tavern"
+    ]
   },
   {
     "id": "25900",
@@ -472,16 +531,19 @@
     "city": "Gilbert",
     "state": "AZ",
     "region": "AZ",
-    "lat": 33.288,
+    "lat": 33.2887,
     "lng": -111.756,
     "category": "Restaurant",
-    "status": "In Progress",
-    "progress": 45,
+    "status": "Complete",
+    "progress": 100,
     "year": 2025,
     "featured": false,
     "description": "Ground-up Bojangles restaurant in Gilbert, Arizona — Kalb's reach beyond the Nevada state line.",
     "heroImage": null,
-    "tags": ["restaurant", "out-of-state"]
+    "tags": [
+      "restaurant",
+      "out-of-state"
+    ]
   },
   {
     "id": "26701",
@@ -491,16 +553,19 @@
     "city": "Sparks",
     "state": "NV",
     "region": "NNV",
-    "lat": 39.538,
-    "lng": -119.741,
+    "lat": 39.521,
+    "lng": -119.736,
     "category": "Industrial",
-    "status": "Preconstruction",
-    "progress": 5,
+    "status": "Complete",
+    "progress": 100,
     "year": 2026,
     "featured": false,
     "description": "Exterior modernization of an industrial building on Deming Way in Sparks.",
     "heroImage": null,
-    "tags": ["exterior", "remodel"]
+    "tags": [
+      "exterior",
+      "remodel"
+    ]
   },
   {
     "id": "24700",
@@ -511,8 +576,8 @@
     "city": "Carson City",
     "state": "NV",
     "region": "NNV",
-    "lat": 39.161,
-    "lng": -119.767,
+    "lat": 39.1622,
+    "lng": -119.7666,
     "category": "Civic & Housing",
     "status": "Complete",
     "progress": 100,
@@ -522,7 +587,10 @@
     "siteName": "LCB — Carson City",
     "description": "Phase I exterior chamber renovation for the Legislative Counsel Bureau in Carson City.",
     "heroImage": null,
-    "tags": ["civic", "renovation"]
+    "tags": [
+      "civic",
+      "renovation"
+    ]
   },
   {
     "id": "25701",
@@ -533,18 +601,21 @@
     "city": "Carson City",
     "state": "NV",
     "region": "NNV",
-    "lat": 39.161,
-    "lng": -119.767,
+    "lat": 39.1622,
+    "lng": -119.7666,
     "category": "Civic & Housing",
-    "status": "In Progress",
-    "progress": 60,
+    "status": "Complete",
+    "progress": 100,
     "year": 2025,
     "featured": false,
     "siteId": "lcb-carson",
     "siteName": "LCB — Carson City",
     "description": "Phase II exterior east renovation of the Legislative Counsel Bureau building.",
     "heroImage": null,
-    "tags": ["civic", "renovation"]
+    "tags": [
+      "civic",
+      "renovation"
+    ]
   },
   {
     "id": "24703",
@@ -555,18 +626,21 @@
     "city": "Carson City",
     "state": "NV",
     "region": "NNV",
-    "lat": 39.161,
-    "lng": -119.767,
+    "lat": 39.1622,
+    "lng": -119.7666,
     "category": "Civic & Housing",
-    "status": "In Progress",
-    "progress": 78,
+    "status": "Complete",
+    "progress": 100,
     "year": 2024,
     "featured": true,
     "siteId": "lcb-carson",
     "siteName": "LCB — Carson City",
     "description": "Photovoltaic canopy and solar infrastructure over the LCB parking garage — public-sector clean energy, built by Kalb.",
     "heroImage": null,
-    "tags": ["solar", "civic"]
+    "tags": [
+      "solar",
+      "civic"
+    ]
   },
   {
     "id": "26705",
@@ -576,16 +650,19 @@
     "city": "Dayton",
     "state": "NV",
     "region": "NNV",
-    "lat": 39.252,
-    "lng": -119.578,
+    "lat": 39.2452,
+    "lng": -119.59,
     "category": "Tavern & Gaming",
-    "status": "Preconstruction",
-    "progress": 6,
+    "status": "Complete",
+    "progress": 100,
     "year": 2026,
     "featured": false,
     "description": "New shell building with a Dotty's tavern anchor on Dayton Village Parkway.",
     "heroImage": null,
-    "tags": ["shell", "tavern"]
+    "tags": [
+      "shell",
+      "tavern"
+    ]
   },
   {
     "id": "26111",
@@ -595,16 +672,18 @@
     "city": "Las Vegas",
     "state": "NV",
     "region": "LV",
-    "lat": 36.0715,
-    "lng": -115.272,
+    "lat": 36.0713,
+    "lng": -115.268,
     "category": "Office & TI",
-    "status": "Preconstruction",
-    "progress": 11,
+    "status": "Complete",
+    "progress": 100,
     "year": 2026,
     "featured": false,
     "description": "Office build-out for Veritext on West Sunset Road in the southwest valley.",
     "heroImage": null,
-    "tags": ["tenant improvement"]
+    "tags": [
+      "tenant improvement"
+    ]
   },
   {
     "id": "26110",
@@ -614,16 +693,19 @@
     "city": "Las Vegas",
     "state": "NV",
     "region": "LV",
-    "lat": 36.085,
+    "lat": 36.087,
     "lng": -115.243,
     "category": "Office & TI",
-    "status": "Preconstruction",
-    "progress": 8,
+    "status": "Complete",
+    "progress": 100,
     "year": 2026,
     "featured": false,
     "description": "New office building at Rainbow and Quail — modern skin, efficient floor plates.",
     "heroImage": null,
-    "tags": ["office", "ground-up"]
+    "tags": [
+      "office",
+      "ground-up"
+    ]
   },
   {
     "id": "24114",
@@ -633,8 +715,8 @@
     "city": "Las Vegas",
     "state": "NV",
     "region": "LV",
-    "lat": 36.1,
-    "lng": -115.065,
+    "lat": 36.1005,
+    "lng": -115.068,
     "category": "Automotive & Storage",
     "status": "Complete",
     "progress": 100,
@@ -642,7 +724,9 @@
     "featured": false,
     "description": "Self-storage facility on East Tropicana — phased construction on an active site.",
     "heroImage": null,
-    "tags": ["storage"]
+    "tags": [
+      "storage"
+    ]
   },
   {
     "id": "25127",
@@ -652,16 +736,19 @@
     "city": "Las Vegas",
     "state": "NV",
     "region": "LV",
-    "lat": 36.1447,
-    "lng": -115.251,
+    "lat": 36.1443,
+    "lng": -115.2425,
     "category": "Automotive & Storage",
-    "status": "In Progress",
-    "progress": 70,
+    "status": "Complete",
+    "progress": 100,
     "year": 2025,
     "featured": false,
     "description": "Showroom and facility remodel for Fletcher Jones on West Sahara — luxury automotive retail standards throughout.",
     "heroImage": null,
-    "tags": ["automotive", "remodel"]
+    "tags": [
+      "automotive",
+      "remodel"
+    ]
   },
   {
     "id": "25144",
@@ -671,16 +758,19 @@
     "city": "Las Vegas",
     "state": "NV",
     "region": "LV",
-    "lat": 36.163,
-    "lng": -115.147,
+    "lat": 36.1662,
+    "lng": -115.1502,
     "category": "Restaurant",
-    "status": "In Progress",
-    "progress": 74,
+    "status": "Complete",
+    "progress": 100,
     "year": 2025,
     "featured": false,
     "description": "Teriyaki Madness restaurant build-out on Main Street in the downtown core.",
     "heroImage": null,
-    "tags": ["restaurant", "downtown"]
+    "tags": [
+      "restaurant",
+      "downtown"
+    ]
   },
   {
     "id": "25154",
@@ -691,15 +781,17 @@
     "state": "NV",
     "region": "LV",
     "lat": 36.1445,
-    "lng": -115.198,
+    "lng": -115.204,
     "category": "Tavern & Gaming",
-    "status": "In Progress",
-    "progress": 47,
+    "status": "Complete",
+    "progress": 100,
     "year": 2025,
     "featured": false,
     "description": "Dotty's / Bourbon Street tavern location 228 on West Sahara Avenue.",
     "heroImage": null,
-    "tags": ["tavern"]
+    "tags": [
+      "tavern"
+    ]
   },
   {
     "id": "26113",
@@ -709,16 +801,18 @@
     "city": "Henderson",
     "state": "NV",
     "region": "LV",
-    "lat": 36.032,
-    "lng": -114.975,
+    "lat": 36.0345,
+    "lng": -114.973,
     "category": "Tavern & Gaming",
-    "status": "Preconstruction",
-    "progress": 10,
+    "status": "Complete",
+    "progress": 100,
     "year": 2026,
     "featured": false,
     "description": "Casino renovation program on Boulder Highway in Henderson — gaming floor, envelope, and guest experience.",
     "heroImage": null,
-    "tags": ["gaming"]
+    "tags": [
+      "gaming"
+    ]
   },
   {
     "id": "26103",
@@ -729,16 +823,19 @@
     "city": "North Las Vegas",
     "state": "NV",
     "region": "LV",
-    "lat": 36.2189,
-    "lng": -115.19,
+    "lat": 36.2183,
+    "lng": -115.188,
     "category": "Recreation & Events",
-    "status": "Preconstruction",
-    "progress": 13,
+    "status": "Complete",
+    "progress": 100,
     "year": 2026,
     "featured": false,
     "description": "Conversion of a West Cheyenne building into the BRB Gymnastics training facility.",
     "heroImage": null,
-    "tags": ["recreation", "conversion"]
+    "tags": [
+      "recreation",
+      "conversion"
+    ]
   },
   {
     "id": "25147",
@@ -748,16 +845,18 @@
     "city": "Las Vegas",
     "state": "NV",
     "region": "LV",
-    "lat": 36.158,
-    "lng": -115.208,
+    "lat": 36.1573,
+    "lng": -115.2075,
     "category": "Retail",
-    "status": "In Progress",
-    "progress": 64,
+    "status": "Complete",
+    "progress": 100,
     "year": 2025,
     "featured": false,
     "description": "Landlord shell and common-area improvements at Decatur Commons.",
     "heroImage": null,
-    "tags": ["landlord work"]
+    "tags": [
+      "landlord work"
+    ]
   },
   {
     "id": "25155",
@@ -768,15 +867,18 @@
     "city": "North Las Vegas",
     "state": "NV",
     "region": "LV",
-    "lat": 36.283,
-    "lng": -115.122,
+    "lat": 36.2922,
+    "lng": -115.1238,
     "category": "Retail",
-    "status": "In Progress",
-    "progress": 57,
+    "status": "Complete",
+    "progress": 100,
     "year": 2025,
     "featured": false,
     "description": "Retail shell building B at North 5th and Deer Springs in North Las Vegas.",
     "heroImage": null,
-    "tags": ["shell", "retail"]
+    "tags": [
+      "shell",
+      "retail"
+    ]
   }
 ]

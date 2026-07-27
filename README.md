@@ -2,7 +2,7 @@
 
 An interactive wall-map experience for Kalb Construction — a full-screen, touch-first Las Vegas valley atlas that shows every active Kalb project as a tactile marker, with cinematic fly-to transitions into a project detail view. Designed for a large 16:9 touch display in the office lobby; equally usable with a mouse for desktop testing.
 
-**This is a digital installation, not a GIS dashboard.** The basemap is a custom-drawn, brand-styled vector map (freeways, arterial grid, district labels, terrain ridges) rendered from real coordinates — no map tiles, no external services, fully offline-capable.
+**Zillow-real map, Kalb-branded chrome.** The basemap is a natural, realistic street map (MapLibre GL + OpenFreeMap vector tiles — no API key) with real 3D building extrusions and a tilted cinematic camera. Every project sits at its real-world coordinates; selecting one flies the camera in with an Oryzo-style swoop. Internet access is required for map tiles; all UI, markers, and data work regardless.
 
 ---
 
@@ -12,12 +12,12 @@ An interactive wall-map experience for Kalb Construction — a full-screen, touc
 |---|---|---|
 | Build | **Vite 5** | Instant dev server, tiny static output, `base: './'` so the bundle runs from any folder or kiosk file server |
 | UI | **React 18 + TypeScript** | Modular components, typed project schema, easy handoff to any developer |
-| Map | **Custom SVG engine** (in-repo) | Hand-drawn branded basemap + pan/zoom/pinch/fly-to written directly on pointer events. No tile server, no API keys, no network. Smooth on kiosk hardware because it's one SVG transform |
+| Map | **MapLibre GL JS + OpenFreeMap tiles** | Real, natural-color street basemap (Zillow-like), no API key or account. 3D building extrusions (`fill-extrusion`), pitch/bearing camera, buttery `flyTo` cinematics, pinch/rotate touch gestures |
 | Typography | **Oswald Variable** (display) + **Inter Variable** (UI), self-hosted via Fontsource | Bold condensed construction-forward headlines; no Google Fonts CDN dependency |
 | Motion | CSS transitions/keyframes + a single rAF animator for camera flights | No animation library weight; `prefers-reduced-motion` respected |
 | Data | `src/data/projects.json` | Clean JSON array, CMS-ready (see below) |
 
-Deliberately **no** map SDK (MapLibre/Mapbox), no state library, no CSS framework — the experience is bespoke and the bundle stays small (~160 KB gzipped JS).
+No state library, no CSS framework — the chrome is bespoke. Map tiles are fetched from tiles.openfreemap.org at runtime (free, keyless); everything else is self-hosted.
 
 ## Running it
 
@@ -45,19 +45,15 @@ src/
 ├── data/
 │   └── projects.json        # THE source of truth — edit projects here
 ├── lib/
-│   ├── geo.ts               # lon/lat → world-space projection, easing
 │   ├── meta.ts              # category/status/city taxonomies + tones
 │   ├── filters.ts           # filter + search predicates
+│   ├── regions.ts           # region quick-nav definitions + bounds math
 │   ├── rng.ts               # seeded PRNG for stable procedural art
 │   └── useIdle.ts           # idle-timer + clock hooks
-├── map/
-│   └── Basemap.tsx          # branded vector basemap (freeways, grid, labels)
 └── components/
-    ├── MapView.tsx          # camera: pan / pinch / wheel / fly-to, tooltip,
-    │                        #   zoom controls; owns the SVG stage
-    ├── MarkerLayer.tsx      # pins, featured pulses, site clusters + radial
-    │                        #   fan-out (Craig & Valley, Palm campus, …)
-    ├── InsetPanels.tsx      # Northern Nevada + Arizona mini-maps
+    ├── MapLibreView.tsx     # MapLibre map: real tiles, 3D buildings,
+    │                        #   Kalb DOM markers, cluster popups, fly-tos
+    ├── RegionNav.tsx        # one-tap camera flights: LV / N. Nevada / AZ
     ├── ProjectDetail.tsx    # right-side detail panel (dialog) w/ parallax hero
     ├── BuildingHero.tsx     # procedural isometric "render" per project;
     │                        #   swaps to a real image when heroImage is set
@@ -68,7 +64,7 @@ src/
     └── BootScreen.tsx       # branded loading state
 ```
 
-**Data flow:** `App` owns all cross-cutting state and passes it down; `MapView` owns only camera + gesture state. Selecting a project (marker, cluster child, inset dot, featured card, or search row) funnels through one `select()` which sets the hash route (`#/project/26104`), opens the panel, and fires a camera flight that seats the marker beside the panel.
+**Data flow:** `App` owns all cross-cutting state; `MapLibreView` owns only the camera. Selecting a project (marker, cluster popup row, featured card, or search row) funnels through one `select()` which sets the hash route (`#/project/26104`), opens the panel, and flies the camera (zoom + tilt + bearing swing) to seat the marker beside the panel. Picking a **City** filter or a **Region** row flies the camera to that area — Henderson, Northern Nevada, and Arizona are one tap away.
 
 ## Data schema (`src/data/projects.json`)
 
@@ -82,7 +78,7 @@ src/
   "city": "North Las Vegas",
   "state": "NV",
   "region": "LV",             // LV = valley map · NNV / AZ = inset panels
-  "lat": 36.256, "lng": -115.115,   // approximate is fine — atlas, not GIS
+  "lat": 36.2612, "lng": -115.124,  // real-world coords — nudge here if a pin is off
   "category": "Retail",       // one of the 10 types in lib/meta.ts
   "status": "Preconstruction",// Preconstruction | In Progress | Closeout | Complete
   "progress": 12,             // 0–100, drives the timeline bar
@@ -96,7 +92,8 @@ src/
 }
 ```
 
-- **Statuses/progress are editable placeholders** — set real values as jobs move.
+- **All projects are currently marked `Complete`** per the portfolio. Statuses/progress are editable if live jobs are added later.
+- **Coordinates were placed from the street addresses** — if any pin sits a block off, fix its `lat`/`lng` here (Google Maps right-click → copy coordinates) and the app hot-reloads.
 - **Adding a project** = adding one object. Clusters, filters, search, counts, insets all derive from the array.
 - **Real renders:** drop images in `public/renders/` and set `heroImage`. Until then every project gets a stable procedural isometric building scene generated from its job number and category (Kalb palette only).
 

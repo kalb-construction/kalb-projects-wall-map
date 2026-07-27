@@ -60,13 +60,5 @@ export interface Project {
 export interface Filters {
   city: string; // 'all' | city group label
   category: string; // 'all' | Category
-  status: string; // 'all' | ProjectStatus
-}
-
-export interface ViewState {
-  /** World-space center of the viewport. */
-  cx: number;
-  cy: number;
-  /** Zoom multiplier on top of the cover-fit base scale. */
-  k: number;
+  status: string; // 'all' | ProjectStatus (kept for future use)
 }

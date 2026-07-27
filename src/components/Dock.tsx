@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import type { Filters, Project } from '../types';
-import { CATEGORIES, CITY_GROUPS, STATUSES, statusTone } from '../lib/meta';
+import { CATEGORIES, CITY_GROUPS, statusTone } from '../lib/meta';
 import { BuildingHero } from './BuildingHero';
 
 interface DockProps {
@@ -12,18 +12,16 @@ interface DockProps {
   onSelect: (p: Project) => void;
 }
 
-type TrayKey = 'city' | 'category' | 'status' | null;
+type TrayKey = 'city' | 'category' | null;
 
 const TRAY_OPTIONS: Record<Exclude<TrayKey, null>, readonly string[]> = {
   city: CITY_GROUPS,
-  category: CATEGORIES,
-  status: STATUSES
+  category: CATEGORIES
 };
 
 const TRAY_LABEL: Record<Exclude<TrayKey, null>, string> = {
   city: 'City',
-  category: 'Type',
-  status: 'Status'
+  category: 'Type'
 };
 
 export function Dock({
@@ -36,10 +34,7 @@ export function Dock({
 }: DockProps) {
   const [tray, setTray] = useState<TrayKey>(null);
 
-  const isFiltered =
-    filters.city !== 'all' ||
-    filters.category !== 'all' ||
-    filters.status !== 'all';
+  const isFiltered = filters.city !== 'all' || filters.category !== 'all';
 
   const setValue = (key: Exclude<TrayKey, null>, value: string) => {
     onFilters({ ...filters, [key]: value });
@@ -70,7 +65,7 @@ export function Dock({
 
       <div className="dock-left">
         <span className="dock-label">Filter</span>
-        {(['city', 'category', 'status'] as const).map((key) => (
+        {(['city', 'category'] as const).map((key) => (
           <button
             key={key}
             className={`dock-filter${filters[key] !== 'all' ? ' is-set' : ''}${
@@ -103,9 +98,8 @@ export function Dock({
         )}
         <span className="dock-count">{shownCount} shown</span>
         <div className="dock-legend" aria-hidden="true">
-          <span className="lg lg-active" /> Active
-          <span className="lg lg-precon" /> Precon
-          <span className="lg lg-done" /> Delivered
+          <span className="lg lg-active" /> Project site
+          <span className="lg lg-multi">2+</span> Multi-project site
         </div>
       </div>
 
