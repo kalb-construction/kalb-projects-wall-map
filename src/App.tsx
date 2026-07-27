@@ -8,6 +8,7 @@ import { useIdle } from './lib/useIdle';
 import { BootScreen } from './components/BootScreen';
 import { TopBar } from './components/TopBar';
 import { MapLibreView } from './components/MapLibreView';
+import { MapboxView, MAPBOX_TOKEN } from './components/MapboxView';
 import { RegionNav } from './components/RegionNav';
 import { Dock } from './components/Dock';
 import { SearchOverlay } from './components/SearchOverlay';
@@ -160,9 +161,13 @@ export default function App() {
 
   const showAttract = bootGone && idle && featured.length > 0;
 
+  // Mapbox Standard engine when a token is configured; keyless MapLibre
+  // engine otherwise. Same props, same chrome — just a better renderer.
+  const MapEngine = MAPBOX_TOKEN ? MapboxView : MapLibreView;
+
   return (
     <div className="app">
-      <MapLibreView
+      <MapEngine
         projects={PROJECTS}
         visibleIds={visibleIds}
         selectedId={selectedId}

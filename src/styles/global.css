@@ -95,17 +95,24 @@ button {
   z-index: 2;
 }
 
-/* MapLibre chrome adjustments */
-.maplibregl-ctrl-bottom-right {
+/* MapLibre / Mapbox chrome adjustments */
+.maplibregl-ctrl-bottom-right,
+.mapboxgl-ctrl-bottom-right {
   bottom: 142px;
   right: 8px;
 }
-.maplibregl-ctrl-attrib {
+.mapboxgl-ctrl-bottom-left {
+  bottom: 142px;
+  left: 246px;
+}
+.maplibregl-ctrl-attrib,
+.mapboxgl-ctrl-attrib {
   background: rgba(12, 11, 10, 0.55) !important;
   border-radius: 8px;
   font-size: 10px;
 }
-.maplibregl-ctrl-attrib a {
+.maplibregl-ctrl-attrib a,
+.mapboxgl-ctrl-attrib a {
   color: rgba(231, 227, 219, 0.75) !important;
 }
 
