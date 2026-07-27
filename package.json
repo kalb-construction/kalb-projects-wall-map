@@ -13,6 +13,8 @@
   "dependencies": {
     "@fontsource-variable/inter": "^5.0.0",
     "@fontsource-variable/oswald": "^5.0.0",
+    "@loaders.gl/3d-tiles": "^4.4.3",
+    "deck.gl": "^9.3.7",
     "maplibre-gl": "^6.0.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"

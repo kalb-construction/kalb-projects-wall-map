@@ -144,6 +144,25 @@ const HOME = {
 /** Degrees per millisecond for the slow drone-orbit around a selection. */
 const ORBIT_SPEED = 0.0008;
 
+/**
+ * Google Photorealistic 3D Tiles key. Set VITE_GOOGLE_MAPS_API_KEY in .env
+ * (see .env.example), or pass ?gkey=YOUR_KEY in the URL for a quick test.
+ */
+const GOOGLE_KEY: string | null =
+  new URLSearchParams(window.location.search).get('gkey') ||
+  import.meta.env.VITE_GOOGLE_MAPS_API_KEY ||
+  null;
+
+/** deck.gl overlay handle (loaded on demand — heavy modules stay lazy). */
+interface DeckOverlayLike {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  setProps: (p: any) => void;
+}
+interface DeckHandle {
+  overlay: DeckOverlayLike;
+  makeLayer: () => unknown;
+}
+
 interface SiteGroup {
   siteId: string;
   siteName: string;
@@ -216,6 +235,9 @@ export function MapLibreView({
   const [sitePopup, setSitePopup] = useState<SiteGroup | null>(null);
   const [popupPos, setPopupPos] = useState<{ x: number; y: number } | null>(null);
   const [satellite, setSatellite] = useState(true);
+  const [google3d, setGoogle3d] = useState(false);
+  const [g3dError, setG3dError] = useState(false);
+  const deckRef = useRef<DeckHandle | null>(null);
   const orbitRef = useRef<number | null>(null);
 
   const stopOrbit = () => {
@@ -465,6 +487,57 @@ export function MapLibreView({
     mapRef.current?.flyTo({ ...HOME, duration: 1800, essential: true });
   };
 
+  /**
+   * Toggle Google Photorealistic 3D Tiles, lazily loading deck.gl the first
+   * time. Rendered interleaved into MapLibre's WebGL context so DOM markers
+   * and camera stay perfectly in sync.
+   */
+  const toggleGoogle3d = async () => {
+    const map = mapRef.current;
+    if (!map || !GOOGLE_KEY) return;
+    const next = !google3d;
+    setGoogle3d(next);
+    setG3dError(false);
+
+    try {
+      let handle = deckRef.current;
+      if (!handle) {
+        const [{ MapboxOverlay }, { Tile3DLayer }, { Tiles3DLoader }] =
+          await Promise.all([
+            import('@deck.gl/mapbox'),
+            import('@deck.gl/geo-layers'),
+            import('@loaders.gl/3d-tiles')
+          ]);
+        const makeLayer = () =>
+          new Tile3DLayer({
+            id: 'google-3d-tiles',
+            data: `https://tile.googleapis.com/v1/3dtiles/root.json?key=${GOOGLE_KEY}`,
+            loader: Tiles3DLoader,
+            onTileError: () => setG3dError(true)
+          });
+        const overlay = new MapboxOverlay({ interleaved: true, layers: [] });
+        // MapboxOverlay implements maplibre's IControl.
+        map.addControl(overlay as unknown as maplibregl.IControl);
+        handle = { overlay: overlay as unknown as DeckOverlayLike, makeLayer };
+        deckRef.current = handle;
+      }
+      handle.overlay.setProps({
+        layers: next ? [handle.makeLayer()] : []
+      });
+      // Google's photorealistic mesh replaces our flat imagery + extrusions.
+      const vis = (on: boolean) => (on ? 'visible' : 'none');
+      map.setLayoutProperty('base-satlabels', 'visibility', vis(!next));
+      map.setPaintProperty(
+        'kalb-3d-buildings',
+        'fill-extrusion-opacity',
+        next ? 0 : satellite ? 0.5 : 0.85
+      );
+    } catch {
+      setG3dError(true);
+      setGoogle3d(false);
+    }
+  };
+
   const toggleSatellite = () => {
     const map = mapRef.current;
     if (!map) return;
@@ -481,6 +554,11 @@ export function MapLibreView({
         'fill-extrusion-opacity',
         next ? 0.5 : 0.85
       );
+      // Streets view retires the photorealistic overlay.
+      if (!next && google3d && deckRef.current) {
+        deckRef.current.overlay.setProps({ layers: [] });
+        setGoogle3d(false);
+      }
     } catch {
       /* style not loaded yet */
     }
@@ -556,10 +634,27 @@ export function MapLibreView({
         >
           {satellite ? 'MAP' : 'SAT'}
         </button>
+        {GOOGLE_KEY && (
+          <button
+            className={`ctl-btn ctl-sat${google3d ? ' is-on' : ''}`}
+            aria-label="Toggle photorealistic 3D buildings"
+            aria-pressed={google3d}
+            onClick={toggleGoogle3d}
+          >
+            3D
+          </button>
+        )}
         <button className="ctl-btn ctl-home" aria-label="Reset view" onClick={home}>
           ⌂
         </button>
       </div>
+
+      {google3d && <div className="g-attrib">Map data © Google</div>}
+      {g3dError && (
+        <div className="g-error">
+          3D tiles unavailable — check the Google API key / Map Tiles API
+        </div>
+      )}
     </div>
   );
 }

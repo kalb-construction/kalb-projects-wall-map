@@ -28,6 +28,27 @@ npm run build      # static bundle in dist/
 npm run preview    # serve the built bundle (kiosk mode) on :4173
 ```
 
+### Google Photorealistic 3D Tiles (the "3D" button)
+
+The most cinematic mode — Google's photoreal 3D city mesh (like Google Earth
+flyovers) rendered inside the atlas via deck.gl. It needs a Google Maps
+Platform API key with billing enabled:
+
+1. [console.cloud.google.com](https://console.cloud.google.com) → create/select a project (billing must be enabled).
+2. **APIs & Services → Library** → enable **Map Tiles API**.
+3. **APIs & Services → Credentials → Create credentials → API key.**
+4. Restrict the key (recommended): API restrictions → *Map Tiles API* only;
+   Website restrictions → your dev/kiosk origins (e.g. `http://localhost:5173`).
+5. `copy .env.example .env` and paste the key into `VITE_GOOGLE_MAPS_API_KEY`, then restart `npm run dev`.
+   (Quick test without a .env: open `http://localhost:5173/?gkey=YOUR_KEY`.)
+
+A **3D** button appears in the map controls once a key is present. Turning it
+on streams Google's photorealistic mesh over the satellite base; the drone
+orbit around a selected project uses it to full effect. Usage is billed by
+Google per tile request — a single lobby kiosk is typically modest, but check
+current Map Tiles API pricing and set a budget alert on the project. The
+"Map data © Google" attribution shown on screen is required by Google's terms.
+
 ### Kiosk deployment (Mac Mini / any box)
 
 1. `npm run build`, serve `dist/` with any static server (or `npm run kiosk`).
