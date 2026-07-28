@@ -12,10 +12,15 @@ import type { BBox } from '../lib/regions';
  * mapbox-gl is dynamically imported so the base bundle stays lean.
  */
 
+/** Trim stray quotes/whitespace/BOM that .env files on Windows pick up. */
+function cleanKey(v: string | undefined | null): string | null {
+  const s = (v ?? '').replace(/^﻿/, '').trim().replace(/^['"]|['"]$/g, '');
+  return s.length > 0 ? s : null;
+}
+
 export const MAPBOX_TOKEN: string | null =
-  new URLSearchParams(window.location.search).get('mtoken') ||
-  import.meta.env.VITE_MAPBOX_TOKEN ||
-  null;
+  cleanKey(new URLSearchParams(window.location.search).get('mtoken')) ??
+  cleanKey(import.meta.env.VITE_MAPBOX_TOKEN);
 
 /**
  * Three view modes, cycled by one control button:
@@ -80,6 +85,8 @@ interface MapboxViewProps {
   onSelect: (p: Project) => void;
   onBackgroundTap: () => void;
   onLoaded: () => void;
+  /** Called once if Mapbox can't render (bad token, blocked host, …). */
+  onFailure?: (reason: string) => void;
 }
 
 function groupProjects(projects: Project[]): {
@@ -133,7 +140,8 @@ export function MapboxView({
   regionSignal,
   onSelect,
   onBackgroundTap,
-  onLoaded
+  onLoaded,
+  onFailure
 }: MapboxViewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<any>(null);
@@ -151,6 +159,18 @@ export function MapboxView({
   onBackgroundTapRef.current = onBackgroundTap;
   const onLoadedRef = useRef(onLoaded);
   onLoadedRef.current = onLoaded;
+  const onFailureRef = useRef(onFailure);
+  onFailureRef.current = onFailure;
+  const failedRef = useRef(false);
+  const styleOkRef = useRef(false);
+
+  /** Report an unrecoverable Mapbox problem exactly once. */
+  const fail = (reason: string) => {
+    if (failedRef.current) return;
+    failedRef.current = true;
+    console.error('[Kalb Atlas] Mapbox engine failed:', reason);
+    onFailureRef.current?.(reason);
+  };
   const detailOpenRef = useRef(detailOpen);
   detailOpenRef.current = detailOpen;
   const lightIdxRef = useRef(lightIdx);
@@ -195,10 +215,14 @@ export function MapboxView({
 
     (async () => {
       const mod: any = await import('mapbox-gl');
-      await import('mapbox-gl/dist/mapbox-gl.css');
       if (cancelled) return;
       const mapboxgl = mod.default ?? mod;
-      mapboxgl.accessToken = MAPBOX_TOKEN;
+      try {
+        mapboxgl.accessToken = MAPBOX_TOKEN;
+      } catch {
+        fail('could not set the Mapbox access token');
+        return;
+      }
 
       const map = new mapboxgl.Map({
         container,
@@ -219,9 +243,25 @@ export function MapboxView({
       });
       // Lighting presets exist only on the Standard (3D) style.
       map.on('style.load', () => {
+        styleOkRef.current = true;
         if (viewRef.current === 'city3d') applyLight(map, lightIdxRef.current);
       });
-      map.on('error', () => onLoadedRef.current());
+      map.on('error', (e: any) => {
+        const msg = String(
+          e?.error?.message ?? e?.error?.status ?? e?.message ?? 'unknown error'
+        );
+        // Auth/quota/blocked-host problems mean the map can never draw.
+        if (/401|403|unauthorized|forbidden|access token|not authorized/i.test(msg)) {
+          fail(msg);
+        }
+        onLoadedRef.current();
+      });
+
+      // Watchdog: if the style never loads (blocked host, dead token),
+      // hand off to the keyless engine instead of showing a blank wall.
+      window.setTimeout(() => {
+        if (!styleOkRef.current) fail('Mapbox style did not load in time');
+      }, 9000);
       map.on('click', () => {
         setSitePopup(null);
         onBackgroundTapRef.current();

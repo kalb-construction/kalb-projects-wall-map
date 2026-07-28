@@ -78,6 +78,7 @@ function Atlas({ projects }: { projects: Project[] }) {
     null
   );
   const [searchOpen, setSearchOpen] = useState(false);
+  const [mapboxFailed, setMapboxFailed] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
   const toastTimer = useRef<number | undefined>(undefined);
   const signalCounter = useRef(0);
@@ -201,9 +202,6 @@ function Atlas({ projects }: { projects: Project[] }) {
 
   const showAttract = bootGone && idle && featured.length > 0;
 
-  // Mapbox Standard engine when a token is configured; keyless MapLibre
-  // engine otherwise. Same props, same chrome — just a better renderer.
-  const MapEngine = MAPBOX_TOKEN ? MapboxView : MapLibreView;
   useEffect(() => {
     // Visible in DevTools → Console, so it's obvious which engine is live.
     console.info(
@@ -215,19 +213,43 @@ function Atlas({ projects }: { projects: Project[] }) {
     );
   }, []);
 
+  // Mapbox Standard engine when a token is configured; the keyless
+  // MapLibre engine otherwise — or as an automatic rescue if Mapbox
+  // can't render (bad token, blocked host), so the wall is never blank.
+  const useMapbox = MAPBOX_TOKEN !== null && !mapboxFailed;
+
   return (
     <div className="app">
-      <MapEngine
-        projects={projects}
-        visibleIds={visibleIds}
-        selectedId={selectedId}
-        detailOpen={selected !== null}
-        focusSignal={focusSignal}
-        regionSignal={regionSignal}
-        onSelect={select}
-        onBackgroundTap={close}
-        onLoaded={() => setMapLoaded(true)}
-      />
+      {useMapbox ? (
+        <MapboxView
+          projects={projects}
+          visibleIds={visibleIds}
+          selectedId={selectedId}
+          detailOpen={selected !== null}
+          focusSignal={focusSignal}
+          regionSignal={regionSignal}
+          onSelect={select}
+          onBackgroundTap={close}
+          onLoaded={() => setMapLoaded(true)}
+          onFailure={(reason) => {
+            setMapboxFailed(true);
+            setMapLoaded(true);
+            showToast(`Mapbox unavailable (${reason}) — using standard maps.`);
+          }}
+        />
+      ) : (
+        <MapLibreView
+          projects={projects}
+          visibleIds={visibleIds}
+          selectedId={selectedId}
+          detailOpen={selected !== null}
+          focusSignal={focusSignal}
+          regionSignal={regionSignal}
+          onSelect={select}
+          onBackgroundTap={close}
+          onLoaded={() => setMapLoaded(true)}
+        />
+      )}
 
       <div className="vignette" aria-hidden="true" />
 
