@@ -55,6 +55,23 @@ current Map Tiles API pricing and set a budget alert on the project. The
 2. Launch Chrome/Chromium with `--kiosk --noerrdialogs --disable-pinch-zoom http://localhost:4173` (the app handles its own pinch gestures).
 3. Disable OS sleep; the built-in idle attract loop takes over after 90 s and any touch wakes the map.
 
+## Updating the dashboard yourself (no developer needed)
+
+This is Kalb's own dashboard — all content lives in two plain places:
+
+- **`data/projects.json`** — every project's name, address, coordinates,
+  status, description, photo. Edit it with any text editor.
+  - During development: `public/data/projects.json` (refresh the browser).
+  - On the kiosk (built app): `dist/data/projects.json` — edit and refresh,
+    **no rebuild required**.
+- **`renders/`** — your own photos of finished projects, named by job number
+  (`26104.jpg`). Point a project's `"heroImage"` at `"./renders/26104.jpg"`
+  and its detail panel shows the real building. Your own photography will
+  always be fresher than any satellite provider's imagery.
+
+Adding a project = adding one JSON object. Removing, re-pinning (lat/lng),
+renaming, featuring — all one-line edits to the same file.
+
 ## Component architecture
 
 ```

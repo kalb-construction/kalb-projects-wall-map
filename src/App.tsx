@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import projectsData from './data/projects.json';
 import type { Filters, Project } from './types';
 import { EMPTY_FILTERS, matchesFilters } from './lib/filters';
 import { cityGroupOf } from './lib/meta';
@@ -15,10 +14,21 @@ import { SearchOverlay } from './components/SearchOverlay';
 import { ProjectDetail } from './components/ProjectDetail';
 import { IdleAttract } from './components/IdleAttract';
 
-const PROJECTS = projectsData as Project[];
 const IDLE_MS = 90_000;
 const BOOT_MIN_MS = 1800;
 const BOOT_MAX_MS = 8000;
+
+/**
+ * Project data is loaded at runtime from a plain file so the team can
+ * update the dashboard without a rebuild: edit data/projects.json (in
+ * public/ during development, or directly inside dist/ on the kiosk),
+ * then refresh the page.
+ */
+async function loadProjects(): Promise<Project[]> {
+  const res = await fetch('./data/projects.json', { cache: 'no-store' });
+  if (!res.ok) throw new Error(`projects.json ${res.status}`);
+  return (await res.json()) as Project[];
+}
 
 function idFromHash(): string | null {
   const m = window.location.hash.match(/^#\/project\/(.+)$/);
@@ -26,6 +36,36 @@ function idFromHash(): string | null {
 }
 
 export default function App() {
+  const [projects, setProjects] = useState<Project[] | null>(null);
+  const [loadError, setLoadError] = useState(false);
+
+  useEffect(() => {
+    loadProjects()
+      .then(setProjects)
+      .catch(() => setLoadError(true));
+  }, []);
+
+  if (loadError) {
+    return (
+      <div className="app">
+        <BootScreen leaving={false} />
+        <div className="g-error">
+          Could not read data/projects.json — check the file and refresh.
+        </div>
+      </div>
+    );
+  }
+  if (!projects) {
+    return (
+      <div className="app">
+        <BootScreen leaving={false} />
+      </div>
+    );
+  }
+  return <Atlas projects={projects} />;
+}
+
+function Atlas({ projects }: { projects: Project[] }) {
   const [mapLoaded, setMapLoaded] = useState(false);
   const [bootMinDone, setBootMinDone] = useState(false);
   const [bootGone, setBootGone] = useState(false);
@@ -43,7 +83,7 @@ export default function App() {
   const signalCounter = useRef(0);
   const idle = useIdle(IDLE_MS);
 
-  const bootDone = (mapLoaded && bootMinDone) || false;
+  const bootDone = mapLoaded && bootMinDone;
 
   useEffect(() => {
     const t1 = window.setTimeout(() => setBootMinDone(true), BOOT_MIN_MS);
@@ -69,27 +109,27 @@ export default function App() {
   }, []);
 
   const selected = useMemo(
-    () => PROJECTS.find((p) => p.id === selectedId) ?? null,
-    [selectedId]
+    () => projects.find((p) => p.id === selectedId) ?? null,
+    [projects, selectedId]
   );
 
   const visibleIds = useMemo(() => {
     const s = new Set<string>();
-    for (const p of PROJECTS) {
+    for (const p of projects) {
       if (matchesFilters(p, filters)) s.add(p.id);
     }
     return s;
-  }, [filters]);
+  }, [projects, filters]);
 
   const shownProjects = useMemo(
-    () => PROJECTS.filter((p) => visibleIds.has(p.id)),
-    [visibleIds]
+    () => projects.filter((p) => visibleIds.has(p.id)),
+    [projects, visibleIds]
   );
 
-  const featured = useMemo(() => PROJECTS.filter((p) => p.featured), []);
+  const featured = useMemo(() => projects.filter((p) => p.featured), [projects]);
   const cityCount = useMemo(
-    () => new Set(PROJECTS.map((p) => `${p.city}|${p.state}`)).size,
-    []
+    () => new Set(projects.map((p) => `${p.city}|${p.state}`)).size,
+    [projects]
   );
 
   const flyToBounds = useCallback((bounds: BBox) => {
@@ -120,7 +160,7 @@ export default function App() {
     (next: Filters) => {
       setFilters((prev) => {
         if (next.city !== prev.city && next.city !== 'all') {
-          const matching = PROJECTS.filter((p) => cityGroupOf(p) === next.city);
+          const matching = projects.filter((p) => cityGroupOf(p) === next.city);
           const b = boundsOf(matching);
           if (b) flyToBounds(b);
         }
@@ -130,18 +170,18 @@ export default function App() {
         return next;
       });
     },
-    [flyToBounds]
+    [projects, flyToBounds]
   );
 
   const step = useCallback(
     (dir: 1 | -1) => {
       if (!selected) return;
-      const list = shownProjects.length > 0 ? shownProjects : PROJECTS;
+      const list = shownProjects.length > 0 ? shownProjects : projects;
       const idx = list.findIndex((p) => p.id === selected.id);
       const next = list[(idx + dir + list.length) % list.length];
       select(next);
     },
-    [selected, shownProjects, select]
+    [selected, shownProjects, projects, select]
   );
 
   const showToast = useCallback((msg: string) => {
@@ -168,7 +208,7 @@ export default function App() {
   return (
     <div className="app">
       <MapEngine
-        projects={PROJECTS}
+        projects={projects}
         visibleIds={visibleIds}
         selectedId={selectedId}
         detailOpen={selected !== null}
@@ -182,14 +222,14 @@ export default function App() {
       <div className="vignette" aria-hidden="true" />
 
       <TopBar
-        totalCount={PROJECTS.length}
+        totalCount={projects.length}
         shownCount={shownProjects.length}
         cityCount={cityCount}
         onSearch={() => setSearchOpen(true)}
       />
 
       <RegionNav
-        projects={PROJECTS}
+        projects={projects}
         visibleIds={visibleIds}
         onFly={flyToBounds}
       />
@@ -215,7 +255,7 @@ export default function App() {
 
       {searchOpen && (
         <SearchOverlay
-          projects={PROJECTS}
+          projects={projects}
           onSelect={select}
           onClose={() => setSearchOpen(false)}
         />
