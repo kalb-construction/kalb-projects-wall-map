@@ -216,6 +216,10 @@ interface MapLibreViewProps {
   onLoaded: () => void;
   /** projectId -> team color, applied to each marker as --km-color. */
   teamColors?: Record<string, string>;
+  /** Reports the camera bearing (throttled) so the dock compass can spin. */
+  onBearing?: (deg: number) => void;
+  /** Bump to snap the camera back to north-up. */
+  northSignal?: number;
 }
 
 function groupProjects(projects: Project[]): {
@@ -255,7 +259,9 @@ export function MapLibreView({
   onSelect,
   onBackgroundTap,
   onLoaded,
-  teamColors
+  teamColors,
+  onBearing,
+  northSignal
 }: MapLibreViewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MLMap | null>(null);
@@ -321,6 +327,8 @@ export function MapLibreView({
   onBackgroundTapRef.current = onBackgroundTap;
   const onLoadedRef = useRef(onLoaded);
   onLoadedRef.current = onLoaded;
+  const onBearingRef = useRef(onBearing);
+  onBearingRef.current = onBearing;
   const detailOpenRef = useRef(detailOpen);
   detailOpenRef.current = detailOpen;
 
@@ -381,6 +389,17 @@ export function MapLibreView({
     map.on('moveend', () => setMoving(false));
     map.on('zoomstart', () => setMoving(true));
     map.on('zoomend', () => setMoving(false));
+
+    // Compass feed: throttled so a spinning camera can't flood React.
+    let lastBearingAt = 0;
+    const emitBearing = () => {
+      const now = performance.now();
+      if (now - lastBearingAt < 100) return;
+      lastBearingAt = now;
+      onBearingRef.current?.(map.getBearing());
+    };
+    map.on('rotate', emitBearing);
+    map.on('moveend', () => onBearingRef.current?.(map.getBearing()));
     map.on('zoom', syncTerrain);
     syncLabels();
 
@@ -545,6 +564,15 @@ export function MapLibreView({
   useEffect(() => {
     if (!detailOpen) stopOrbit();
   }, [detailOpen]);
+
+  // ---- compass: snap back to north-up ------------------------------------
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !northSignal) return;
+    stopOrbit();
+    map.easeTo({ bearing: 0, duration: 700 });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [northSignal]);
 
   // ---- region quick-nav ----------------------------------------------------
   useEffect(() => {

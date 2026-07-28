@@ -1817,3 +1817,54 @@ button {
   color: rgba(231, 227, 219, 0.3);
   cursor: default;
 }
+
+/* ---------- dock compass ---------- */
+
+.compass-btn {
+  width: 50px;
+  height: 50px;
+  flex: 0 0 auto;
+  border-radius: 13px;
+  background: var(--glass-solid);
+  border: 1px solid var(--glass-edge);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.2s, background 0.2s, transform 0.15s;
+}
+.compass-btn:hover {
+  background: rgba(193, 0, 22, 0.18);
+}
+.compass-btn:active {
+  transform: scale(0.94);
+}
+/* Lit up whenever the map is off north, hinting "tap to straighten". */
+.compass-btn.is-turned {
+  border-color: rgba(193, 0, 22, 0.75);
+  box-shadow: 0 0 16px rgba(193, 0, 22, 0.35);
+}
+.compass-btn svg {
+  width: 34px;
+  height: 34px;
+  display: block;
+}
+.compass-ring {
+  fill: none;
+  stroke: rgba(231, 227, 219, 0.28);
+  stroke-width: 1.5;
+}
+.compass-n {
+  fill: #e11026;
+  filter: drop-shadow(0 0 5px rgba(193, 0, 22, 0.65));
+}
+.compass-s {
+  fill: rgba(231, 227, 219, 0.85);
+}
+.compass-label {
+  fill: #fff;
+  font-family: var(--font-display);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-anchor: middle;
+}

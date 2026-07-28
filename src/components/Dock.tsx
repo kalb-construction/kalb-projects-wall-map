@@ -8,6 +8,10 @@ interface DockProps {
   shownCount: number;
   /** Cities present in the data, alphabetical. */
   cityOptions: string[];
+  /** Current camera bearing in degrees, for the compass needle. */
+  bearing: number;
+  /** Snap the camera back to north-up. */
+  onNorth: () => void;
 }
 
 type TrayKey = 'city' | 'category' | null;
@@ -22,7 +26,9 @@ export function Dock({
   filters,
   onFilters,
   shownCount,
-  cityOptions
+  cityOptions,
+  bearing,
+  onNorth
 }: DockProps) {
   const [tray, setTray] = useState<TrayKey>(null);
 
@@ -61,7 +67,23 @@ export function Dock({
       )}
 
       <div className="dock-left">
-        <span className="dock-label">Filter</span>
+        <button
+          className={`compass-btn${Math.abs(bearing) > 0.5 ? ' is-turned' : ''}`}
+          onClick={onNorth}
+          aria-label={`Compass — bearing ${Math.round(bearing)}°, tap to face north`}
+          title="Face north"
+        >
+          <svg viewBox="0 0 44 44" aria-hidden="true">
+            <circle className="compass-ring" cx="22" cy="22" r="18" />
+            <g transform={`rotate(${-bearing} 22 22)`}>
+              {/* north half — Kalb red */}
+              <path className="compass-n" d="M22 6 L28.5 25 L22 21.5 L15.5 25 Z" />
+              {/* south half — sand */}
+              <path className="compass-s" d="M22 38 L15.5 19 L22 22.5 L28.5 19 Z" />
+            </g>
+            <text className="compass-label" x="22" y="12.5">N</text>
+          </svg>
+        </button>
         {(['city', 'category'] as const).map((key) => (
           <button
             key={key}
