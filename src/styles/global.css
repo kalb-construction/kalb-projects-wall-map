@@ -89,9 +89,9 @@ button {
   inset: 0;
   pointer-events: none;
   background:
-    linear-gradient(180deg, rgba(12, 11, 10, 0.55) 0%, transparent 11%),
-    linear-gradient(0deg, rgba(12, 11, 10, 0.6) 0%, transparent 15%),
-    radial-gradient(160% 130% at 50% 45%, transparent 72%, rgba(12, 11, 10, 0.28) 100%);
+    linear-gradient(180deg, rgba(12, 11, 10, 0.42) 0%, transparent 10%),
+    linear-gradient(0deg, rgba(12, 11, 10, 0.48) 0%, transparent 14%),
+    radial-gradient(170% 140% at 50% 45%, transparent 78%, rgba(12, 11, 10, 0.18) 100%);
   z-index: 2;
 }
 

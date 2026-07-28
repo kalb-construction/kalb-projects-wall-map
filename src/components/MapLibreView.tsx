@@ -114,20 +114,17 @@ const MAP_STYLE = {
       id: 'base-osm',
       type: 'raster',
       source: 'osm',
-      layout: { visibility: 'none' },
       paint: { 'raster-saturation': -0.15 }
     },
     {
       id: 'base-voyager',
       type: 'raster',
-      source: 'voyager',
-      layout: { visibility: 'none' }
+      source: 'voyager'
     },
     {
       id: 'terrain-hillshade',
       type: 'hillshade',
       source: 'hillshade-dem',
-      layout: { visibility: 'none' },
       paint: {
         'hillshade-shadow-color': 'rgba(66, 56, 44, 0.45)',
         'hillshade-highlight-color': 'rgba(255, 252, 244, 0.25)',
@@ -138,12 +135,14 @@ const MAP_STYLE = {
       id: 'base-satellite',
       type: 'raster',
       source: 'satellite',
+      layout: { visibility: 'none' },
       paint: { 'raster-saturation': 0.06, 'raster-contrast': 0.05 }
     },
     {
       id: 'base-satlabels',
       type: 'raster',
       source: 'satlabels',
+      layout: { visibility: 'none' },
       paint: { 'raster-opacity': 0.9 }
     },
     {
@@ -161,7 +160,7 @@ const MAP_STYLE = {
           10
         ],
         'fill-extrusion-base': ['coalesce', ['get', 'render_min_height'], 0],
-        'fill-extrusion-opacity': 0.5
+        'fill-extrusion-opacity': 0.85
       }
     }
   ]
@@ -170,8 +169,8 @@ const MAP_STYLE = {
 const HOME = {
   center: [-115.155, 36.135] as [number, number],
   zoom: 10.7,
-  pitch: 47,
-  bearing: -14
+  pitch: 0,
+  bearing: 0
 };
 
 /** ?flat=1 disables 3D terrain for lower-powered hardware. */
@@ -270,7 +269,7 @@ export function MapLibreView({
   const unitsRef = useRef<MarkerUnit[]>([]);
   const [sitePopup, setSitePopup] = useState<SiteGroup | null>(null);
   const [popupPos, setPopupPos] = useState<{ x: number; y: number } | null>(null);
-  const [satellite, setSatellite] = useState(true);
+  const [satellite, setSatellite] = useState(false);
   const [google3d, setGoogle3d] = useState(false);
   const [g3dError, setG3dError] = useState(false);
   const deckRef = useRef<DeckHandle | null>(null);
@@ -525,7 +524,7 @@ export function MapLibreView({
     stopOrbit();
     map.fitBounds(regionSignal.bounds, {
       padding: { top: 120, bottom: 190, left: 120, right: 90 },
-      bearing: -14,
+      bearing: 0,
       duration: 2300,
       essential: true
     });

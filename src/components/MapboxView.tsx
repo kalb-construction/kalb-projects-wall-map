@@ -17,14 +17,37 @@ export const MAPBOX_TOKEN: string | null =
   import.meta.env.VITE_MAPBOX_TOKEN ||
   null;
 
-const STYLE_STANDARD = 'mapbox://styles/mapbox/standard';
-const STYLE_SATELLITE = 'mapbox://styles/mapbox/standard-satellite';
+/**
+ * Three view modes, cycled by one control button:
+ *   MAP — clean light street map (default; the calm "atlas" background)
+ *   3D  — Mapbox Standard: live 3D city with dawn/day/dusk/night lighting
+ *   SAT — satellite imagery
+ */
+const STYLES = {
+  streets: 'mapbox://styles/mapbox/streets-v12',
+  city3d: 'mapbox://styles/mapbox/standard',
+  satellite: 'mapbox://styles/mapbox/standard-satellite'
+} as const;
+
+type ViewMode = keyof typeof STYLES;
+const VIEW_ORDER: ViewMode[] = ['streets', 'city3d', 'satellite'];
+const VIEW_LABEL: Record<ViewMode, string> = {
+  streets: 'MAP',
+  city3d: '3D',
+  satellite: 'SAT'
+};
+/** Resting camera tilt per mode — flat for the clean map, raked for 3D. */
+const VIEW_PITCH: Record<ViewMode, number> = {
+  streets: 0,
+  city3d: 50,
+  satellite: 40
+};
 
 const HOME = {
   center: [-115.155, 36.135] as [number, number],
   zoom: 10.7,
-  pitch: 47,
-  bearing: -14
+  pitch: 0,
+  bearing: 0
 };
 
 const LIGHT_PRESETS = ['dawn', 'day', 'dusk', 'night'] as const;
@@ -119,7 +142,7 @@ export function MapboxView({
   const [sitePopup, setSitePopup] = useState<SiteGroup | null>(null);
   const [popupPos, setPopupPos] = useState<{ x: number; y: number } | null>(null);
   const [lightIdx, setLightIdx] = useState(2); // default: dusk
-  const [satellite, setSatellite] = useState(false);
+  const [view, setView] = useState<ViewMode>('streets');
   const orbitRef = useRef<number | null>(null);
 
   const onSelectRef = useRef(onSelect);
@@ -132,8 +155,8 @@ export function MapboxView({
   detailOpenRef.current = detailOpen;
   const lightIdxRef = useRef(lightIdx);
   lightIdxRef.current = lightIdx;
-  const satelliteRef = useRef(satellite);
-  satelliteRef.current = satellite;
+  const viewRef = useRef(view);
+  viewRef.current = view;
 
   const stopOrbit = () => {
     if (orbitRef.current !== null) {
@@ -179,7 +202,7 @@ export function MapboxView({
 
       const map = new mapboxgl.Map({
         container,
-        style: STYLE_STANDARD,
+        style: STYLES[viewRef.current],
         center: HOME.center,
         zoom: HOME.zoom,
         pitch: HOME.pitch,
@@ -191,13 +214,12 @@ export function MapboxView({
       mapRef.current = map;
 
       map.on('load', () => {
-        applyLight(map, lightIdxRef.current);
         setReady(true);
         onLoadedRef.current();
       });
-      // Re-apply lighting after any style swap (SAT toggle).
+      // Lighting presets exist only on the Standard (3D) style.
       map.on('style.load', () => {
-        if (!satelliteRef.current) applyLight(map, lightIdxRef.current);
+        if (viewRef.current === 'city3d') applyLight(map, lightIdxRef.current);
       });
       map.on('error', () => onLoadedRef.current());
       map.on('click', () => {
@@ -340,7 +362,7 @@ export function MapboxView({
     map.flyTo({
       center: [target.lng, target.lat],
       zoom: Math.max(map.getZoom(), 16.8),
-      pitch: 55,
+      pitch: viewRef.current === 'streets' ? 35 : 55,
       bearing: map.getBearing() + 30,
       duration: 2600,
       offset: [-panelW / 2 + 30, -20],
@@ -374,7 +396,12 @@ export function MapboxView({
   const home = () => {
     setSitePopup(null);
     stopOrbit();
-    mapRef.current?.flyTo({ ...HOME, duration: 1800, essential: true });
+    mapRef.current?.flyTo({
+      ...HOME,
+      pitch: VIEW_PITCH[viewRef.current],
+      duration: 1800,
+      essential: true
+    });
   };
 
   const cycleLight = () => {
@@ -384,12 +411,18 @@ export function MapboxView({
     if (map) applyLight(map, next);
   };
 
-  const toggleSatellite = () => {
+  const cycleView = () => {
     const map = mapRef.current;
     if (!map) return;
-    const next = !satellite;
-    setSatellite(next);
-    map.setStyle(next ? STYLE_SATELLITE : STYLE_STANDARD);
+    const next = VIEW_ORDER[(VIEW_ORDER.indexOf(view) + 1) % VIEW_ORDER.length];
+    setView(next);
+    viewRef.current = next;
+    map.setStyle(STYLES[next]);
+    // Settle the camera at the tilt that suits the new mode, unless the
+    // user is already flown into a project.
+    if (!detailOpenRef.current) {
+      map.easeTo({ pitch: VIEW_PITCH[next], duration: 900 });
+    }
   };
 
   return (
@@ -452,7 +485,7 @@ export function MapboxView({
         >
           ⬒
         </button>
-        {!satellite && (
+        {view === 'city3d' && (
           <button
             className="ctl-btn ctl-sat"
             aria-label="Cycle lighting (dawn, day, dusk, night)"
@@ -462,12 +495,11 @@ export function MapboxView({
           </button>
         )}
         <button
-          className={`ctl-btn ctl-sat${satellite ? ' is-on' : ''}`}
-          aria-label="Toggle satellite view"
-          aria-pressed={satellite}
-          onClick={toggleSatellite}
+          className={`ctl-btn ctl-sat${view !== 'streets' ? ' is-on' : ''}`}
+          aria-label={`Map view: ${VIEW_LABEL[view]} — tap to change`}
+          onClick={cycleView}
         >
-          {satellite ? 'MAP' : 'SAT'}
+          {VIEW_LABEL[view]}
         </button>
         <button className="ctl-btn ctl-home" aria-label="Reset view" onClick={home}>
           ⌂
