@@ -204,6 +204,16 @@ function Atlas({ projects }: { projects: Project[] }) {
   // Mapbox Standard engine when a token is configured; keyless MapLibre
   // engine otherwise. Same props, same chrome — just a better renderer.
   const MapEngine = MAPBOX_TOKEN ? MapboxView : MapLibreView;
+  useEffect(() => {
+    // Visible in DevTools → Console, so it's obvious which engine is live.
+    console.info(
+      MAPBOX_TOKEN
+        ? '[Kalb Atlas] Mapbox engine active.'
+        : '[Kalb Atlas] No VITE_MAPBOX_TOKEN found — running the free ' +
+            'MapLibre engine. Check that .env exists, is saved as UTF-8, ' +
+            'and that the dev server was restarted after creating it.'
+    );
+  }, []);
 
   return (
     <div className="app">

@@ -21,23 +21,6 @@ import type { BBox } from '../lib/regions';
  */
 const MAP_STYLE = {
   version: 8,
-  projection: { type: 'globe' },
-  sky: {
-    'sky-color': '#8fb8de',
-    'horizon-color': '#e8dcc8',
-    'fog-color': '#f2ead9',
-    'sky-horizon-blend': 0.6,
-    'horizon-fog-blend': 0.7,
-    'fog-ground-blend': 0.6,
-    'atmosphere-blend': [
-      'interpolate',
-      ['linear'],
-      ['zoom'],
-      0, 1,
-      10, 1,
-      12, 0
-    ]
-  },
   sources: {
     osm: {
       type: 'raster',
@@ -176,6 +159,13 @@ const HOME = {
 /** ?flat=1 disables 3D terrain for lower-powered hardware. */
 const FLAT_MODE = new URLSearchParams(window.location.search).has('flat');
 
+/**
+ * Terrain is only enabled from this zoom in. Zoomed further out the DEM
+ * mesh has to span enormous distances from sparse elevation tiles, which
+ * is what tore the basemap into floating shards.
+ */
+const TERRAIN_MIN_ZOOM = 9.5;
+
 /** Degrees per millisecond for the slow drone-orbit around a selection. */
 const ORBIT_SPEED = 0.0008;
 
@@ -275,6 +265,31 @@ export function MapLibreView({
   const deckRef = useRef<DeckHandle | null>(null);
   const orbitRef = useRef<number | null>(null);
 
+  /** True while Google's photoreal mesh owns elevation (suppress our DEM). */
+  const google3dRef = useRef(false);
+  const terrainOnRef = useRef(false);
+
+  /**
+   * Enable 3D terrain only when zoomed in past TERRAIN_MIN_ZOOM. Toggling
+   * it with zoom (instead of leaving it always on) is what stops the
+   * basemap from tearing into floating shards at city/state scale.
+   */
+  const syncTerrain = () => {
+    const map = mapRef.current;
+    if (!map || !map.isStyleLoaded?.()) return;
+    const want =
+      !FLAT_MODE &&
+      !google3dRef.current &&
+      map.getZoom() >= TERRAIN_MIN_ZOOM;
+    if (want === terrainOnRef.current) return;
+    try {
+      map.setTerrain(want ? { source: 'terrain-dem', exaggeration: 1.25 } : null);
+      terrainOnRef.current = want;
+    } catch {
+      /* terrain unavailable — map stays flat */
+    }
+  };
+
   const stopOrbit = () => {
     if (orbitRef.current !== null) {
       cancelAnimationFrame(orbitRef.current);
@@ -319,6 +334,7 @@ export function MapLibreView({
       pitch: HOME.pitch,
       bearing: HOME.bearing,
       maxPitch: 60,
+      minZoom: 3,
       pixelRatio: Math.min(window.devicePixelRatio || 1, 1.5),
       maxTileCacheSize: 2048,
       refreshExpiredTiles: false,
@@ -332,15 +348,7 @@ export function MapLibreView({
     map.dragRotate.enable();
 
     map.on('load', () => {
-      // Real 3D terrain from the free DEM tiles. Wrapped so an engine or
-      // network refusal can never take the map down with it.
-      try {
-        if (!FLAT_MODE) {
-          map.setTerrain({ source: 'terrain-dem', exaggeration: 1.3 });
-        }
-      } catch {
-        /* terrain unavailable — map stays flat */
-      }
+      syncTerrain();
       onLoadedRef.current();
     });
     // Never let a failed tile/style fetch wedge the boot screen.
@@ -362,6 +370,7 @@ export function MapLibreView({
     const syncLabels = () =>
       container.classList.toggle('labels-on', map.getZoom() >= 12.6);
     map.on('zoom', syncLabels);
+    map.on('zoom', syncTerrain);
     syncLabels();
 
     // ---- markers ----
@@ -583,18 +592,21 @@ export function MapLibreView({
         'fill-extrusion-opacity',
         next ? 0 : satellite ? 0.5 : 0.85
       );
-      try {
-        if (next) {
+      google3dRef.current = next;
+      if (next) {
+        try {
           map.setTerrain(null);
-        } else if (!FLAT_MODE) {
-          map.setTerrain({ source: 'terrain-dem', exaggeration: 1.3 });
+          terrainOnRef.current = false;
+        } catch {
+          /* terrain unavailable */
         }
-      } catch {
-        /* terrain unavailable */
+      } else {
+        syncTerrain();
       }
     } catch {
       setG3dError(true);
       setGoogle3d(false);
+      google3dRef.current = false;
     }
   };
 
