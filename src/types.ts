@@ -19,6 +19,15 @@ export type Category =
   | 'Recreation & Events'
   | 'Design-Build';
 
+/** A Kalb project team — drives marker colors and the map legend. */
+export interface Team {
+  id: string;
+  name: string;
+  /** Any CSS color; used for the marker, legend swatch, and list dot. */
+  color: string;
+  note?: string;
+}
+
 export interface Project {
   /** Stable id — used for routes (#/project/<id>) and React keys. */
   id: string;
@@ -35,6 +44,8 @@ export interface Project {
   lat: number;
   lng: number;
   category: Category;
+  /** Team id from data/teams.json. Omitted / blank = "unassigned". */
+  team?: string;
   status: ProjectStatus;
   /** 0–100. Drives the timeline bar in the detail panel. */
   progress: number;

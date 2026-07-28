@@ -15,9 +15,9 @@
   --ink-2: #141210;
   --ink-3: #1c1916;
 
-  --glass: rgba(20, 18, 16, 0.72);
+  --glass: rgba(17, 15, 13, 0.94);
   /* Heavier glass for chrome that must read over a light basemap. */
-  --glass-solid: rgba(14, 12, 11, 0.88);
+  --glass-solid: rgba(14, 12, 11, 0.95);
   --glass-edge: rgba(231, 227, 219, 0.2);
   --glass-lite: rgba(231, 227, 219, 0.05);
   --glass-border: rgba(231, 227, 219, 0.13);
@@ -102,7 +102,7 @@ button {
 .maplibregl-ctrl-bottom-right,
 .mapboxgl-ctrl-bottom-right {
   bottom: 142px;
-  right: 8px;
+  right: 350px;
 }
 .mapboxgl-ctrl-bottom-left {
   bottom: 142px;
@@ -127,12 +127,15 @@ button {
   width: 42px;
   height: 52px;
   cursor: pointer;
-  transition: opacity 0.3s var(--ease-out), filter 0.3s var(--ease-out);
-  filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.35));
+  transition: opacity 0.3s var(--ease-out);
+  will-change: transform;
 }
 .km.is-dim {
-  opacity: 0.3;
-  filter: saturate(0.15) drop-shadow(0 4px 8px rgba(0, 0, 0, 0.25));
+  opacity: 0.28;
+}
+.km.is-dim .km-head {
+  background: #6a6762;
+  border-color: rgba(255, 255, 255, 0.75);
 }
 .km-head {
   position: absolute;
@@ -142,7 +145,7 @@ button {
   width: 34px;
   height: 34px;
   border-radius: 50%;
-  background: linear-gradient(150deg, #d91229 0%, var(--red) 45%, var(--red-deep) 100%);
+  background: var(--km-color, var(--red));
   border: 2px solid #fff;
   color: #fff;
   font-family: var(--font-display);
@@ -152,6 +155,7 @@ button {
   align-items: center;
   justify-content: center;
   transition: transform 0.25s var(--ease-out);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.45);
 }
 .km-tip {
   position: absolute;
@@ -194,9 +198,21 @@ button {
   opacity: 0;
   pointer-events: none;
 }
-.km-feat .km-pulse,
 .km.is-selected .km-pulse {
   animation: kmPulse 2.4s var(--ease-out) infinite;
+}
+/* Camera in motion: kill every marker animation and transition so the
+   only work per frame is the map itself. */
+.is-moving .km-pulse {
+  animation: none !important;
+}
+.is-moving .km,
+.is-moving .km-head,
+.is-moving .km-label {
+  transition: none !important;
+}
+.is-moving .km-label {
+  opacity: 0 !important;
 }
 @keyframes kmPulse {
   0% {
@@ -218,7 +234,7 @@ button {
   left: calc(100% - 2px);
   padding: 5px 12px;
   border-radius: 12px;
-  background: rgba(12, 11, 10, 0.82);
+  background: rgba(12, 11, 10, 0.92);
   border: 1px solid var(--glass-border);
   color: var(--sand);
   font-family: var(--font-ui);
@@ -244,12 +260,12 @@ button {
   height: 38px;
   border-radius: 12px;
   font-size: 17px;
-  background: linear-gradient(150deg, #201c18 0%, var(--ink) 100%);
-  border-color: var(--red);
+  background: var(--ink-2);
+  border-color: var(--km-color, var(--red));
   color: #fff;
 }
 .km-site .km-tip {
-  border-top-color: var(--red);
+  border-top-color: var(--km-color, var(--red));
 }
 .km-site .km-tip::after {
   border-top-color: var(--ink);
@@ -265,8 +281,6 @@ button {
   transform: translate(-50%, 18px);
   min-width: 280px;
   background: var(--glass);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--glass-border);
   border-radius: 16px;
   box-shadow: var(--shadow-panel);
@@ -330,8 +344,6 @@ button {
   top: 104px;
   width: 236px;
   background: var(--glass-solid);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--glass-edge);
   border-radius: 16px;
   padding: 8px;
@@ -392,7 +404,7 @@ button {
 /* map controls */
 .map-controls {
   position: absolute;
-  right: 20px;
+  right: 356px;
   bottom: 168px;
   display: flex;
   flex-direction: column;
@@ -404,8 +416,6 @@ button {
   height: 52px;
   border-radius: 14px;
   background: var(--glass-solid);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--glass-border);
   color: var(--sand);
   font-size: 22px;
@@ -479,8 +489,6 @@ button {
   padding: 9px 18px;
   border-radius: 16px;
   background: var(--glass-solid);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--glass-edge);
   box-shadow: 0 12px 34px rgba(0, 0, 0, 0.42);
 }
@@ -625,8 +633,6 @@ button {
   gap: 10px;
   border-radius: 13px;
   background: var(--glass-solid);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--glass-border);
   font-size: 13.5px;
   font-weight: 600;
@@ -705,8 +711,6 @@ button {
   padding: 14px;
   border-radius: 16px;
   background: var(--glass);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--glass-border);
   box-shadow: var(--shadow-panel);
   animation: trayIn 0.28s var(--ease-out);
@@ -773,8 +777,6 @@ button {
   border-radius: 15px;
   overflow: hidden;
   background: var(--glass);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--glass-border);
   scroll-snap-align: start;
   text-align: left;
@@ -877,8 +879,6 @@ button {
   bottom: 0;
   width: min(680px, 46%);
   background: linear-gradient(105deg, rgba(18, 16, 14, 0.9) 0%, rgba(12, 11, 10, 0.97) 45%);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
   border-left: 1px solid var(--glass-border);
   box-shadow: -40px 0 110px rgba(0, 0, 0, 0.6);
   z-index: 12;
@@ -1169,9 +1169,7 @@ button {
 .search-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(8, 7, 6, 0.66);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
+  background: rgba(8, 7, 6, 0.86);
   z-index: 20;
   display: flex;
   justify-content: center;
@@ -1190,8 +1188,6 @@ button {
   width: min(760px, 88vw);
   align-self: flex-start;
   background: var(--glass);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--glass-border);
   border-radius: 20px;
   box-shadow: var(--shadow-panel);
@@ -1279,8 +1275,6 @@ button {
   left: 50%;
   transform: translateX(-50%);
   background: var(--glass);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid rgba(193, 0, 22, 0.55);
   border-radius: 14px;
   padding: 14px 24px;
@@ -1545,5 +1539,211 @@ button {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.15s !important;
+  }
+}
+
+/* ---------- right rail: project index + team legend ---------- */
+
+.index-rail {
+  position: absolute;
+  top: 104px;
+  right: 20px;
+  bottom: 152px;
+  width: 320px;
+  display: flex;
+  flex-direction: column;
+  background: var(--glass-solid);
+  border: 1px solid var(--glass-edge);
+  border-radius: 16px;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.45);
+  z-index: 6;
+  overflow: hidden;
+  contain: layout paint;
+}
+.index-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 14px 16px 10px;
+  border-bottom: 1px solid var(--glass-edge);
+}
+.index-title {
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.3em;
+  color: rgba(231, 227, 219, 0.75);
+}
+.index-count {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 18px;
+  color: var(--red);
+}
+.index-scroll {
+  flex: 1;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 6px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(231, 227, 219, 0.22) transparent;
+}
+.index-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+.index-scroll::-webkit-scrollbar-thumb {
+  background: rgba(231, 227, 219, 0.22);
+  border-radius: 4px;
+}
+.index-group {
+  margin-bottom: 6px;
+}
+.index-city {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 10px 6px;
+  background: var(--glass-solid);
+  font-family: var(--font-display);
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--sand);
+}
+.index-city-count {
+  font-size: 11px;
+  color: rgba(231, 227, 219, 0.45);
+  letter-spacing: 0.08em;
+}
+.index-row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 9px 10px;
+  border-radius: 9px;
+  text-align: left;
+  transition: background 0.14s;
+}
+.index-row:hover {
+  background: rgba(231, 227, 219, 0.07);
+}
+.index-row.is-active {
+  background: rgba(193, 0, 22, 0.22);
+  box-shadow: inset 0 0 0 1px rgba(193, 0, 22, 0.55);
+}
+.index-row.is-muted {
+  opacity: 0.3;
+}
+.index-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex: 0 0 auto;
+  box-shadow: 0 0 0 1.5px rgba(255, 255, 255, 0.35);
+}
+.index-num {
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: rgba(231, 227, 219, 0.55);
+  flex: 0 0 42px;
+}
+.index-name {
+  font-size: 12.5px;
+  font-weight: 550;
+  color: var(--sand);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.index-empty {
+  padding: 18px 12px;
+  font-size: 12.5px;
+  color: var(--sand-60);
+}
+
+.legend {
+  border-top: 1px solid var(--glass-edge);
+  padding: 10px 12px 12px;
+  background: rgba(0, 0, 0, 0.25);
+}
+.legend-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.legend-title {
+  font-family: var(--font-display);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.3em;
+  color: rgba(231, 227, 219, 0.6);
+}
+.legend-clear {
+  font-size: 11px;
+  font-weight: 650;
+  color: var(--red);
+  letter-spacing: 0.04em;
+}
+.legend-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 10px;
+  border-radius: 9px;
+  border: 1px solid var(--glass-border);
+  background: rgba(231, 227, 219, 0.06);
+  transition: background 0.15s, opacity 0.15s;
+}
+.legend-item:hover {
+  background: rgba(231, 227, 219, 0.12);
+}
+.legend-item.is-off {
+  opacity: 0.34;
+}
+.legend-swatch {
+  width: 11px;
+  height: 11px;
+  border-radius: 3px;
+  box-shadow: 0 0 0 1.5px rgba(255, 255, 255, 0.3);
+}
+.legend-name {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--sand);
+}
+.legend-count {
+  font-family: var(--font-display);
+  font-size: 11px;
+  color: rgba(231, 227, 219, 0.5);
+}
+
+/* Detail panel sits above the rail and covers it. */
+.detail-panel {
+  z-index: 12;
+}
+
+@media (max-width: 1500px) {
+  .index-rail {
+    width: 272px;
+  }
+  .map-controls {
+    right: 308px;
+  }
+  .maplibregl-ctrl-bottom-right,
+  .mapboxgl-ctrl-bottom-right {
+    right: 302px;
   }
 }

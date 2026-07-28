@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import type { Filters, Project } from './types';
+import type { Filters, Project, Team } from './types';
 import { EMPTY_FILTERS, matchesFilters } from './lib/filters';
 import { cityGroupOf } from './lib/meta';
 import { boundsOf, REGIONS, type BBox } from './lib/regions';
@@ -13,6 +13,8 @@ import { Dock } from './components/Dock';
 import { SearchOverlay } from './components/SearchOverlay';
 import { ProjectDetail } from './components/ProjectDetail';
 import { IdleAttract } from './components/IdleAttract';
+import { ProjectIndex } from './components/ProjectIndex';
+import { FALLBACK_TEAMS, teamColor, teamIdOf } from './lib/teams';
 
 const IDLE_MS = 90_000;
 const BOOT_MIN_MS = 1800;
@@ -30,6 +32,18 @@ async function loadProjects(): Promise<Project[]> {
   return (await res.json()) as Project[];
 }
 
+/** Teams are optional: a missing/broken file just means one grey team. */
+async function loadTeams(): Promise<Team[]> {
+  try {
+    const res = await fetch('./data/teams.json', { cache: 'no-store' });
+    if (!res.ok) return FALLBACK_TEAMS;
+    const data = (await res.json()) as Team[];
+    return Array.isArray(data) && data.length > 0 ? data : FALLBACK_TEAMS;
+  } catch {
+    return FALLBACK_TEAMS;
+  }
+}
+
 function idFromHash(): string | null {
   const m = window.location.hash.match(/^#\/project\/(.+)$/);
   return m ? m[1] : null;
@@ -37,12 +51,14 @@ function idFromHash(): string | null {
 
 export default function App() {
   const [projects, setProjects] = useState<Project[] | null>(null);
+  const [teams, setTeams] = useState<Team[]>(FALLBACK_TEAMS);
   const [loadError, setLoadError] = useState(false);
 
   useEffect(() => {
     loadProjects()
       .then(setProjects)
       .catch(() => setLoadError(true));
+    loadTeams().then(setTeams);
   }, []);
 
   if (loadError) {
@@ -62,10 +78,10 @@ export default function App() {
       </div>
     );
   }
-  return <Atlas projects={projects} />;
+  return <Atlas projects={projects} teams={teams} />;
 }
 
-function Atlas({ projects }: { projects: Project[] }) {
+function Atlas({ projects, teams }: { projects: Project[]; teams: Team[] }) {
   const [mapLoaded, setMapLoaded] = useState(false);
   const [bootMinDone, setBootMinDone] = useState(false);
   const [bootGone, setBootGone] = useState(false);
@@ -79,6 +95,7 @@ function Atlas({ projects }: { projects: Project[] }) {
   );
   const [searchOpen, setSearchOpen] = useState(false);
   const [mapboxFailed, setMapboxFailed] = useState(false);
+  const [activeTeams, setActiveTeams] = useState<Set<string>>(new Set());
   const [toast, setToast] = useState<string | null>(null);
   const toastTimer = useRef<number | undefined>(undefined);
   const signalCounter = useRef(0);
@@ -114,7 +131,8 @@ function Atlas({ projects }: { projects: Project[] }) {
     [projects, selectedId]
   );
 
-  const visibleIds = useMemo(() => {
+  /** Passes the dock filters (city/type) — drives the index rail. */
+  const filteredIds = useMemo(() => {
     const s = new Set<string>();
     for (const p of projects) {
       if (matchesFilters(p, filters)) s.add(p.id);
@@ -122,10 +140,36 @@ function Atlas({ projects }: { projects: Project[] }) {
     return s;
   }, [projects, filters]);
 
+  /** Filters + team highlight — drives which markers are lit on the map. */
+  const visibleIds = useMemo(() => {
+    if (activeTeams.size === 0) return filteredIds;
+    const s = new Set<string>();
+    for (const p of projects) {
+      if (filteredIds.has(p.id) && activeTeams.has(teamIdOf(p))) s.add(p.id);
+    }
+    return s;
+  }, [projects, filteredIds, activeTeams]);
+
+  const toggleTeam = useCallback((id: string) => {
+    setActiveTeams((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }, []);
+
   const shownProjects = useMemo(
     () => projects.filter((p) => visibleIds.has(p.id)),
     [projects, visibleIds]
   );
+
+  /** projectId -> team color, handed to the map engine for the markers. */
+  const teamColors = useMemo(() => {
+    const m: Record<string, string> = {};
+    for (const p of projects) m[p.id] = teamColor(teams, teamIdOf(p));
+    return m;
+  }, [projects, teams]);
 
   const featured = useMemo(() => projects.filter((p) => p.featured), [projects]);
   const cityCount = useMemo(
@@ -231,6 +275,7 @@ function Atlas({ projects }: { projects: Project[] }) {
           onSelect={select}
           onBackgroundTap={close}
           onLoaded={() => setMapLoaded(true)}
+          teamColors={teamColors}
           onFailure={(reason) => {
             setMapboxFailed(true);
             setMapLoaded(true);
@@ -248,6 +293,7 @@ function Atlas({ projects }: { projects: Project[] }) {
           onSelect={select}
           onBackgroundTap={close}
           onLoaded={() => setMapLoaded(true)}
+          teamColors={teamColors}
         />
       )}
 
@@ -272,6 +318,17 @@ function Atlas({ projects }: { projects: Project[] }) {
         shownCount={shownProjects.length}
         featured={featured}
         selectedId={selectedId}
+        onSelect={select}
+      />
+
+      <ProjectIndex
+        projects={projects}
+        visibleIds={filteredIds}
+        selectedId={selectedId}
+        teams={teams}
+        activeTeams={activeTeams}
+        onToggleTeam={toggleTeam}
+        onClearTeams={() => setActiveTeams(new Set())}
         onSelect={select}
       />
 

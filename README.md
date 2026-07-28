@@ -69,6 +69,17 @@ This is Kalb's own dashboard — all content lives in two plain places:
   and its detail panel shows the real building. Your own photography will
   always be fresher than any satellite provider's imagery.
 
+- **`data/teams.json`** — the color-coded team legend. Each entry is
+  `{ "id", "name", "color" }`. Rename the placeholder teams to your real
+  ones, pick any colors, then assign a project to a team by adding
+  `"team": "team-2"` to it in `projects.json`. Markers, the legend, and the
+  index dots all take their color from here; anything without a `team`
+  falls under **Unassigned** (Kalb red).
+
+The right-hand **Project Index** lists every project grouped by city (A→Z,
+and A→Z within each city). Tapping a row flies the map to it; tapping a
+team in the legend highlights just that team's projects.
+
 Adding a project = adding one JSON object. Removing, re-pinning (lat/lng),
 renaming, featuring — all one-line edits to the same file.
 

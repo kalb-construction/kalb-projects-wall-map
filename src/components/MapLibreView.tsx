@@ -214,6 +214,8 @@ interface MapLibreViewProps {
   onSelect: (p: Project) => void;
   onBackgroundTap: () => void;
   onLoaded: () => void;
+  /** projectId -> team color, applied to each marker as --km-color. */
+  teamColors?: Record<string, string>;
 }
 
 function groupProjects(projects: Project[]): {
@@ -252,7 +254,8 @@ export function MapLibreView({
   regionSignal,
   onSelect,
   onBackgroundTap,
-  onLoaded
+  onLoaded,
+  teamColors
 }: MapLibreViewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MLMap | null>(null);
@@ -370,6 +373,14 @@ export function MapLibreView({
     const syncLabels = () =>
       container.classList.toggle('labels-on', map.getZoom() >= 12.6);
     map.on('zoom', syncLabels);
+    // While the camera moves, freeze marker animations/transitions so
+    // the only per-frame work is the map itself.
+    const setMoving = (on: boolean) =>
+      container.classList.toggle('is-moving', on);
+    map.on('movestart', () => setMoving(true));
+    map.on('moveend', () => setMoving(false));
+    map.on('zoomstart', () => setMoving(true));
+    map.on('zoomend', () => setMoving(false));
     map.on('zoom', syncTerrain);
     syncLabels();
 
@@ -481,6 +492,8 @@ export function MapLibreView({
       if (u.project) {
         u.el.classList.toggle('is-dim', !visibleIds.has(u.project.id));
         u.el.classList.toggle('is-selected', u.project.id === selectedId);
+        const c = teamColors?.[u.project.id];
+        if (c) u.el.style.setProperty('--km-color', c);
       } else if (u.site) {
         const vis = u.site.members.filter((m) => visibleIds.has(m.id)).length;
         u.el.classList.toggle('is-dim', vis === 0);
@@ -490,9 +503,11 @@ export function MapLibreView({
         );
         const head = u.el.querySelector('.km-head');
         if (head) head.textContent = String(vis > 0 ? vis : u.site.members.length);
+        const c = teamColors?.[u.site.members[0].id];
+        if (c) u.el.style.setProperty('--km-color', c);
       }
     }
-  }, [visibleIds, selectedId]);
+  }, [visibleIds, selectedId, teamColors]);
 
   // ---- cinematic fly-to on selection --------------------------------------
   useEffect(() => {
@@ -503,7 +518,13 @@ export function MapLibreView({
     setSitePopup(null);
     stopOrbit();
     const w = map.getContainer().clientWidth;
-    const panelW = detailOpenRef.current ? Math.min(680, w * 0.46) : 0;
+    // Detail panel (when open) or the project index rail occupies the
+    // right side — bias the camera so the pin lands clear of it.
+    const panelW = detailOpenRef.current
+      ? Math.min(680, w * 0.46)
+      : w > 1500
+        ? 360
+        : 300;
     map.flyTo({
       center: [target.lng, target.lat],
       zoom: Math.max(map.getZoom(), 16.8),

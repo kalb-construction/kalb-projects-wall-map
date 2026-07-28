@@ -1,0 +1,34 @@
+[
+  {
+    "id": "unassigned",
+    "name": "Unassigned",
+    "color": "#C10016",
+    "note": "Default for projects with no \"team\" set in projects.json"
+  },
+  {
+    "id": "team-1",
+    "name": "Team 1",
+    "color": "#2E7CF6",
+    "note": "Rename these to your real team names; change colors freely."
+  },
+  {
+    "id": "team-2",
+    "name": "Team 2",
+    "color": "#18A957"
+  },
+  {
+    "id": "team-3",
+    "name": "Team 3",
+    "color": "#F2A413"
+  },
+  {
+    "id": "team-4",
+    "name": "Team 4",
+    "color": "#8B5CF6"
+  },
+  {
+    "id": "team-5",
+    "name": "Team 5",
+    "color": "#00B8C4"
+  }
+]
