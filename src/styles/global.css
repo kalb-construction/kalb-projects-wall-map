@@ -403,16 +403,18 @@ button {
 /* map controls */
 .map-controls {
   position: absolute;
-  right: 356px;
-  bottom: 96px;
+  right: 20px;
+  bottom: 92px;
+  width: 320px;
   display: flex;
-  flex-direction: column;
-  gap: 8px;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 6px;
   z-index: 6;
 }
 .ctl-btn {
-  width: 52px;
-  height: 52px;
+  width: 48px;
+  height: 48px;
   border-radius: 14px;
   background: var(--glass-solid);
   border: 1px solid var(--glass-border);
@@ -1550,7 +1552,7 @@ button {
   position: absolute;
   top: 104px;
   right: 20px;
-  bottom: 92px;
+  bottom: 152px;
   width: 320px;
   display: flex;
   flex-direction: column;
@@ -1738,15 +1740,9 @@ button {
 }
 
 @media (max-width: 1500px) {
-  .index-rail {
-    width: 272px;
-  }
+  .index-rail,
   .map-controls {
-    right: 308px;
-  }
-  .maplibregl-ctrl-bottom-right,
-  .mapboxgl-ctrl-bottom-right {
-    right: 302px;
+    width: 272px;
   }
 }
 
