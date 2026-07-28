@@ -16,6 +16,9 @@
   --ink-3: #1c1916;
 
   --glass: rgba(20, 18, 16, 0.72);
+  /* Heavier glass for chrome that must read over a light basemap. */
+  --glass-solid: rgba(14, 12, 11, 0.88);
+  --glass-edge: rgba(231, 227, 219, 0.2);
   --glass-lite: rgba(231, 227, 219, 0.05);
   --glass-border: rgba(231, 227, 219, 0.13);
   --glass-blur: blur(18px) saturate(1.15);
@@ -324,16 +327,16 @@ button {
 .region-nav {
   position: absolute;
   left: 20px;
-  top: 96px;
+  top: 104px;
   width: 236px;
-  background: var(--glass);
+  background: var(--glass-solid);
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
-  border: 1px solid var(--glass-border);
+  border: 1px solid var(--glass-edge);
   border-radius: 16px;
   padding: 8px;
   z-index: 6;
-  box-shadow: 0 14px 44px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 14px 44px rgba(0, 0, 0, 0.42);
 }
 .region-nav-head {
   font-family: var(--font-display);
@@ -400,7 +403,7 @@ button {
   width: 52px;
   height: 52px;
   border-radius: 14px;
-  background: var(--glass);
+  background: var(--glass-solid);
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--glass-border);
@@ -457,18 +460,35 @@ button {
   top: 0;
   left: 0;
   right: 0;
-  height: 76px;
+  height: 84px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 24px;
+  padding: 0 20px;
   z-index: 10;
+  pointer-events: none;
 }
+/* Both clusters are solid glass so the chrome stays legible over the
+   light street basemap as well as dark satellite imagery. */
 .topbar-left,
 .topbar-right {
   display: flex;
   align-items: center;
-  gap: 18px;
+  gap: 16px;
+  pointer-events: auto;
+  padding: 9px 18px;
+  border-radius: 16px;
+  background: var(--glass-solid);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-edge);
+  box-shadow: 0 12px 34px rgba(0, 0, 0, 0.42);
+}
+.topbar-sep {
+  width: 1px;
+  align-self: stretch;
+  margin: 2px 0;
+  background: var(--glass-edge);
 }
 .topbar-logo {
   height: 42px;
@@ -477,8 +497,8 @@ button {
 }
 .topbar-divider {
   width: 1px;
-  height: 36px;
-  background: var(--glass-border);
+  height: 34px;
+  background: var(--glass-edge);
 }
 .topbar-title {
   display: flex;
@@ -492,7 +512,7 @@ button {
   letter-spacing: 0.24em;
 }
 .tt-sub {
-  color: var(--sand-40);
+  color: rgba(231, 227, 219, 0.68);
   font-size: 10px;
   letter-spacing: 0.3em;
   font-weight: 500;
@@ -501,43 +521,46 @@ button {
   display: flex;
   align-items: baseline;
   gap: 8px;
-  background: var(--glass-lite);
-  border: 1px solid var(--glass-border);
-  border-radius: 12px;
-  padding: 8px 16px;
+  padding: 0 2px;
 }
 .stat-num {
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: 22px;
-  color: var(--red);
+  font-size: 24px;
+  color: #ff2136;
+  text-shadow: 0 0 18px rgba(193, 0, 22, 0.5);
 }
 .stat-label {
   font-size: 11px;
   letter-spacing: 0.08em;
-  color: var(--sand-60);
+  color: rgba(231, 227, 219, 0.78);
   text-transform: uppercase;
 }
 .search-btn {
   display: flex;
   align-items: center;
   gap: 10px;
-  height: 48px;
-  padding: 0 18px;
+  height: 46px;
+  padding: 0 20px;
   border-radius: 12px;
-  background: var(--glass-lite);
-  border: 1px solid var(--glass-border);
-  font-size: 13px;
-  font-weight: 600;
+  background: rgba(231, 227, 219, 0.12);
+  border: 1px solid rgba(231, 227, 219, 0.28);
+  color: #fff;
+  font-size: 13.5px;
+  font-weight: 650;
   letter-spacing: 0.06em;
-  transition: border-color 0.2s;
+  transition: background 0.2s, border-color 0.2s;
 }
 .search-btn svg {
   width: 17px;
   height: 17px;
 }
+.search-btn:hover {
+  background: rgba(231, 227, 219, 0.18);
+}
 .search-btn:active {
   border-color: var(--red);
+  background: rgba(193, 0, 22, 0.3);
 }
 .topbar-clock {
   display: flex;
@@ -548,18 +571,19 @@ button {
 .clock-time {
   font-family: var(--font-display);
   font-weight: 600;
-  font-size: 20px;
+  font-size: 21px;
   letter-spacing: 0.06em;
+  color: #fff;
 }
 .clock-time em {
   font-style: normal;
   font-size: 12px;
-  color: var(--red);
+  color: #ff5060;
 }
 .clock-date {
   font-size: 10px;
   letter-spacing: 0.22em;
-  color: var(--sand-40);
+  color: rgba(231, 227, 219, 0.7);
 }
 
 /* ---------- dock ---------- */
@@ -600,7 +624,7 @@ button {
   align-items: center;
   gap: 10px;
   border-radius: 13px;
-  background: var(--glass);
+  background: var(--glass-solid);
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--glass-border);

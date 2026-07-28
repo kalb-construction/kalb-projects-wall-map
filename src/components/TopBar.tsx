@@ -40,6 +40,7 @@ export function TopBar({ totalCount, shownCount, cityCount, onSearch }: TopBarPr
             of {totalCount} projects · {cityCount} cities
           </span>
         </div>
+        <span className="topbar-sep" aria-hidden="true" />
         <button className="search-btn" onClick={onSearch} aria-label="Search projects">
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <path
@@ -52,6 +53,7 @@ export function TopBar({ totalCount, shownCount, cityCount, onSearch }: TopBarPr
           </svg>
           <span>Search</span>
         </button>
+        <span className="topbar-sep" aria-hidden="true" />
         <div className="topbar-clock">
           <span className="clock-time">
             {hh}:{mm} <em>{ap}</em>
