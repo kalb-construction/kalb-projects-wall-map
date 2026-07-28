@@ -108,15 +108,16 @@ button {
   bottom: 142px;
   left: 246px;
 }
+/* Vendor logo/attribution chrome is hidden on the kiosk display. */
 .maplibregl-ctrl-attrib,
-.mapboxgl-ctrl-attrib {
-  background: rgba(12, 11, 10, 0.55) !important;
-  border-radius: 8px;
-  font-size: 10px;
-}
-.maplibregl-ctrl-attrib a,
-.mapboxgl-ctrl-attrib a {
-  color: rgba(231, 227, 219, 0.75) !important;
+.mapboxgl-ctrl-attrib,
+.mapboxgl-ctrl-logo,
+.maplibregl-ctrl-logo,
+.mapboxgl-ctrl-bottom-left,
+.maplibregl-ctrl-bottom-left,
+.mapboxgl-ctrl-bottom-right,
+.maplibregl-ctrl-bottom-right {
+  display: none !important;
 }
 
 /* ---------- Kalb markers (DOM) ---------- */
@@ -405,7 +406,7 @@ button {
 .map-controls {
   position: absolute;
   right: 356px;
-  bottom: 168px;
+  bottom: 96px;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -601,12 +602,11 @@ button {
   left: 0;
   right: 0;
   bottom: 0;
-  height: 136px;
+  height: 78px;
   display: flex;
-  align-items: stretch;
-  justify-content: space-between;
+  align-items: center;
   gap: 20px;
-  padding: 14px 20px 16px;
+  padding: 10px 20px 14px;
   background: linear-gradient(180deg, transparent 0%, rgba(12, 11, 10, 0.88) 42%);
   z-index: 8;
 }
@@ -703,7 +703,7 @@ button {
 .tray {
   position: absolute;
   left: 20px;
-  bottom: 148px;
+  bottom: 88px;
   max-width: 720px;
   display: flex;
   flex-wrap: wrap;
@@ -1271,7 +1271,7 @@ button {
 
 .toast {
   position: absolute;
-  bottom: 156px;
+  bottom: 96px;
   left: 50%;
   transform: translateX(-50%);
   background: var(--glass);
@@ -1548,7 +1548,7 @@ button {
   position: absolute;
   top: 104px;
   right: 20px;
-  bottom: 152px;
+  bottom: 92px;
   width: 320px;
   display: flex;
   flex-direction: column;
@@ -1746,4 +1746,79 @@ button {
   .mapboxgl-ctrl-bottom-right {
     right: 302px;
   }
+}
+
+
+/* ---------- collapsible panel headers ---------- */
+
+.panel-toggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px 14px;
+  border-radius: 15px;
+  text-align: left;
+  transition: background 0.15s;
+}
+.panel-toggle:hover {
+  background: rgba(231, 227, 219, 0.06);
+}
+.panel-toggle-label {
+  flex: 1;
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.26em;
+  color: var(--sand);
+}
+.panel-toggle-meta {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--red);
+}
+.panel-caret {
+  width: 12px;
+  height: 8px;
+  color: rgba(231, 227, 219, 0.6);
+  transition: transform 0.22s var(--ease-out);
+  flex: 0 0 auto;
+}
+.is-open .panel-caret {
+  transform: rotate(180deg);
+}
+
+/* Regions: collapses to just its header bar. */
+.region-nav {
+  height: auto;
+  padding: 0;
+  overflow: hidden;
+}
+.region-body {
+  padding: 0 6px 8px;
+  border-top: 1px solid var(--glass-edge);
+  animation: trayIn 0.22s var(--ease-out);
+}
+
+/* Project index: header stays, body collapses. */
+.index-rail:not(.is-open) {
+  bottom: auto;
+  height: auto;
+}
+.index-rail .panel-toggle {
+  border-bottom: 1px solid transparent;
+}
+.index-rail.is-open .panel-toggle {
+  border-bottom: 1px solid var(--glass-edge);
+  border-radius: 15px 15px 0 0;
+}
+
+.legend-item.is-picked {
+  border-color: rgba(231, 227, 219, 0.6);
+  background: rgba(231, 227, 219, 0.16);
+}
+.legend-clear:disabled {
+  color: rgba(231, 227, 219, 0.3);
+  cursor: default;
 }

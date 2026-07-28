@@ -236,7 +236,7 @@ export function MapboxView({
         bearing: HOME.bearing,
         maxPitch: 60,
         antialias: true,
-        attributionControl: true
+        attributionControl: false
       });
       mapRef.current = map;
 

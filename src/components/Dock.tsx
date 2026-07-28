@@ -1,15 +1,11 @@
 import { useState } from 'react';
-import type { Filters, Project } from '../types';
-import { CATEGORIES, CITY_GROUPS, statusTone } from '../lib/meta';
-import { BuildingHero } from './BuildingHero';
+import type { Filters } from '../types';
+import { CATEGORIES, CITY_GROUPS } from '../lib/meta';
 
 interface DockProps {
   filters: Filters;
   onFilters: (f: Filters) => void;
   shownCount: number;
-  featured: Project[];
-  selectedId: string | null;
-  onSelect: (p: Project) => void;
 }
 
 type TrayKey = 'city' | 'category' | null;
@@ -24,14 +20,8 @@ const TRAY_LABEL: Record<Exclude<TrayKey, null>, string> = {
   category: 'Type'
 };
 
-export function Dock({
-  filters,
-  onFilters,
-  shownCount,
-  featured,
-  selectedId,
-  onSelect
-}: DockProps) {
+/** Bottom filter bar: city and project-type chip trays. */
+export function Dock({ filters, onFilters, shownCount }: DockProps) {
   const [tray, setTray] = useState<TrayKey>(null);
 
   const isFiltered = filters.city !== 'all' || filters.category !== 'all';
@@ -97,34 +87,6 @@ export function Dock({
           </button>
         )}
         <span className="dock-count">{shownCount} shown</span>
-        <div className="dock-legend" aria-hidden="true">
-          <span className="lg lg-active" /> Project site
-          <span className="lg lg-multi">2+</span> Multi-project site
-        </div>
-      </div>
-
-      <div className="dock-right">
-        <span className="dock-label dock-label-feat">Featured</span>
-        <div className="feat-rail">
-          {featured.map((p) => (
-            <button
-              key={p.id}
-              className={`feat-card${selectedId === p.id ? ' is-active' : ''}`}
-              onClick={() => onSelect(p)}
-            >
-              <div className="feat-visual">
-                <BuildingHero project={p} compact />
-              </div>
-              <div className="feat-info">
-                <span className="feat-number">{p.number}</span>
-                <span className="feat-name">{p.shortName ?? p.name}</span>
-                <span className={`feat-status tone-${statusTone(p.status)}`}>
-                  {p.status}
-                </span>
-              </div>
-            </button>
-          ))}
-        </div>
       </div>
     </footer>
   );

@@ -316,9 +316,6 @@ function Atlas({ projects, teams }: { projects: Project[]; teams: Team[] }) {
         filters={filters}
         onFilters={handleFilters}
         shownCount={shownProjects.length}
-        featured={featured}
-        selectedId={selectedId}
-        onSelect={select}
       />
 
       <ProjectIndex

@@ -343,7 +343,7 @@ export function MapLibreView({
       refreshExpiredTiles: false,
       fadeDuration: 150,
       canvasContextAttributes: { antialias: true },
-      attributionControl: { compact: true }
+      attributionControl: false
     });
     mapRef.current = map;
 

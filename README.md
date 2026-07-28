@@ -102,12 +102,14 @@ src/
 └── components/
     ├── MapLibreView.tsx     # MapLibre map: real tiles, 3D buildings,
     │                        #   Kalb DOM markers, cluster popups, fly-tos
-    ├── RegionNav.tsx        # one-tap camera flights: LV / N. Nevada / AZ
+    ├── RegionNav.tsx        # collapsible one-tap flights: LV / NNV / AZ
     ├── ProjectDetail.tsx    # right-side detail panel (dialog) w/ parallax hero
     ├── BuildingHero.tsx     # procedural isometric "render" per project;
     │                        #   swaps to a real image when heroImage is set
     ├── TopBar.tsx           # brand lockup, stats, search trigger, clock
-    ├── Dock.tsx             # filter chip trays + featured project rail
+    ├── Dock.tsx             # city / project-type filter chip trays
+    ├── ProjectIndex.tsx     # collapsible right rail: A-Z index by city
+    │                        #   + color-coded team legend
     ├── SearchOverlay.tsx    # number/name/address search
     ├── IdleAttract.tsx      # kiosk attract loop over featured projects
     └── BootScreen.tsx       # branded loading state
