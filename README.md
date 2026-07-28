@@ -80,6 +80,20 @@ The right-hand **Project Index** lists every project grouped by city (A→Z,
 and A→Z within each city). Tapping a row flies the map to it; tapping a
 team in the legend highlights just that team's projects.
 
+### Checking / fixing pin locations
+
+Open **`/tools/coords.html`** while the app is running (e.g.
+`http://localhost:5173/tools/coords.html`). It lists all projects with two
+Google Maps links each — one for the written address, one for the pin the
+atlas currently uses — so you can eyeball them side by side. Paste a
+corrected `lat, lng` (right-click in Google Maps → click the coordinates to
+copy) into any row, then **Download corrected projects.json** and drop it
+into `public/data/` (and `dist/data/` on the kiosk).
+
+Rows whose address is a road intersection rather than a street number are
+flagged **INTERSECTION** — those pins sit at the junction by definition and
+are the ones worth relocating onto the actual building pad.
+
 Adding a project = adding one JSON object. Removing, re-pinning (lat/lng),
 renaming, featuring — all one-line edits to the same file.
 

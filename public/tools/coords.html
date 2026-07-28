@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Kalb Atlas — Coordinate Check</title>
+<style>
+  :root {
+    --red:#c10016; --sand:#e7e3db; --ink:#0c0b0a; --ink2:#141210;
+    --edge:rgba(231,227,219,.16);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--ink);color:var(--sand);font:14px/1.5 system-ui,sans-serif;padding:28px}
+  h1{font-size:22px;letter-spacing:.06em;margin-bottom:6px}
+  .sub{color:rgba(231,227,219,.6);margin-bottom:18px;max-width:80ch}
+  .bar{position:sticky;top:0;background:var(--ink);padding:12px 0 14px;
+       border-bottom:1px solid var(--edge);margin-bottom:14px;z-index:2;
+       display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+  button{background:var(--red);color:#fff;border:0;border-radius:9px;
+         padding:11px 18px;font-weight:700;cursor:pointer}
+  button.ghost{background:transparent;border:1px solid var(--edge);color:var(--sand)}
+  button:disabled{opacity:.4;cursor:default}
+  .count{color:rgba(231,227,219,.65)}
+  table{border-collapse:collapse;width:100%}
+  th,td{padding:9px 10px;border-bottom:1px solid rgba(231,227,219,.09);
+        text-align:left;vertical-align:top}
+  th{font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+     color:rgba(231,227,219,.5);position:sticky;top:64px;background:var(--ink)}
+  td.num{color:var(--red);font-weight:700;white-space:nowrap}
+  td.addr{color:rgba(231,227,219,.75)}
+  .coord{font-family:ui-monospace,monospace;font-size:12px;white-space:nowrap;
+         color:rgba(231,227,219,.6)}
+  a{color:#7fb2ff;text-decoration:none;white-space:nowrap}
+  a:hover{text-decoration:underline}
+  .flag{display:inline-block;background:rgba(242,164,19,.16);color:#f2a413;
+        border:1px solid rgba(242,164,19,.4);border-radius:5px;padding:1px 6px;
+        font-size:10px;margin-left:6px;letter-spacing:.06em}
+  input{background:var(--ink2);border:1px solid var(--edge);color:var(--sand);
+        border-radius:7px;padding:8px 10px;width:210px;font-family:ui-monospace,monospace;
+        font-size:12px}
+  input.ok{border-color:#18a957}
+  input.bad{border-color:var(--red)}
+  tr.fixed td{background:rgba(24,169,87,.07)}
+</style>
+</head>
+<body>
+<h1>Coordinate check — Kalb Project Atlas</h1>
+<p class="sub">
+  For each job: open <b>Address</b> (what Google finds for the written address) and
+  <b>Our pin</b> (where the atlas currently places it) and compare. If the pin is wrong,
+  right-click the correct spot in Google Maps → click the lat/long at the top of the
+  menu to copy it → paste into the box. When you're done, hit
+  <b>Download corrected projects.json</b> and drop that file into
+  <code>public/data/</code> (and <code>dist/data/</code> on the kiosk).
+</p>
+
+<div class="bar">
+  <button id="dl" disabled>Download corrected projects.json</button>
+  <button class="ghost" id="clear">Clear entries</button>
+  <span class="count" id="count">no changes yet</span>
+</div>
+
+<table>
+  <thead>
+    <tr>
+      <th>Job</th><th>Project</th><th>Address</th><th>Current pin</th>
+      <th>Check</th><th>Corrected lat, lng</th>
+    </tr>
+  </thead>
+  <tbody id="rows"></tbody>
+</table>
+
+<script>
+const gmapsQuery = (q) =>
+  'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(q);
+
+let projects = [];
+const fixes = new Map();
+
+function isIntersection(a) {
+  return a.includes('&') || / and /i.test(a);
+}
+
+function render() {
+  const tbody = document.getElementById('rows');
+  tbody.innerHTML = '';
+  for (const p of projects) {
+    const full = `${p.address}, ${p.city}, ${p.state}`;
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td class="num">${p.number}</td>
+      <td>${p.name}</td>
+      <td class="addr">${p.address}<br><span style="opacity:.6">${p.city}, ${p.state}</span>
+        ${isIntersection(p.address) ? '<span class="flag">INTERSECTION</span>' : ''}</td>
+      <td class="coord">${p.lat}<br>${p.lng}</td>
+      <td>
+        <a href="${gmapsQuery(full)}" target="_blank" rel="noopener">Address ↗</a><br>
+        <a href="${gmapsQuery(p.lat + ',' + p.lng)}" target="_blank" rel="noopener">Our pin ↗</a>
+      </td>
+      <td><input placeholder="36.123456, -115.123456" data-id="${p.id}" /></td>`;
+    tbody.appendChild(tr);
+  }
+  tbody.addEventListener('input', onInput);
+}
+
+function onInput(e) {
+  const el = e.target;
+  if (el.tagName !== 'INPUT') return;
+  const id = el.dataset.id;
+  const raw = el.value.trim();
+  const row = el.closest('tr');
+  if (raw === '') {
+    fixes.delete(id);
+    el.className = '';
+    row.classList.remove('fixed');
+    return update();
+  }
+  const m = raw.match(/^\s*(-?\d+(?:\.\d+)?)\s*[, ]\s*(-?\d+(?:\.\d+)?)\s*$/);
+  if (!m) {
+    el.className = 'bad';
+    row.classList.remove('fixed');
+    fixes.delete(id);
+    return update();
+  }
+  const lat = parseFloat(m[1]), lng = parseFloat(m[2]);
+  const sane = lat > 24 && lat < 50 && lng < -60 && lng > -125;
+  el.className = sane ? 'ok' : 'bad';
+  row.classList.toggle('fixed', sane);
+  if (sane) fixes.set(id, { lat, lng });
+  else fixes.delete(id);
+  update();
+}
+
+function update() {
+  const n = fixes.size;
+  document.getElementById('count').textContent =
+    n === 0 ? 'no changes yet' : `${n} coordinate${n > 1 ? 's' : ''} corrected`;
+  document.getElementById('dl').disabled = n === 0;
+}
+
+document.getElementById('clear').onclick = () => {
+  fixes.clear();
+  document.querySelectorAll('#rows input').forEach((i) => {
+    i.value = ''; i.className = '';
+  });
+  document.querySelectorAll('#rows tr').forEach((r) => r.classList.remove('fixed'));
+  update();
+};
+
+document.getElementById('dl').onclick = () => {
+  const out = projects.map((p) => {
+    const f = fixes.get(p.id);
+    return f ? { ...p, lat: f.lat, lng: f.lng } : p;
+  });
+  const blob = new Blob([JSON.stringify(out, null, 2) + '\n'], {
+    type: 'application/json'
+  });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'projects.json';
+  a.click();
+  URL.revokeObjectURL(a.href);
+};
+
+fetch('../data/projects.json', { cache: 'no-store' })
+  .then((r) => r.json())
+  .then((d) => { projects = d; render(); })
+  .catch(() => {
+    document.getElementById('rows').innerHTML =
+      '<tr><td colspan="6">Could not load ../data/projects.json — open this page ' +
+      'through the dev server (npm run dev), not by double-clicking the file.</td></tr>';
+  });
+</script>
+</body>
+</html>
