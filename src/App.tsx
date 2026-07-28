@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { Filters, Project, Team } from './types';
 import { EMPTY_FILTERS, matchesFilters } from './lib/filters';
-import { cityGroupOf } from './lib/meta';
+import { cityGroupOf, cityOptionsOf } from './lib/meta';
 import { boundsOf, REGIONS, type BBox } from './lib/regions';
 import { useIdle } from './lib/useIdle';
 import { BootScreen } from './components/BootScreen';
@@ -176,6 +176,7 @@ function Atlas({ projects, teams }: { projects: Project[]; teams: Team[] }) {
     () => new Set(projects.map((p) => `${p.city}|${p.state}`)).size,
     [projects]
   );
+  const cityOptions = useMemo(() => cityOptionsOf(projects), [projects]);
 
   const flyToBounds = useCallback((bounds: BBox) => {
     signalCounter.current += 1;
@@ -316,6 +317,7 @@ function Atlas({ projects, teams }: { projects: Project[]; teams: Team[] }) {
         filters={filters}
         onFilters={handleFilters}
         shownCount={shownProjects.length}
+        cityOptions={cityOptions}
       />
 
       <ProjectIndex

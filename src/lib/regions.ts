@@ -25,7 +25,7 @@ export const REGIONS: RegionDef[] = [
   {
     id: 'nnv',
     label: 'Northern Nevada',
-    sub: 'Sparks · Carson City · Dayton',
+    sub: 'Reno · Sparks · Carson City',
     match: (p) => p.region === 'NNV',
     bounds: [
       [-119.86, 39.09],
@@ -35,11 +35,11 @@ export const REGIONS: RegionDef[] = [
   {
     id: 'az',
     label: 'Arizona',
-    sub: 'Gilbert · Phoenix metro',
+    sub: 'Gilbert · Avondale · Phoenix',
     match: (p) => p.region === 'AZ',
     bounds: [
-      [-111.84, 33.23],
-      [-111.67, 33.36]
+      [-112.4, 33.19],
+      [-111.6, 33.58]
     ]
   }
 ];

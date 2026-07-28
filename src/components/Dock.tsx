@@ -1,19 +1,16 @@
 import { useState } from 'react';
 import type { Filters } from '../types';
-import { CATEGORIES, CITY_GROUPS } from '../lib/meta';
+import { CATEGORIES } from '../lib/meta';
 
 interface DockProps {
   filters: Filters;
   onFilters: (f: Filters) => void;
   shownCount: number;
+  /** Cities present in the data, alphabetical. */
+  cityOptions: string[];
 }
 
 type TrayKey = 'city' | 'category' | null;
-
-const TRAY_OPTIONS: Record<Exclude<TrayKey, null>, readonly string[]> = {
-  city: CITY_GROUPS,
-  category: CATEGORIES
-};
 
 const TRAY_LABEL: Record<Exclude<TrayKey, null>, string> = {
   city: 'City',
@@ -21,8 +18,18 @@ const TRAY_LABEL: Record<Exclude<TrayKey, null>, string> = {
 };
 
 /** Bottom filter bar: city and project-type chip trays. */
-export function Dock({ filters, onFilters, shownCount }: DockProps) {
+export function Dock({
+  filters,
+  onFilters,
+  shownCount,
+  cityOptions
+}: DockProps) {
   const [tray, setTray] = useState<TrayKey>(null);
+
+  const trayOptions: Record<Exclude<TrayKey, null>, readonly string[]> = {
+    city: cityOptions,
+    category: CATEGORIES
+  };
 
   const isFiltered = filters.city !== 'all' || filters.category !== 'all';
 
@@ -41,7 +48,7 @@ export function Dock({ filters, onFilters, shownCount }: DockProps) {
           >
             All
           </button>
-          {TRAY_OPTIONS[tray].map((opt) => (
+          {trayOptions[tray].map((opt) => (
             <button
               key={opt}
               className={`tray-chip${filters[tray] === opt ? ' is-active' : ''}`}

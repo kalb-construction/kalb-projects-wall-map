@@ -112,7 +112,7 @@ export function ProjectDetail({
           </div>
           <div className="meta-cell">
             <span className="meta-label">Year</span>
-            <span className="meta-value">{project.year}</span>
+            <span className="meta-value">{project.year ?? '—'}</span>
           </div>
         </div>
 

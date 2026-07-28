@@ -10,6 +10,7 @@ export const CATEGORIES: Category[] = [
   'Tavern & Gaming',
   'Automotive & Storage',
   'Recreation & Events',
+  'Civil & Sitework',
   'Design-Build'
 ];
 
@@ -20,19 +21,19 @@ export const STATUSES: ProjectStatus[] = [
   'Complete'
 ];
 
-/** Filter groups shown in the City chip tray. */
-export const CITY_GROUPS = [
-  'Las Vegas',
-  'North Las Vegas',
-  'Henderson',
-  'Northern Nevada',
-  'Arizona'
-] as const;
-
+/**
+ * Projects group by their actual city everywhere (index rail, City
+ * filter). Broad areas are handled separately by the Regions quick-nav.
+ */
 export function cityGroupOf(project: Project): string {
-  if (project.region === 'NNV') return 'Northern Nevada';
-  if (project.region === 'AZ') return 'Arizona';
   return project.city;
+}
+
+/** Every city present in the data, alphabetical — drives the City tray. */
+export function cityOptionsOf(projects: Project[]): string[] {
+  return [...new Set(projects.map(cityGroupOf))].sort((a, b) =>
+    a.localeCompare(b)
+  );
 }
 
 export function statusTone(status: ProjectStatus): 'active' | 'precon' | 'done' {

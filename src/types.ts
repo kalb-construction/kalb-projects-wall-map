@@ -17,6 +17,7 @@ export type Category =
   | 'Tavern & Gaming'
   | 'Automotive & Storage'
   | 'Recreation & Events'
+  | 'Civil & Sitework'
   | 'Design-Build';
 
 /** A Kalb project team — drives marker colors and the map legend. */
@@ -49,8 +50,8 @@ export interface Project {
   status: ProjectStatus;
   /** 0–100. Drives the timeline bar in the detail panel. */
   progress: number;
-  /** First two digits of the job number, as a full year. */
-  year: number;
+  /** First two digits of the job number, as a full year (B-jobs omit it). */
+  year?: number;
   featured: boolean;
   /**
    * Projects sharing a siteId collapse into one map marker that fans out
