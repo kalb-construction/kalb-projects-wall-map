@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import type { Project } from '../types';
 import type { BBox } from '../lib/regions';
+import { setBearing } from '../lib/bearing';
 
 /**
  * Premium engine: Mapbox GL JS v3 with the "Standard" style — live vector
@@ -87,8 +88,6 @@ interface MapboxViewProps {
   onLoaded: () => void;
   /** projectId -> team color, applied to each marker as --km-color. */
   teamColors?: Record<string, string>;
-  /** Reports the camera bearing (throttled) so the dock compass can spin. */
-  onBearing?: (deg: number) => void;
   /** Bump to snap the camera back to north-up. */
   northSignal?: number;
   /** Called once if Mapbox can't render (bad token, blocked host, …). */
@@ -148,7 +147,6 @@ export function MapboxView({
   onBackgroundTap,
   onLoaded,
   teamColors,
-  onBearing,
   northSignal,
   onFailure
 }: MapboxViewProps) {
@@ -168,8 +166,6 @@ export function MapboxView({
   onBackgroundTapRef.current = onBackgroundTap;
   const onLoadedRef = useRef(onLoaded);
   onLoadedRef.current = onLoaded;
-  const onBearingRef = useRef(onBearing);
-  onBearingRef.current = onBearing;
   const onFailureRef = useRef(onFailure);
   onFailureRef.current = onFailure;
   const failedRef = useRef(false);
@@ -242,8 +238,11 @@ export function MapboxView({
         zoom: HOME.zoom,
         pitch: HOME.pitch,
         bearing: HOME.bearing,
-        maxPitch: 60,
-        antialias: true,
+        maxPitch: 58,
+        // MSAA is costly on a large display and buys little at this scale.
+        antialias: false,
+        // No label cross-fade: fewer full-frame repaints while panning.
+        fadeDuration: 0,
         attributionControl: false
       });
       mapRef.current = map;
@@ -301,12 +300,12 @@ export function MapboxView({
       let lastBearingAt = 0;
       const emitBearing = () => {
         const now = performance.now();
-        if (now - lastBearingAt < 100) return;
+        if (now - lastBearingAt < 90) return;
         lastBearingAt = now;
-        onBearingRef.current?.(map.getBearing());
+        setBearing(map.getBearing());
       };
       map.on('rotate', emitBearing);
-      map.on('moveend', () => onBearingRef.current?.(map.getBearing()));
+      map.on('moveend', () => setBearing(map.getBearing()));
       syncLabels();
 
       const { singles, sites } = groupProjects(projects);

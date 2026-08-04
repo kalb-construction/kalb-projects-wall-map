@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { memo, useState } from 'react';
 import type { Project } from '../types';
 import { REGIONS, type BBox } from '../lib/regions';
 
@@ -12,7 +12,7 @@ interface RegionNavProps {
  * Collapsible quick-nav: one tap flies the camera to each Kalb region
  * (Las Vegas Valley, Northern Nevada, Arizona).
  */
-export function RegionNav({ projects, visibleIds, onFly }: RegionNavProps) {
+function RegionNavBase({ projects, visibleIds, onFly }: RegionNavProps) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -62,3 +62,6 @@ export function RegionNav({ projects, visibleIds, onFly }: RegionNavProps) {
     </nav>
   );
 }
+
+/** Memoized: only re-renders when its own props actually change. */
+export const RegionNav = memo(RegionNavBase);

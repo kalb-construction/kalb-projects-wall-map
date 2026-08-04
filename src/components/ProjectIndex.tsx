@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { memo, useMemo, useState } from 'react';
 import type { Project, Team } from '../types';
 import { cityGroupOf } from '../lib/meta';
 import { countByTeam, teamColor, teamIdOf, teamsInUse } from '../lib/teams';
@@ -21,7 +21,7 @@ interface ProjectIndexProps {
  * A→Z, projects A→Z inside each), plus the color-coded team legend.
  * Tapping a row flies the map there; tapping a team filters to that team.
  */
-export function ProjectIndex({
+function ProjectIndexBase({
   projects,
   visibleIds,
   selectedId,
@@ -159,3 +159,6 @@ export function ProjectIndex({
     </aside>
   );
 }
+
+/** Memoized: only re-renders when its own props actually change. */
+export const ProjectIndex = memo(ProjectIndexBase);

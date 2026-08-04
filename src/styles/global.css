@@ -330,9 +330,7 @@ button {
 .site-pop-name {
   font-size: 13px;
   font-weight: 600;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  overflow-wrap: anywhere;
 }
 
 /* ---------- region quick-nav ---------- */
@@ -389,9 +387,7 @@ button {
   font-size: 10.5px;
   color: var(--sand-40);
   letter-spacing: 0.04em;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  overflow-wrap: anywhere;
 }
 .region-count {
   font-family: var(--font-display);
@@ -1082,9 +1078,8 @@ button {
   font-weight: 600;
   font-size: 15px;
   letter-spacing: 0.03em;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
 }
 
 .detail-progress {
@@ -1517,14 +1512,8 @@ button {
 /* ---------- responsive & a11y ---------- */
 
 @media (max-width: 1280px) {
-  .region-nav {
-    display: none;
-  }
   .detail-panel {
-    width: min(560px, 60%);
-  }
-  .dock-legend {
-    display: none;
+    width: min(560px, 62%);
   }
 }
 
@@ -1583,7 +1572,8 @@ button {
   color: var(--red);
 }
 .index-scroll {
-  flex: 1;
+  flex: 1 1 auto;
+  min-height: 90px;
   overflow-y: auto;
   overscroll-behavior: contain;
   padding: 6px;
@@ -1624,7 +1614,7 @@ button {
 .index-row {
   width: 100%;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 9px;
   padding: 9px 10px;
   border-radius: 9px;
@@ -1642,6 +1632,7 @@ button {
   opacity: 0.3;
 }
 .index-dot {
+  margin-top: 3px;
   width: 10px;
   height: 10px;
   border-radius: 50%;
@@ -1649,6 +1640,7 @@ button {
   box-shadow: 0 0 0 1.5px rgba(255, 255, 255, 0.35);
 }
 .index-num {
+  margin-top: 1px;
   font-family: var(--font-display);
   font-size: 12px;
   font-weight: 600;
@@ -1660,9 +1652,9 @@ button {
   font-size: 12.5px;
   font-weight: 550;
   color: var(--sand);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  line-height: 1.32;
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 .index-empty {
   padding: 18px 12px;
@@ -1671,6 +1663,9 @@ button {
 }
 
 .legend {
+  flex: 0 0 auto;
+  max-height: 34%;
+  overflow-y: auto;
   border-top: 1px solid var(--glass-edge);
   padding: 10px 12px 12px;
   background: rgba(0, 0, 0, 0.25);
@@ -1737,9 +1732,56 @@ button {
   z-index: 12;
 }
 
-@media (max-width: 1500px) {
+/* Laptop / smaller wall panels: shrink chrome before anything overlaps. */
+@media (max-width: 1600px) {
   .index-rail {
-    width: 272px;
+    width: 280px;
+  }
+  .region-nav {
+    width: 214px;
+  }
+}
+@media (max-width: 1360px) {
+  .index-rail {
+    width: 248px;
+    top: 96px;
+  }
+  .region-nav {
+    width: 196px;
+    top: 96px;
+  }
+  .topbar {
+    height: 74px;
+    padding: 0 14px;
+  }
+  .topbar-left,
+  .topbar-right {
+    gap: 10px;
+    padding: 7px 12px;
+  }
+  .tt-main {
+    font-size: 17px;
+    letter-spacing: 0.18em;
+  }
+  .tt-sub {
+    display: none;
+  }
+  .topbar-logo {
+    height: 34px;
+  }
+  .stat-label {
+    display: none;
+  }
+  .index-num {
+    flex-basis: 38px;
+  }
+}
+@media (max-width: 1100px) {
+  .region-nav {
+    display: none;
+  }
+  .detail-panel {
+    width: min(520px, 66%);
   }
 }
 

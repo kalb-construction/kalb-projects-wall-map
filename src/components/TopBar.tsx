@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { useClock } from '../lib/useIdle';
 
 interface TopBarProps {
@@ -13,7 +14,7 @@ const MON = [
   'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'
 ];
 
-export function TopBar({ totalCount, shownCount, cityCount, onSearch }: TopBarProps) {
+function TopBarBase({ totalCount, shownCount, cityCount, onSearch }: TopBarProps) {
   const now = useClock();
   const hh = now.getHours() % 12 || 12;
   const mm = String(now.getMinutes()).padStart(2, '0');
@@ -66,3 +67,6 @@ export function TopBar({ totalCount, shownCount, cityCount, onSearch }: TopBarPr
     </header>
   );
 }
+
+/** Memoized: only re-renders when its own props actually change. */
+export const TopBar = memo(TopBarBase);

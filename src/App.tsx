@@ -96,7 +96,6 @@ function Atlas({ projects, teams }: { projects: Project[]; teams: Team[] }) {
   const [searchOpen, setSearchOpen] = useState(false);
   const [mapboxFailed, setMapboxFailed] = useState(false);
   const [activeTeams, setActiveTeams] = useState<Set<string>>(new Set());
-  const [bearing, setBearing] = useState(0);
   const [northSignal, setNorthSignal] = useState(0);
   const [toast, setToast] = useState<string | null>(null);
   const toastTimer = useRef<number | undefined>(undefined);
@@ -279,7 +278,6 @@ function Atlas({ projects, teams }: { projects: Project[]; teams: Team[] }) {
           onBackgroundTap={close}
           onLoaded={() => setMapLoaded(true)}
           teamColors={teamColors}
-          onBearing={setBearing}
           northSignal={northSignal}
           onFailure={(reason) => {
             setMapboxFailed(true);
@@ -299,7 +297,6 @@ function Atlas({ projects, teams }: { projects: Project[]; teams: Team[] }) {
           onBackgroundTap={close}
           onLoaded={() => setMapLoaded(true)}
           teamColors={teamColors}
-          onBearing={setBearing}
           northSignal={northSignal}
         />
       )}
@@ -324,7 +321,6 @@ function Atlas({ projects, teams }: { projects: Project[]; teams: Team[] }) {
         onFilters={handleFilters}
         shownCount={shownProjects.length}
         cityOptions={cityOptions}
-        bearing={bearing}
         onNorth={() => setNorthSignal((n) => n + 1)}
       />
 

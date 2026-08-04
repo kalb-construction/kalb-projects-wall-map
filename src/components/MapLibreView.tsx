@@ -3,6 +3,7 @@ import * as maplibregl from 'maplibre-gl';
 import type { Map as MLMap, Marker, StyleSpecification } from 'maplibre-gl';
 import type { Project } from '../types';
 import type { BBox } from '../lib/regions';
+import { setBearing } from '../lib/bearing';
 
 /**
  * Real-world map engine: MapLibre GL with a custom style built on the most
@@ -216,8 +217,6 @@ interface MapLibreViewProps {
   onLoaded: () => void;
   /** projectId -> team color, applied to each marker as --km-color. */
   teamColors?: Record<string, string>;
-  /** Reports the camera bearing (throttled) so the dock compass can spin. */
-  onBearing?: (deg: number) => void;
   /** Bump to snap the camera back to north-up. */
   northSignal?: number;
 }
@@ -260,7 +259,6 @@ export function MapLibreView({
   onBackgroundTap,
   onLoaded,
   teamColors,
-  onBearing,
   northSignal
 }: MapLibreViewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -327,8 +325,6 @@ export function MapLibreView({
   onBackgroundTapRef.current = onBackgroundTap;
   const onLoadedRef = useRef(onLoaded);
   onLoadedRef.current = onLoaded;
-  const onBearingRef = useRef(onBearing);
-  onBearingRef.current = onBearing;
   const detailOpenRef = useRef(detailOpen);
   detailOpenRef.current = detailOpen;
 
@@ -349,8 +345,8 @@ export function MapLibreView({
       pixelRatio: Math.min(window.devicePixelRatio || 1, 1.5),
       maxTileCacheSize: 2048,
       refreshExpiredTiles: false,
-      fadeDuration: 150,
-      canvasContextAttributes: { antialias: true },
+      fadeDuration: 0,
+      canvasContextAttributes: { antialias: false },
       attributionControl: false
     });
     mapRef.current = map;
@@ -394,12 +390,12 @@ export function MapLibreView({
     let lastBearingAt = 0;
     const emitBearing = () => {
       const now = performance.now();
-      if (now - lastBearingAt < 100) return;
+      if (now - lastBearingAt < 90) return;
       lastBearingAt = now;
-      onBearingRef.current?.(map.getBearing());
+      setBearing(map.getBearing());
     };
     map.on('rotate', emitBearing);
-    map.on('moveend', () => onBearingRef.current?.(map.getBearing()));
+    map.on('moveend', () => setBearing(map.getBearing()));
     map.on('zoom', syncTerrain);
     syncLabels();
 

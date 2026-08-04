@@ -1,5 +1,9 @@
 # Kalb Project Atlas
 
+> **Read [`MASTER_PROMPT.md`](MASTER_PROMPT.md) first** — it is the binding
+> spec: brand rules, performance rules, data model, and what is still open.
+
+
 An interactive wall-map experience for Kalb Construction — a full-screen, touch-first Las Vegas valley atlas that shows every active Kalb project as a tactile marker, with cinematic fly-to transitions into a project detail view. Designed for a large 16:9 touch display in the office lobby; equally usable with a mouse for desktop testing.
 
 **Zillow-real map, Kalb-branded chrome.** The basemap is a natural, realistic street map (MapLibre GL + OpenFreeMap vector tiles — no API key) with real 3D building extrusions and a tilted cinematic camera. Every project sits at its real-world coordinates; selecting one flies the camera in with an Oryzo-style swoop. Internet access is required for map tiles; all UI, markers, and data work regardless.
