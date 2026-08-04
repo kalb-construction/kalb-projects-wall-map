@@ -2,6 +2,7 @@
 
 > **Read [`MASTER_PROMPT.md`](MASTER_PROMPT.md) first** — it is the binding
 > spec: brand rules, performance rules, data model, and what is still open.
+> To put it online, see [`DEPLOY.md`](DEPLOY.md) (Vercel).
 
 
 An interactive wall-map experience for Kalb Construction — a full-screen, touch-first Las Vegas valley atlas that shows every active Kalb project as a tactile marker, with cinematic fly-to transitions into a project detail view. Designed for a large 16:9 touch display in the office lobby; equally usable with a mouse for desktop testing.
