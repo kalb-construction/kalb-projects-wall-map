@@ -694,7 +694,7 @@
   {
     "id": "25126",
     "number": "25126",
-    "name": "Horizon Ridge Office Park",
+    "name": "Horizon Ridge Office Park (Rise and Ridge)",
     "address": "2551 W. Horizon Ridge Pkwy, Bldg A",
     "city": "Henderson",
     "state": "NV",
@@ -710,11 +710,16 @@
     "featured": false,
     "siteId": "horizon-ridge",
     "siteName": "Horizon Ridge",
-    "description": "GU Medical in Henderson. Completion date not yet on file.",
+    "description": "GU Medical \u00b7 17,984 sf across two buildings in Henderson. Estimated completion 10/01/2026.",
     "heroImage": null,
     "flags": [
-      "CONFLICT: job 25126 also appears as 'Rise and Ridge' (PM RJ, 2561 W. Horizon Ridge Pkwy, est. 10/01/2026, Bldg A 6,032 sf + Bldg B 11,952 sf) \u2014 confirm whether these are one job"
-    ]
+      "Two buildings on one job: Bldg A (2551) and Bldg B (2561 W. Horizon Ridge Pkwy)"
+    ],
+    "shortName": "Horizon Ridge Office Park",
+    "estCompletion": "10/01/2026",
+    "estCompletionDate": "2026-10-01",
+    "sqFt": 17984,
+    "sqFtNote": "Bldg A 6,032 + Bldg B 11,952"
   },
   {
     "id": "26110",

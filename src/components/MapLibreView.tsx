@@ -215,8 +215,6 @@ interface MapLibreViewProps {
   onSelect: (p: Project) => void;
   onBackgroundTap: () => void;
   onLoaded: () => void;
-  /** projectId -> team color, applied to each marker as --km-color. */
-  teamColors?: Record<string, string>;
   /** Bump to snap the camera back to north-up. */
   northSignal?: number;
 }
@@ -258,7 +256,6 @@ export function MapLibreView({
   onSelect,
   onBackgroundTap,
   onLoaded,
-  teamColors,
   northSignal
 }: MapLibreViewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -507,8 +504,6 @@ export function MapLibreView({
       if (u.project) {
         u.el.classList.toggle('is-dim', !visibleIds.has(u.project.id));
         u.el.classList.toggle('is-selected', u.project.id === selectedId);
-        const c = teamColors?.[u.project.id];
-        if (c) u.el.style.setProperty('--km-color', c);
       } else if (u.site) {
         const vis = u.site.members.filter((m) => visibleIds.has(m.id)).length;
         u.el.classList.toggle('is-dim', vis === 0);
@@ -518,11 +513,9 @@ export function MapLibreView({
         );
         const head = u.el.querySelector('.km-head');
         if (head) head.textContent = String(vis > 0 ? vis : u.site.members.length);
-        const c = teamColors?.[u.site.members[0].id];
-        if (c) u.el.style.setProperty('--km-color', c);
       }
     }
-  }, [visibleIds, selectedId, teamColors]);
+  }, [visibleIds, selectedId]);
 
   // ---- cinematic fly-to on selection --------------------------------------
   useEffect(() => {

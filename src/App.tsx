@@ -14,7 +14,7 @@ import { SearchOverlay } from './components/SearchOverlay';
 import { ProjectDetail } from './components/ProjectDetail';
 import { IdleAttract } from './components/IdleAttract';
 import { ProjectIndex } from './components/ProjectIndex';
-import { FALLBACK_TEAMS, teamColor, teamIdOf } from './lib/teams';
+import { FALLBACK_TEAMS, teamIdOf } from './lib/teams';
 
 const IDLE_MS = 90_000;
 const BOOT_MIN_MS = 1800;
@@ -165,13 +165,6 @@ function Atlas({ projects, teams }: { projects: Project[]; teams: Team[] }) {
     [projects, visibleIds]
   );
 
-  /** projectId -> team color, handed to the map engine for the markers. */
-  const teamColors = useMemo(() => {
-    const m: Record<string, string> = {};
-    for (const p of projects) m[p.id] = teamColor(teams, teamIdOf(p));
-    return m;
-  }, [projects, teams]);
-
   const featured = useMemo(() => projects.filter((p) => p.featured), [projects]);
   const cityCount = useMemo(
     () => new Set(projects.map((p) => `${p.city}|${p.state}`)).size,
@@ -237,15 +230,6 @@ function Atlas({ projects, teams }: { projects: Project[]; teams: Team[] }) {
     toastTimer.current = window.setTimeout(() => setToast(null), 3400);
   }, []);
 
-  const handleOpenProject = useCallback(
-    (p: Project) => {
-      showToast(
-        `Project ${p.number} — ready to link to your PM system (see README).`
-      );
-    },
-    [showToast]
-  );
-
   const showAttract = bootGone && idle && featured.length > 0;
 
   useEffect(() => {
@@ -265,7 +249,7 @@ function Atlas({ projects, teams }: { projects: Project[]; teams: Team[] }) {
   const useMapbox = MAPBOX_TOKEN !== null && !mapboxFailed;
 
   return (
-    <div className="app">
+    <div className={`app${selected ? ' detail-open' : ''}`}>
       {useMapbox ? (
         <MapboxView
           projects={projects}
@@ -277,7 +261,6 @@ function Atlas({ projects, teams }: { projects: Project[]; teams: Team[] }) {
           onSelect={select}
           onBackgroundTap={close}
           onLoaded={() => setMapLoaded(true)}
-          teamColors={teamColors}
           northSignal={northSignal}
           onFailure={(reason) => {
             setMapboxFailed(true);
@@ -296,7 +279,6 @@ function Atlas({ projects, teams }: { projects: Project[]; teams: Team[] }) {
           onSelect={select}
           onBackgroundTap={close}
           onLoaded={() => setMapLoaded(true)}
-          teamColors={teamColors}
           northSignal={northSignal}
         />
       )}
@@ -342,7 +324,6 @@ function Atlas({ projects, teams }: { projects: Project[]; teams: Team[] }) {
           onClose={close}
           onPrev={() => step(-1)}
           onNext={() => step(1)}
-          onOpenProject={handleOpenProject}
         />
       )}
 

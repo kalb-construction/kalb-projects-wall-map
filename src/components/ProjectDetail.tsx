@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import type { Project, Team } from '../types';
 import { statusTone } from '../lib/meta';
-import { teamColor, teamIdOf, teamName } from '../lib/teams';
+import { teamName } from '../lib/teams';
+import { teamIdOf } from '../lib/teams';
 import { BuildingHero } from './BuildingHero';
 
 interface ProjectDetailProps {
@@ -10,25 +11,28 @@ interface ProjectDetailProps {
   onClose: () => void;
   onPrev: () => void;
   onNext: () => void;
-  onOpenProject: (p: Project) => void;
 }
 
+/**
+ * Compact glass card docked to the left. Deliberately narrow so the map
+ * and the project index stay visible — the whole atlas reads as one page
+ * rather than a panel taking over half the screen.
+ */
 export function ProjectDetail({
   project,
   teams,
   onClose,
   onPrev,
-  onNext,
-  onOpenProject
+  onNext
 }: ProjectDetailProps) {
   const heroRef = useRef<HTMLDivElement>(null);
   const [tilt, setTilt] = useState({ rx: 0, ry: 0 });
-  const [barOn, setBarOn] = useState(false);
+  /** Cinematic swap: content fades through on every project change. */
+  const [phase, setPhase] = useState<'loading' | 'ready'>('loading');
 
-  // Re-run the progress bar sweep whenever the project changes.
   useEffect(() => {
-    setBarOn(false);
-    const id = window.setTimeout(() => setBarOn(true), 120);
+    setPhase('loading');
+    const id = window.setTimeout(() => setPhase('ready'), 260);
     return () => window.clearTimeout(id);
   }, [project.id]);
 
@@ -38,25 +42,23 @@ export function ProjectDetail({
     const r = el.getBoundingClientRect();
     const nx = (e.clientX - r.left) / r.width - 0.5;
     const ny = (e.clientY - r.top) / r.height - 0.5;
-    setTilt({ rx: -ny * 7, ry: nx * 9 });
+    setTilt({ rx: -ny * 6, ry: nx * 8 });
   };
 
   const tone = statusTone(project.status);
 
   return (
     <aside
-      className="detail-panel"
+      className={`detail-card is-${phase}`}
       role="dialog"
       aria-label={`Project ${project.number} ${project.name}`}
     >
-      <div className="detail-head">
-        <div className="detail-chips">
-          <span className="chip chip-category">{project.category}</span>
-          <span className={`chip chip-status tone-${tone}`}>
-            {project.status}
-          </span>
-          {project.featured && <span className="chip chip-feat">Featured</span>}
-        </div>
+      {/* blueprint / glass architecture backdrop */}
+      <span className="detail-blueprint" aria-hidden="true" />
+      <span className="detail-sheen" aria-hidden="true" />
+
+      <header className="detail-head">
+        <span className="detail-number">№ {project.number}</span>
         <div className="detail-nav">
           <button className="nav-btn" aria-label="Previous project" onClick={onPrev}>
             ←
@@ -68,10 +70,9 @@ export function ProjectDetail({
             ✕
           </button>
         </div>
-      </div>
+      </header>
 
-      <div className="detail-scroll">
-        <div className="detail-number">№ {project.number}</div>
+      <div className="detail-body">
         <h2 className="detail-name">{project.name}</h2>
         <p className="detail-address">
           <svg viewBox="0 0 24 24" className="addr-pin" aria-hidden="true">
@@ -83,77 +84,52 @@ export function ProjectDetail({
           {project.address} · {project.city}, {project.state}
         </p>
 
+        <div className="detail-chips">
+          <span className={`chip chip-status tone-${tone}`}>{project.status}</span>
+          <span className="chip chip-category">
+            {project.projectType ?? project.category}
+          </span>
+        </div>
+
         <div
           ref={heroRef}
           className="detail-hero"
           onPointerMove={onHeroMove}
           onPointerLeave={() => setTilt({ rx: 0, ry: 0 })}
           style={{
-            transform: `perspective(1100px) rotateX(${tilt.rx}deg) rotateY(${tilt.ry}deg)`
+            transform: `perspective(900px) rotateX(${tilt.rx}deg) rotateY(${tilt.ry}deg)`
           }}
         >
-          <BuildingHero project={project} />
-          {!project.heroImage && (
-            <span className="hero-note">Concept visual — render slot ready</span>
-          )}
+          <BuildingHero project={project} compact />
+          <span className="hero-scan" aria-hidden="true" />
         </div>
 
-        <div className="detail-meta">
-          <div className="meta-cell">
-            <span className="meta-label">Project No.</span>
-            <span className="meta-value">{project.number}</span>
+        <dl className="detail-facts">
+          <div>
+            <dt>Project Manager</dt>
+            <dd>{teamName(teams, teamIdOf(project))}</dd>
           </div>
-          <div className="meta-cell">
-            <span className="meta-label">Project Manager</span>
-            <span className="meta-value">
-              <span
-                className="pm-dot"
-                style={{ background: teamColor(teams, teamIdOf(project)) }}
-                aria-hidden="true"
-              />
-              {teamName(teams, teamIdOf(project))}
-            </span>
+          <div>
+            <dt>Superintendent</dt>
+            <dd>{project.superintendent ?? '—'}</dd>
           </div>
-          <div className="meta-cell">
-            <span className="meta-label">Superintendent</span>
-            <span className="meta-value">{project.superintendent ?? '—'}</span>
-          </div>
-          <div className="meta-cell">
-            <span className="meta-label">Square Feet</span>
-            <span className="meta-value">
+          <div>
+            <dt>Square Feet</dt>
+            <dd>
               {project.sqFt
                 ? project.sqFt.toLocaleString()
                 : project.sqFtNote ?? '—'}
-            </span>
+            </dd>
           </div>
-          <div className="meta-cell">
-            <span className="meta-label">Est. Completion</span>
-            <span className="meta-value">{project.estCompletion ?? '—'}</span>
+          <div>
+            <dt>Est. Completion</dt>
+            <dd>{project.estCompletion ?? '—'}</dd>
           </div>
-          <div className="meta-cell">
-            <span className="meta-label">Type</span>
-            <span className="meta-value">
-              {project.projectType ?? project.category}
-            </span>
-          </div>
-        </div>
+        </dl>
 
-        {project.progress !== undefined && (
-          <div className="detail-progress">
-            <div className="progress-row">
-              <span className="meta-label">Status — {project.status}</span>
-              <span className="progress-pct">{project.progress}%</span>
-            </div>
-            <div className="progress-track">
-              <div
-                className={`progress-fill tone-${tone}`}
-                style={{ width: barOn ? `${project.progress}%` : '0%' }}
-              />
-            </div>
-          </div>
+        {project.sqFtNote && project.sqFt && (
+          <p className="detail-subnote">{project.sqFtNote}</p>
         )}
-
-        <p className="detail-desc">{project.description}</p>
 
         {project.flags && project.flags.length > 0 && (
           <ul className="detail-flags">
@@ -165,19 +141,10 @@ export function ProjectDetail({
 
         {project.siteName && (
           <p className="detail-site">
-            Part of the <strong>{project.siteName}</strong> site — tap the
-            cluster on the map to see neighboring jobs.
+            Part of <strong>{project.siteName}</strong> — tap the cluster to
+            see neighbouring jobs.
           </p>
         )}
-
-        <div className="detail-ctas">
-          <button className="btn btn-primary" onClick={() => onOpenProject(project)}>
-            Open Project
-          </button>
-          <button className="btn btn-ghost" onClick={onClose}>
-            Back to Map
-          </button>
-        </div>
       </div>
     </aside>
   );

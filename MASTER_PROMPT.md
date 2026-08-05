@@ -25,9 +25,8 @@ updatable by Kalb staff without a developer.
 
 **Brand**
 - Palette is exactly: Kalb Red `#C10016`, Sand `#E7E3DB`, Concrete `#6A6762`,
-  near-black inks (`#0C0B0A` / `#141210`). No other brand colours.
-  Team colours (see §5) are the one deliberate exception, and they only
-  appear on markers, legend swatches, and index dots.
+  near-black inks (`#0C0B0A` / `#141210`). No other brand colours anywhere —
+  **every map pin is Kalb red.** The PM legend is a filter, not a colour key.
 - Type: **Oswald** for display/headings (condensed, construction-forward),
   **Inter** for UI text. Both self-hosted — never a font CDN.
 - The Kalb logo assets in `public/brand/` are the only marks used.
@@ -93,17 +92,21 @@ within 9 seconds and explains itself in a toast.
 │ [Kalb logo | PROJECT ATLAS]        [count · Search · clock]  │ top bar
 │                                                              │
 │ [REGIONS ▾]                              [PROJECT INDEX ▾]   │
-│                                          │ city A–Z         │
-│                MAP (markers)             │  projects A–Z    │
-│                                          │  ...             │
-│                                          ├──────────────────┤
-│                                          │ TEAMS legend     │
-│ [compass][City ▾][Type ▾] 48 shown   [+][−][tilt][MAP][⌂]  │ bottom bar
+│  ↳ replaced by the                       │ city A–Z         │
+│    DETAIL CARD when a   MAP (markers)    │  projects A–Z    │
+│    project is selected                   ├──────────────────┤
+│                                          │ PM legend        │
+│ [compass][City][Type][Status]  [+][−][tilt][MAP][⌂]         │ bottom bar
 └──────────────────────────────────────────────────────────────┘
 ```
-- Selecting a project slides a **detail panel** over the right side.
-- Both side panels collapse to a single header bar.
+- Selecting a project opens a **compact glass card on the left** (~396px,
+  never full height) so the map and the index stay visible — the atlas
+  always reads as one page. The Regions nav steps aside while it is open.
+- Side panels collapse to a single header bar.
 - The bottom bar has no background scrim — chips and buttons float.
+- The card has a blueprint-grid glass backdrop, a specular top sheen, a
+  parallax hero, and a scan-sweep as each project loads in. Glass is faked
+  with layered gradients — **never `backdrop-filter`** (see performance).
 
 ## 5. Data model
 
@@ -209,11 +212,9 @@ from here.
 Everything below is flagged in-app: open a project and any data-quality
 note appears in an amber box in its detail panel.
 
-1. **Job 25126 appears twice on the sheet.** Once as *Horizon Ridge Office
-   Park* (PM TP, 2551 W. Horizon Ridge Pkwy Bldg A) and once as *Rise and
-   Ridge* (PM RJ, 2561 W. Horizon Ridge Pkwy, est. 10/01/2026, Bldg A
-   6,032 sf + Bldg B 11,952 sf). Treated as one job at the 2551 address —
-   confirm whether that's right, or whether Rise and Ridge is a separate job.
+1. ~~Job 25126 duplication~~ — **resolved:** confirmed as one job. Recorded
+   as *Horizon Ridge Office Park (Rise and Ridge)*, 17,984 sf across
+   Bldg A (2551) + Bldg B (2561), est. 10/01/2026.
 2. **Job 26111 (Veritext)** is listed under RJ but its PM column reads RC.
    Currently assigned to RJ. Suite 350 also unverified.
 3. **RP's 10 Northern Nevada jobs** have no estimated completion or square
@@ -230,4 +231,3 @@ note appears in an amber box in its detail panel.
    `/tools/coords.html` to move them onto the actual pads.
 9. **PM full names** — teams.json uses the sheet's initials.
 10. **Project photos** for `heroImage`, named by job number.
-11. **"Open Project" CTA** — where it should link (Procore, SharePoint, …).
