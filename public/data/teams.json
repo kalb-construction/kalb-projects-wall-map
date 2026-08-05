@@ -1,34 +1,17 @@
 [
   {
-    "id": "unassigned",
-    "name": "Unassigned",
+    "id": "jj",
+    "name": "JJ",
     "color": "#C10016",
-    "note": "Default for projects with no \"team\" set in projects.json"
+    "note": "12 jobs — replace initials with the PM's full name when confirmed"
   },
-  {
-    "id": "team-1",
-    "name": "Team 1",
-    "color": "#2E7CF6",
-    "note": "Rename these to your real team names; change colors freely."
-  },
-  {
-    "id": "team-2",
-    "name": "Team 2",
-    "color": "#18A957"
-  },
-  {
-    "id": "team-3",
-    "name": "Team 3",
-    "color": "#F2A413"
-  },
-  {
-    "id": "team-4",
-    "name": "Team 4",
-    "color": "#8B5CF6"
-  },
-  {
-    "id": "team-5",
-    "name": "Team 5",
-    "color": "#00B8C4"
-  }
+  { "id": "rp", "name": "RP", "color": "#2E7CF6", "note": "10 jobs" },
+  { "id": "tp", "name": "TP", "color": "#18A957", "note": "8 jobs" },
+  { "id": "mk", "name": "MK", "color": "#F2A413", "note": "4 jobs" },
+  { "id": "jb", "name": "JB", "color": "#8B5CF6", "note": "4 jobs" },
+  { "id": "rj", "name": "RJ", "color": "#00B8C4", "note": "4 jobs" },
+  { "id": "sb", "name": "SB", "color": "#FF5CA8", "note": "2 jobs — Arizona" },
+  { "id": "ng", "name": "NG", "color": "#E0DCD2", "note": "2 jobs" },
+  { "id": "dd", "name": "DD", "color": "#B87333", "note": "1 job" },
+  { "id": "db", "name": "Dave Brown", "color": "#9C978E", "note": "1 job" }
 ]

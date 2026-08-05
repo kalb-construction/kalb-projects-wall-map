@@ -118,7 +118,7 @@ function ProjectIndexBase({
 
           <footer className="legend">
             <div className="legend-head">
-              <span className="legend-title">TEAMS</span>
+              <span className="legend-title">PROJECT MANAGERS</span>
               <button
                 className="legend-clear"
                 onClick={onClearTeams}

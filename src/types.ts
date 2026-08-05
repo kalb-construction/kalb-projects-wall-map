@@ -45,11 +45,25 @@ export interface Project {
   lat: number;
   lng: number;
   category: Category;
-  /** Team id from data/teams.json. Omitted / blank = "unassigned". */
+  /** Verbatim "Project Type" from the PM job list (e.g. "GU Restaurant/Bar"). */
+  projectType?: string;
+  /** Team id from data/teams.json — the project manager. */
   team?: string;
+  /** Superintendent as written on the PM sheet. */
+  superintendent?: string | null;
   status: ProjectStatus;
-  /** 0–100. Drives the timeline bar in the detail panel. */
-  progress: number;
+  /** 0–100. Only set where it is actually known (finished jobs). */
+  progress?: number;
+  /** Estimated completion, as written on the PM sheet. */
+  estCompletion?: string;
+  /** Same date normalised to YYYY-MM-DD, where it could be parsed. */
+  estCompletionDate?: string;
+  /** Square footage from the PM sheet. */
+  sqFt?: number;
+  /** Text where a number wasn't available ("Bidding", "Site area"). */
+  sqFtNote?: string;
+  /** Data-quality notes: missing fields, conflicts, shared pins. */
+  flags?: string[];
   /** First two digits of the job number, as a full year (B-jobs omit it). */
   year?: number;
   featured: boolean;

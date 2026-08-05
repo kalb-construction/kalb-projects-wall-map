@@ -338,6 +338,7 @@ function Atlas({ projects, teams }: { projects: Project[]; teams: Team[] }) {
       {selected && (
         <ProjectDetail
           project={selected}
+          teams={teams}
           onClose={close}
           onPrev={() => step(-1)}
           onNext={() => step(1)}

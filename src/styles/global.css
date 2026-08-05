@@ -1910,3 +1910,32 @@ button {
   letter-spacing: 0.06em;
   text-anchor: middle;
 }
+
+/* PM dot in the detail panel + data-quality flags */
+.pm-dot {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  margin-right: 7px;
+  box-shadow: 0 0 0 1.5px rgba(255, 255, 255, 0.35);
+}
+.detail-meta {
+  grid-template-columns: repeat(3, 1fr);
+}
+.detail-flags {
+  list-style: none;
+  margin: 0 0 18px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: rgba(242, 164, 19, 0.09);
+  border: 1px solid rgba(242, 164, 19, 0.32);
+}
+.detail-flags li {
+  font-size: 12px;
+  line-height: 1.5;
+  color: #f0b95a;
+}
+.detail-flags li + li {
+  margin-top: 4px;
+}

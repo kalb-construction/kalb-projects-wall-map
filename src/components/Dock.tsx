@@ -1,6 +1,6 @@
 import { memo, useState } from 'react';
 import type { Filters } from '../types';
-import { CATEGORIES } from '../lib/meta';
+import { CATEGORIES, STATUSES } from '../lib/meta';
 import { Compass } from './Compass';
 
 interface DockProps {
@@ -13,11 +13,12 @@ interface DockProps {
   onNorth: () => void;
 }
 
-type TrayKey = 'city' | 'category' | null;
+type TrayKey = 'city' | 'category' | 'status' | null;
 
 const TRAY_LABEL: Record<Exclude<TrayKey, null>, string> = {
   city: 'City',
-  category: 'Type'
+  category: 'Type',
+  status: 'Status'
 };
 
 /** Bottom filter bar: city and project-type chip trays. */
@@ -32,10 +33,14 @@ function DockBase({
 
   const trayOptions: Record<Exclude<TrayKey, null>, readonly string[]> = {
     city: cityOptions,
-    category: CATEGORIES
+    category: CATEGORIES,
+    status: STATUSES
   };
 
-  const isFiltered = filters.city !== 'all' || filters.category !== 'all';
+  const isFiltered =
+    filters.city !== 'all' ||
+    filters.category !== 'all' ||
+    filters.status !== 'all';
 
   const setValue = (key: Exclude<TrayKey, null>, value: string) => {
     onFilters({ ...filters, [key]: value });
@@ -66,7 +71,7 @@ function DockBase({
 
       <div className="dock-left">
         <Compass onNorth={onNorth} />
-        {(['city', 'category'] as const).map((key) => (
+        {(['city', 'category', 'status'] as const).map((key) => (
           <button
             key={key}
             className={`dock-filter${filters[key] !== 'all' ? ' is-set' : ''}${

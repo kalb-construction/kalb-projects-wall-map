@@ -43,6 +43,8 @@ updatable by Kalb staff without a developer.
   surface a readable message instead of an empty canvas.
 - Text must wrap, never be clipped mid-word. Panels scroll internally.
 - The kiosk idles into an attract loop after 90s and wakes on any touch.
+- **Never fabricate project data.** Missing values stay missing and get a
+  `flags` entry; the UI shows them as "—" or an amber note.
 
 **Performance (this is a wall display, smoothness is a feature)**
 - No `backdrop-filter` anywhere. Blurring behind panels over a repainting
@@ -105,36 +107,69 @@ within 9 seconds and explains itself in a toast.
 
 ## 5. Data model
 
+**Source of record:** *Kalb Industries — Job List by Project Manager*,
+48 active jobs, job-list report dated **07/27/2026** plus PM confirmations.
+Every field below traces to that sheet. Nothing is invented; anything the
+sheet left blank is recorded as a flag rather than filled with a guess.
+
 `public/data/projects.json` — array of:
 
 ```jsonc
 {
-  "id": "26104",            // stable; used in the #/project/<id> route
-  "number": "26104",        // Kalb job number (may be "B1329")
-  "name": "Dorrell Retail Building",
-  "shortName": "…",         // optional, for map callouts and the index
-  "address": "635 E. Dorrell Ln.",
+  "id": "25130",            // stable; used in the #/project/<id> route
+  "number": "25130",        // Kalb job number (may be "B1329")
+  "name": "Craig & Valley Retail Center",
+  "address": "Craig Rd & Valley Dr",
   "city": "North Las Vegas",
   "state": "NV",
   "region": "LV",           // LV | NNV | AZ — drives the Regions quick-nav
-  "lat": 36.285249,
-  "lng": -115.133593,
-  "category": "Retail",     // one of the types in src/lib/meta.ts
-  "team": "team-2",         // optional; matches an id in teams.json
-  "status": "Complete",     // Preconstruction | In Progress | Closeout | Complete
-  "progress": 100,          // 0–100
-  "year": 2026,             // optional (B-numbered jobs have none)
-  "featured": true,         // pulses on the map, appears in the attract loop
-  "siteId": "craig-valley", // optional: same siteId ⇒ one cluster marker
+  "lat": 36.239167,
+  "lng": -115.198431,
+  "category": "Retail",         // display taxonomy (src/lib/meta.ts)
+  "projectType": "GU Other",    // verbatim from the PM sheet
+  "team": "jj",                 // PM id — matches teams.json
+  "superintendent": "SC",       // as written on the PM sheet
+  "status": "In Progress",      // derived, see below
+  "progress": 100,              // ONLY on finished jobs; otherwise absent
+  "estCompletion": "SEP 2026",  // verbatim
+  "estCompletionDate": "2026-09-30", // normalised, when parseable
+  "sqFt": 239580,
+  "sqFtNote": "Bidding",        // when a number wasn't available
+  "flags": ["Shared pin: Craig & Valley intersection"],
+  "year": 2025,
+  "featured": true,
+  "siteId": "craig-valley",     // same siteId ⇒ one cluster marker
   "siteName": "Craig & Valley",
   "description": "…",
-  "heroImage": null,        // "./renders/26104.jpg" for a real photo
-  "tags": ["ground-up"]
+  "heroImage": null,            // "./renders/25130.jpg" for a real photo
 }
 ```
 
-`public/data/teams.json` — `[{ "id", "name", "color" }]`. A project with no
-`team` falls under **Unassigned** (Kalb red).
+### Status is derived, never guessed
+
+Against the report date (07/27/2026) and today:
+
+| Sheet says | Status |
+|---|---|
+| "COMPLETED – FEB/2026" | **Complete** (progress 100) |
+| a date already past | **Complete** (progress 100) |
+| a date within 45 days | **Closeout** |
+| a date further out | **In Progress** |
+| "ONGOING" + sq ft "BIDDING" | **Preconstruction** |
+| blank / MISSING | **In Progress** (it is on the active job list) |
+
+`progress` is only set where it is genuinely known (finished jobs). The
+detail panel shows a percentage bar only when the number exists — otherwise
+it shows the estimated completion date. **Do not invent progress values.**
+
+### Teams are the project managers
+
+`public/data/teams.json` — `[{ "id", "name", "color" }]`, one entry per PM.
+Current split (matches the sheet exactly): JJ 12 · RP 10 · TP 8 · MK 4 ·
+JB 4 · RJ 4 · SB 2 (Arizona) · NG 2 · DD 1 · Dave Brown 1 = **48**.
+Names are the initials from the sheet — replace them with full names as
+they're confirmed. Marker colour, legend swatch, and index dot all come
+from here.
 
 ## 6. Feature list (what "done" means)
 
@@ -171,12 +206,28 @@ within 9 seconds and explains itself in a toast.
 
 ## 8. Open items (Kalb to confirm)
 
-- **Team roster** — real team names and which job numbers belong to each.
-  Until then every project shows as Unassigned.
-- **Pin accuracy** — 9 jobs have intersection-only addresses (the six Craig &
-  Valley pads, Marble Manor, Bojangles 99th & Indian School, Dayton Shell)
-  and sit on the junction. They need per-building coordinates.
-- **Categories** for the newest jobs were inferred from their names.
-- **Statuses** — everything currently reads Complete.
-- **Project photos** for `heroImage`, named by job number.
-- **"Open Project" CTA** — where it should link (Procore, SharePoint, …).
+Everything below is flagged in-app: open a project and any data-quality
+note appears in an amber box in its detail panel.
+
+1. **Job 25126 appears twice on the sheet.** Once as *Horizon Ridge Office
+   Park* (PM TP, 2551 W. Horizon Ridge Pkwy Bldg A) and once as *Rise and
+   Ridge* (PM RJ, 2561 W. Horizon Ridge Pkwy, est. 10/01/2026, Bldg A
+   6,032 sf + Bldg B 11,952 sf). Treated as one job at the 2551 address —
+   confirm whether that's right, or whether Rise and Ridge is a separate job.
+2. **Job 26111 (Veritext)** is listed under RJ but its PM column reads RC.
+   Currently assigned to RJ. Suite 350 also unverified.
+3. **RP's 10 Northern Nevada jobs** have no estimated completion or square
+   footage on the sheet. They show as In Progress with the dates blank.
+4. **TP's 8 jobs** have blank completion/sq ft cells on the sheet.
+5. **Arizona (SB)** — 25900 superintendent conflict (MM vs Cliff Smith),
+   26900 superintendent unverified; both missing dates and square footage.
+6. **B7035 Light and Wonder** — project type, superintendent, completion and
+   square footage all missing; category currently shown as Industrial.
+7. **26101 Twain Luxury Vehicle Condos** — square footage still in bidding.
+8. **Pin accuracy** — 8 jobs have intersection-only addresses (the six Craig
+   & Valley pads, Marble Manor, Bojangles 99th & Indian School) plus Dayton
+   Shell with no street number. Those pins sit on the junction; use
+   `/tools/coords.html` to move them onto the actual pads.
+9. **PM full names** — teams.json uses the sheet's initials.
+10. **Project photos** for `heroImage`, named by job number.
+11. **"Open Project" CTA** — where it should link (Procore, SharePoint, …).

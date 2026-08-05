@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
-import type { Project } from '../types';
+import type { Project, Team } from '../types';
 import { statusTone } from '../lib/meta';
+import { teamColor, teamIdOf, teamName } from '../lib/teams';
 import { BuildingHero } from './BuildingHero';
 
 interface ProjectDetailProps {
   project: Project;
+  teams: Team[];
   onClose: () => void;
   onPrev: () => void;
   onNext: () => void;
@@ -13,6 +15,7 @@ interface ProjectDetailProps {
 
 export function ProjectDetail({
   project,
+  teams,
   onClose,
   onPrev,
   onNext,
@@ -101,35 +104,64 @@ export function ProjectDetail({
             <span className="meta-value">{project.number}</span>
           </div>
           <div className="meta-cell">
-            <span className="meta-label">City</span>
+            <span className="meta-label">Project Manager</span>
             <span className="meta-value">
-              {project.city}, {project.state}
+              <span
+                className="pm-dot"
+                style={{ background: teamColor(teams, teamIdOf(project)) }}
+                aria-hidden="true"
+              />
+              {teamName(teams, teamIdOf(project))}
             </span>
           </div>
           <div className="meta-cell">
-            <span className="meta-label">Type</span>
-            <span className="meta-value">{project.category}</span>
+            <span className="meta-label">Superintendent</span>
+            <span className="meta-value">{project.superintendent ?? '—'}</span>
           </div>
           <div className="meta-cell">
-            <span className="meta-label">Year</span>
-            <span className="meta-value">{project.year ?? '—'}</span>
+            <span className="meta-label">Square Feet</span>
+            <span className="meta-value">
+              {project.sqFt
+                ? project.sqFt.toLocaleString()
+                : project.sqFtNote ?? '—'}
+            </span>
+          </div>
+          <div className="meta-cell">
+            <span className="meta-label">Est. Completion</span>
+            <span className="meta-value">{project.estCompletion ?? '—'}</span>
+          </div>
+          <div className="meta-cell">
+            <span className="meta-label">Type</span>
+            <span className="meta-value">
+              {project.projectType ?? project.category}
+            </span>
           </div>
         </div>
 
-        <div className="detail-progress">
-          <div className="progress-row">
-            <span className="meta-label">Status — {project.status}</span>
-            <span className="progress-pct">{project.progress}%</span>
+        {project.progress !== undefined && (
+          <div className="detail-progress">
+            <div className="progress-row">
+              <span className="meta-label">Status — {project.status}</span>
+              <span className="progress-pct">{project.progress}%</span>
+            </div>
+            <div className="progress-track">
+              <div
+                className={`progress-fill tone-${tone}`}
+                style={{ width: barOn ? `${project.progress}%` : '0%' }}
+              />
+            </div>
           </div>
-          <div className="progress-track">
-            <div
-              className={`progress-fill tone-${tone}`}
-              style={{ width: barOn ? `${project.progress}%` : '0%' }}
-            />
-          </div>
-        </div>
+        )}
 
         <p className="detail-desc">{project.description}</p>
+
+        {project.flags && project.flags.length > 0 && (
+          <ul className="detail-flags">
+            {project.flags.map((f) => (
+              <li key={f}>{f}</li>
+            ))}
+          </ul>
+        )}
 
         {project.siteName && (
           <p className="detail-site">
