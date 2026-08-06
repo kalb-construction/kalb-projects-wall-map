@@ -150,7 +150,7 @@ src/
   "region": "LV",             // LV = valley map · NNV / AZ = inset panels
   "lat": 36.2612, "lng": -115.124,  // real-world coords — nudge here if a pin is off
   "category": "Retail",       // one of the 10 types in lib/meta.ts
-  "status": "Preconstruction",// Preconstruction | In Progress | Closeout | Complete
+  "status": "Preconstruction",// Preconstruction | In Progress | Complete (past estCompletionDate auto-displays as Complete)
   "progress": 12,             // 0–100, drives the timeline bar
   "year": 2026,
   "featured": true,           // pulsing pin + featured rail + attract loop

@@ -158,16 +158,21 @@ sheet left blank is recorded as a flag rather than filled with a guess.
 
 ### Status is derived, never guessed
 
-Against the report date (07/27/2026) and today:
+The JSON stores what Kalb said; the app derives the display status **at
+load time** (`src/lib/status.ts`) so the wall stays current as dates pass
+with no data edits:
 
-| Sheet says | Status |
+| Fact | Displayed status |
 |---|---|
-| "COMPLETED – FEB/2026" | **Complete** (progress 100) |
-| a date already past | **Complete** (progress 100) |
-| a date within 45 days | **Closeout** |
-| a date further out | **In Progress** |
+| "COMPLETED" on the sheet | **Complete** (progress 100) |
+| estCompletionDate already past | **Complete** (progress 100) |
+| estCompletionDate in the future | **In Progress** |
 | "ONGOING" + sq ft "BIDDING" | **Preconstruction** |
 | blank / MISSING | **In Progress** (it is on the active job list) |
+
+"Closeout" is retired — Kalb doesn't use the concept (decided
+08/06/2026). Any stored Closeout value is mapped to In Progress at load
+and the Status filter no longer offers it.
 
 `progress` is only set where it is genuinely known (finished jobs). The
 detail panel shows a percentage bar only when the number exists — otherwise

@@ -14,10 +14,11 @@ export const CATEGORIES: Category[] = [
   'Design-Build'
 ];
 
+// 'Closeout' is retired as a display status (mapped to In Progress at
+// load — see lib/status.ts), so the Status filter doesn't offer it.
 export const STATUSES: ProjectStatus[] = [
   'Preconstruction',
   'In Progress',
-  'Closeout',
   'Complete'
 ];
 

@@ -16,6 +16,7 @@ import { IdleAttract } from './components/IdleAttract';
 import { ProjectIndex } from './components/ProjectIndex';
 import { DiagOverlay } from './components/DiagOverlay';
 import { FALLBACK_TEAMS, teamIdOf } from './lib/teams';
+import { deriveStatus } from './lib/status';
 
 /** `?diag=1` shows the on-screen engine/dpr/fps readout (kiosk-friendly). */
 const SHOW_DIAG = new URLSearchParams(window.location.search).has('diag');
@@ -33,7 +34,10 @@ const BOOT_MAX_MS = 8000;
 async function loadProjects(): Promise<Project[]> {
   const res = await fetch('./data/projects.json', { cache: 'no-store' });
   if (!res.ok) throw new Error(`projects.json ${res.status}`);
-  return (await res.json()) as Project[];
+  const data = (await res.json()) as Project[];
+  // Status is derived from the estimated completion date at load time, so
+  // the wall stays current as dates pass without anyone editing the file.
+  return data.map((p) => deriveStatus(p));
 }
 
 /** Teams are optional: a missing/broken file just means one grey team. */
