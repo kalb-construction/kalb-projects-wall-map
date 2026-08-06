@@ -19,7 +19,7 @@
     "sqFt": 5000,
     "year": 2026,
     "featured": false,
-    "description": "GU Retail \u00b7 5,000 sf in North Las Vegas. Estimated completion SEP 2026.",
+    "description": "GU Retail · 5,000 sf in North Las Vegas. Estimated completion SEP 2026.",
     "heroImage": null
   },
   {
@@ -44,7 +44,7 @@
     "featured": true,
     "siteId": "craig-valley",
     "siteName": "Craig & Valley",
-    "description": "GU Other \u00b7 239,580 sf in North Las Vegas. Estimated completion SEP 2026.",
+    "description": "GU Other · 239,580 sf in North Las Vegas. Estimated completion SEP 2026.",
     "heroImage": null,
     "flags": [
       "Shared pin: Craig & Valley intersection"
@@ -72,7 +72,7 @@
     "featured": false,
     "siteId": "craig-valley",
     "siteName": "Craig & Valley",
-    "description": "GU Restaurant/Bar \u00b7 3,500 sf in North Las Vegas. Estimated completion SEP 2026.",
+    "description": "GU Restaurant/Bar · 3,500 sf in North Las Vegas. Estimated completion SEP 2026.",
     "heroImage": null,
     "flags": [
       "Shared pin: Craig & Valley intersection"
@@ -100,7 +100,7 @@
     "featured": false,
     "siteId": "craig-valley",
     "siteName": "Craig & Valley",
-    "description": "GU Restaurant/Bar \u00b7 968 sf in North Las Vegas. Estimated completion SEP 2026.",
+    "description": "GU Restaurant/Bar · 968 sf in North Las Vegas. Estimated completion SEP 2026.",
     "heroImage": null,
     "flags": [
       "Shared pin: Craig & Valley intersection"
@@ -128,7 +128,7 @@
     "featured": false,
     "siteId": "craig-valley",
     "siteName": "Craig & Valley",
-    "description": "GU Restaurant/Bar \u00b7 4,625 sf in North Las Vegas. Estimated completion SEP 2026.",
+    "description": "GU Restaurant/Bar · 4,625 sf in North Las Vegas. Estimated completion SEP 2026.",
     "heroImage": null,
     "flags": [
       "Shared pin: Craig & Valley intersection"
@@ -156,7 +156,7 @@
     "featured": false,
     "siteId": "craig-valley",
     "siteName": "Craig & Valley",
-    "description": "GU Restaurant/Bar \u00b7 3,500 sf in North Las Vegas. Estimated completion SEP 2026.",
+    "description": "GU Restaurant/Bar · 3,500 sf in North Las Vegas. Estimated completion SEP 2026.",
     "heroImage": null,
     "flags": [
       "Shared pin: Craig & Valley intersection"
@@ -184,7 +184,7 @@
     "featured": false,
     "siteId": "craig-valley",
     "siteName": "Craig & Valley",
-    "description": "GU Restaurant/Bar \u00b7 1,641 sf in North Las Vegas. Estimated completion SEP 2026.",
+    "description": "GU Restaurant/Bar · 1,641 sf in North Las Vegas. Estimated completion SEP 2026.",
     "heroImage": null,
     "flags": [
       "Shared pin: Craig & Valley intersection"
@@ -209,7 +209,7 @@
     "sqFtNote": "Bidding",
     "year": 2026,
     "featured": false,
-    "description": "Ground Up Storage \u00b7 Bidding in Las Vegas. Estimated completion Ongoing.",
+    "description": "Ground Up Storage · Bidding in Las Vegas. Estimated completion Ongoing.",
     "heroImage": null,
     "flags": [
       "Square footage still in bidding"
@@ -235,7 +235,7 @@
     "sqFt": 3200,
     "year": 2025,
     "featured": false,
-    "description": "GU Restaurant/Bar \u00b7 3,200 sf in Las Vegas. Estimated completion 08/05/2026.",
+    "description": "GU Restaurant/Bar · 3,200 sf in Las Vegas. Estimated completion 08/05/2026.",
     "heroImage": null
   },
   {
@@ -258,7 +258,7 @@
     "sqFt": 10000,
     "year": 2026,
     "featured": false,
-    "description": "IND TI \u00b7 10,000 sf in Las Vegas. Estimated completion SEP 2026.",
+    "description": "IND TI · 10,000 sf in Las Vegas. Estimated completion SEP 2026.",
     "heroImage": null
   },
   {
@@ -281,7 +281,7 @@
     "sqFt": 5000,
     "year": 2025,
     "featured": false,
-    "description": "GU Retail \u00b7 5,000 sf in North Las Vegas. Estimated completion AUG 2026.",
+    "description": "GU Retail · 5,000 sf in North Las Vegas. Estimated completion AUG 2026.",
     "heroImage": null
   },
   {
@@ -303,7 +303,7 @@
     "estCompletionDate": "2027-02-28",
     "sqFtNote": "Site area",
     "featured": false,
-    "description": "Site Work (ROW) \u00b7 Site area in North Las Vegas. Estimated completion FEB 2027.",
+    "description": "Site Work (ROW) · Site area in North Las Vegas. Estimated completion FEB 2027.",
     "heroImage": null
   },
   {
@@ -348,7 +348,7 @@
     "year": 2024,
     "featured": false,
     "siteId": "lcb-south",
-    "siteName": "LCB \u2014 401 S. Carson",
+    "siteName": "LCB — 401 S. Carson",
     "description": "TI Office in Carson City. Completion date not yet on file.",
     "heroImage": null,
     "flags": [
@@ -374,7 +374,7 @@
     "year": 2025,
     "featured": false,
     "siteId": "lcb-south",
-    "siteName": "LCB \u2014 401 S. Carson",
+    "siteName": "LCB — 401 S. Carson",
     "description": "TI Office in Carson City. Completion date not yet on file.",
     "heroImage": null,
     "flags": [
@@ -401,7 +401,7 @@
     "year": 2024,
     "featured": false,
     "siteId": "lcb-south",
-    "siteName": "LCB \u2014 401 S. Carson",
+    "siteName": "LCB — 401 S. Carson",
     "description": "Non-Ins / Misc in Carson City. Completion date not yet on file.",
     "heroImage": null,
     "flags": [
@@ -427,7 +427,7 @@
     "year": 2026,
     "featured": false,
     "siteId": "lcb-north",
-    "siteName": "LCB \u2014 101 N. Carson",
+    "siteName": "LCB — 101 N. Carson",
     "description": "GU Other in Carson City. Completion date not yet on file.",
     "heroImage": null,
     "flags": [
@@ -453,7 +453,7 @@
     "year": 2026,
     "featured": false,
     "siteId": "lcb-north",
-    "siteName": "LCB \u2014 101 N. Carson",
+    "siteName": "LCB — 101 N. Carson",
     "description": "TI Other in Carson City. Completion date not yet on file.",
     "heroImage": null,
     "flags": [
@@ -479,7 +479,7 @@
     "year": 2026,
     "featured": false,
     "siteId": "lcb-north",
-    "siteName": "LCB \u2014 101 N. Carson",
+    "siteName": "LCB — 101 N. Carson",
     "description": "TI Other in Carson City. Completion date not yet on file.",
     "heroImage": null,
     "flags": [
@@ -694,7 +694,7 @@
   {
     "id": "25126",
     "number": "25126",
-    "name": "Horizon Ridge Office Park (Rise and Ridge)",
+    "name": "Horizon Ridge Office Park",
     "address": "2551 W. Horizon Ridge Pkwy, Bldg A",
     "city": "Henderson",
     "state": "NV",
@@ -710,16 +710,44 @@
     "featured": false,
     "siteId": "horizon-ridge",
     "siteName": "Horizon Ridge",
-    "description": "GU Medical \u00b7 17,984 sf across two buildings in Henderson. Estimated completion 10/01/2026.",
+    "description": "GU Medical shell in the Horizon Ridge office park, Henderson. Completion date and square footage are blank on the PM sheet.",
     "heroImage": null,
     "flags": [
-      "Two buildings on one job: Bldg A (2551) and Bldg B (2561 W. Horizon Ridge Pkwy)"
+      "JOB NUMBER CONFLICT: 25126 is used by two different projects — this one (2551 W. Horizon Ridge Pkwy, PM TP) and Rise and Ridge (2561, PM RJ). One of the two numbers is wrong — pending Kalb.",
+      "No estimated completion on the PM sheet",
+      "No square footage on the PM sheet"
     ],
-    "shortName": "Horizon Ridge Office Park",
+    "shortName": "Horizon Ridge Office Park"
+  },
+  {
+    "id": "25126-rise-ridge",
+    "number": "25126",
+    "name": "Rise and Ridge",
+    "shortName": "Rise and Ridge",
+    "address": "2561 W. Horizon Ridge Pkwy",
+    "city": "Henderson",
+    "state": "NV",
+    "region": "LV",
+    "lat": 36.005275,
+    "lng": -115.098671,
+    "category": "Medical",
+    "projectType": "MEDICAL",
+    "team": "rj",
+    "superintendent": "DM (Doug Manning)",
+    "status": "In Progress",
     "estCompletion": "10/01/2026",
     "estCompletionDate": "2026-10-01",
     "sqFt": 17984,
-    "sqFtNote": "Bldg A 6,032 + Bldg B 11,952"
+    "sqFtNote": "Building A 6,032 + Building B 11,952",
+    "year": 2025,
+    "featured": false,
+    "siteId": "horizon-ridge",
+    "siteName": "Horizon Ridge",
+    "description": "Two-building medical development on W. Horizon Ridge Pkwy, Henderson — Building A 6,032 sf and Building B 11,952 sf. Estimated completion 10/01/2026.",
+    "heroImage": null,
+    "flags": [
+      "JOB NUMBER CONFLICT: 25126 is used by two different projects — this one (2561 W. Horizon Ridge Pkwy, PM RJ) and Horizon Ridge Office Park (2551, PM TP). One of the two numbers is wrong — pending Kalb."
+    ]
   },
   {
     "id": "26110",
@@ -790,7 +818,7 @@
     "sqFt": 3634,
     "year": 2025,
     "featured": false,
-    "description": "TI Restaurant/Bar \u00b7 3,634 sf in Las Vegas. Estimated completion 05/25/2026.",
+    "description": "TI Restaurant/Bar · 3,634 sf in Las Vegas. Estimated completion 05/25/2026.",
     "heroImage": null
   },
   {
@@ -806,7 +834,7 @@
     "category": "Tavern & Gaming",
     "projectType": "TI Restaurant/Bar",
     "team": "mk",
-    "superintendent": "SCOH H",
+    "superintendent": "SH (Scott H.)",
     "status": "Complete",
     "progress": 100,
     "estCompletion": "04/07/2026",
@@ -814,8 +842,11 @@
     "sqFt": 6626,
     "year": 2025,
     "featured": false,
-    "description": "TI Restaurant/Bar \u00b7 6,626 sf in Las Vegas. Estimated completion 04/07/2026.",
-    "heroImage": null
+    "description": "TI Restaurant/Bar · 6,626 sf in Las Vegas. Estimated completion 04/07/2026.",
+    "heroImage": null,
+    "flags": [
+      "PM sheet reads 'SCOH H' — read as Scott H. to match SH on 26113; confirm surname"
+    ]
   },
   {
     "id": "26113",
@@ -837,7 +868,7 @@
     "sqFt": 19090,
     "year": 2026,
     "featured": false,
-    "description": "GU Restaurant/Bar \u00b7 19,090 sf in Henderson. Estimated completion 03/09/2027.",
+    "description": "GU Restaurant/Bar · 19,090 sf in Henderson. Estimated completion 03/09/2027.",
     "heroImage": null
   },
   {
@@ -860,7 +891,7 @@
     "sqFt": 8500,
     "year": 2026,
     "featured": false,
-    "description": "GU Restaurant/Bar \u00b7 8,500 sf in Dayton. Estimated completion 10/01/2026.",
+    "description": "GU Restaurant/Bar · 8,500 sf in Dayton. Estimated completion 10/01/2026.",
     "heroImage": null,
     "flags": [
       "Street number not on file"
@@ -887,7 +918,7 @@
     "sqFt": 69983,
     "year": 2024,
     "featured": true,
-    "description": "GU Other \u00b7 69,983 sf in Las Vegas. Estimated completion 07/30/2026.",
+    "description": "GU Other · 69,983 sf in Las Vegas. Estimated completion 07/30/2026.",
     "heroImage": null
   },
   {
@@ -910,7 +941,7 @@
     "sqFt": 8885,
     "year": 2026,
     "featured": false,
-    "description": "TI \u00b7 8,885 sf in Las Vegas. Estimated completion 08/28/2026.",
+    "description": "TI · 8,885 sf in Las Vegas. Estimated completion 08/28/2026.",
     "heroImage": null
   },
   {
@@ -934,7 +965,7 @@
     "sqFt": 75600,
     "year": 2024,
     "featured": false,
-    "description": "GU Industrial \u00b7 75,600 sf in Las Vegas. Estimated completion Completed FEB 2026.",
+    "description": "GU Industrial · 75,600 sf in Las Vegas. Estimated completion Completed FEB 2026.",
     "heroImage": null,
     "flags": [
       "Co-managed with DB"
@@ -961,7 +992,7 @@
     "sqFt": 19278,
     "year": 2026,
     "featured": false,
-    "description": "TI Fitness \u00b7 19,278 sf in North Las Vegas. Estimated completion 07/03/2026.",
+    "description": "TI Fitness · 19,278 sf in North Las Vegas. Estimated completion 07/03/2026.",
     "heroImage": null
   },
   {
@@ -984,7 +1015,7 @@
     "sqFt": 79941,
     "year": 2025,
     "featured": true,
-    "description": "DB Office \u00b7 79,941 sf in Las Vegas. Estimated completion 12/31/2026.",
+    "description": "DB Office · 79,941 sf in Las Vegas. Estimated completion 12/31/2026.",
     "heroImage": null
   },
   {
@@ -1009,7 +1040,7 @@
     "featured": false,
     "siteId": "horizon-ridge",
     "siteName": "Horizon Ridge",
-    "description": "TI Medical \u00b7 1,866 sf in Henderson. Estimated completion 10/31/2026.",
+    "description": "TI Medical · 1,866 sf in Henderson. Estimated completion 10/31/2026.",
     "heroImage": null
   },
   {
@@ -1032,7 +1063,7 @@
     "sqFt": 13730,
     "year": 2025,
     "featured": false,
-    "description": "TI Office \u00b7 13,730 sf in Las Vegas. Estimated completion 08/31/2026.",
+    "description": "TI Office · 13,730 sf in Las Vegas. Estimated completion 08/31/2026.",
     "heroImage": null
   },
   {
@@ -1047,7 +1078,7 @@
     "lng": -115.273,
     "category": "Office & TI",
     "projectType": "TI Office",
-    "team": "rj",
+    "team": "rc",
     "superintendent": "MC",
     "status": "In Progress",
     "estCompletion": "09/30/2026",
@@ -1055,10 +1086,9 @@
     "sqFt": 7334,
     "year": 2026,
     "featured": false,
-    "description": "TI Office \u00b7 7,334 sf in Las Vegas. Estimated completion 09/30/2026.",
+    "description": "TI Office · 7,334 sf in Las Vegas. Estimated completion 09/30/2026.",
     "heroImage": null,
     "flags": [
-      "Listed under RJ but the PM column reads RC \u2014 confirm",
       "Suite 350 unverified"
     ]
   },
@@ -1132,7 +1162,7 @@
     "sqFt": 80000,
     "year": 2026,
     "featured": true,
-    "description": "TI Office \u00b7 80,000 sf in Las Vegas. Estimated completion SEP 2026.",
+    "description": "TI Office · 80,000 sf in Las Vegas. Estimated completion SEP 2026.",
     "heroImage": null
   },
   {
@@ -1155,7 +1185,7 @@
     "sqFt": 15000,
     "year": 2025,
     "featured": false,
-    "description": "TI Retail \u00b7 15,000 sf in Las Vegas. Estimated completion 08/10/2026.",
+    "description": "TI Retail · 15,000 sf in Las Vegas. Estimated completion 08/10/2026.",
     "heroImage": null
   },
   {
@@ -1178,7 +1208,7 @@
     "sqFt": 74477,
     "year": 2024,
     "featured": true,
-    "description": "GU Industrial \u00b7 74,477 sf in North Las Vegas. Estimated completion 12/27/2026.",
+    "description": "GU Industrial · 74,477 sf in North Las Vegas. Estimated completion 12/27/2026.",
     "heroImage": null
   },
   {
@@ -1200,7 +1230,7 @@
     "estCompletionDate": "2026-11-30",
     "sqFt": 274708,
     "featured": true,
-    "description": "Apartments \u00b7 274,708 sf in Las Vegas. Estimated completion NOV 2026.",
+    "description": "Apartments · 274,708 sf in Las Vegas. Estimated completion NOV 2026.",
     "heroImage": null
   }
 ]

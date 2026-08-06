@@ -3,7 +3,7 @@
     "id": "jj",
     "name": "JJ",
     "color": "#C10016",
-    "note": "Colour is Kalb red for every PM \u2014 the legend is a filter, not a colour key"
+    "note": "12 jobs — colour is Kalb red for every PM; the legend is a filter, not a colour key"
   },
   {
     "id": "rp",
@@ -36,10 +36,16 @@
     "note": "4 jobs"
   },
   {
+    "id": "rc",
+    "name": "RC",
+    "color": "#C10016",
+    "note": "1 job — 26111 Veritext; the PM cell on the sheet reads RC even though the row sits in the RJ block"
+  },
+  {
     "id": "sb",
     "name": "SB",
     "color": "#C10016",
-    "note": "2 jobs \u2014 Arizona"
+    "note": "2 jobs — Arizona"
   },
   {
     "id": "ng",

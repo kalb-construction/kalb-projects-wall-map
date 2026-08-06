@@ -111,7 +111,7 @@ within 9 seconds and explains itself in a toast.
 ## 5. Data model
 
 **Source of record:** *Kalb Industries — Job List by Project Manager*,
-48 active jobs, job-list report dated **07/27/2026** plus PM confirmations.
+49 active jobs, job-list report dated **07/27/2026** plus PM confirmations.
 Every field below traces to that sheet. Nothing is invented; anything the
 sheet left blank is recorded as a flag rather than filled with a guess.
 
@@ -169,10 +169,15 @@ it shows the estimated completion date. **Do not invent progress values.**
 
 `public/data/teams.json` — `[{ "id", "name", "color" }]`, one entry per PM.
 Current split (matches the sheet exactly): JJ 12 · RP 10 · TP 8 · MK 4 ·
-JB 4 · RJ 4 · SB 2 (Arizona) · NG 2 · DD 1 · Dave Brown 1 = **48**.
+JB 4 · RJ 4 · RC 1 · SB 2 (Arizona) · NG 2 · DD 1 · Dave Brown 1 = **49**.
 Names are the initials from the sheet — replace them with full names as
 they're confirmed. Marker colour, legend swatch, and index dot all come
 from here.
+
+The sheet prints "RJ — 3 jobs" above a block of five rows. That header is
+stale, not wrong-by-one: it predates Rise and Ridge being added, and one of
+the five rows (26111 Veritext) carries `RC` in its own PM cell. Read as
+**RJ 4 + RC 1** and every section total reconciles to 49.
 
 ## 6. Feature list (what "done" means)
 
@@ -212,11 +217,21 @@ from here.
 Everything below is flagged in-app: open a project and any data-quality
 note appears in an amber box in its detail panel.
 
-1. ~~Job 25126 duplication~~ — **resolved:** confirmed as one job. Recorded
-   as *Horizon Ridge Office Park (Rise and Ridge)*, 17,984 sf across
-   Bldg A (2551) + Bldg B (2561), est. 10/01/2026.
-2. **Job 26111 (Veritext)** is listed under RJ but its PM column reads RC.
-   Currently assigned to RJ. Suite 350 also unverified.
+1. **Job number 25126 is used twice — BLOCKING.** Two different projects,
+   two addresses, two PMs:
+   - *Horizon Ridge Office Park* — 2551 W. Horizon Ridge Pkwy, Bldg A, PM **TP**,
+     super DM. No completion date, no sq ft on the sheet.
+   - *Rise and Ridge* — 2561 W. Horizon Ridge Pkwy, PM **RJ**, super DM,
+     est. 10/01/2026, 17,984 sf (Bldg A 6,032 + Bldg B 11,952).
+
+   Both are carried as separate jobs (ids `25126` and `25126-rise-ridge`)
+   because the job number is the unique key and one of the two numbers is
+   wrong. Both detail panels show the conflict in an amber flag. **Kalb must
+   supply the correct number for one of them**; renaming the id then makes
+   the flags go away.
+2. **Job 26111 (Veritext)** sits inside the RJ block on the sheet but its own
+   PM cell reads **RC**. Assigned to RC, which is its own legend entry.
+   Suite 350 still unverified.
 3. **RP's 10 Northern Nevada jobs** have no estimated completion or square
    footage on the sheet. They show as In Progress with the dates blank.
 4. **TP's 8 jobs** have blank completion/sq ft cells on the sheet.
@@ -231,3 +246,10 @@ note appears in an amber box in its detail panel.
    `/tools/coords.html` to move them onto the actual pads.
 9. **PM full names** — teams.json uses the sheet's initials.
 10. **Project photos** for `heroImage`, named by job number.
+11. **Superintendent name spellings.** The sheet is inconsistent; the data
+    normalises and flags rather than guessing silently:
+    - 25154 reads `SCOH H` → carried as **SH (Scott H.)**, matching `SH` on
+      26113. Flagged; confirm the surname. Note this is *not* Scott Smith
+      (`SS`), who runs 25153 and 26705 — unless Kalb says otherwise.
+    - 25137 reads `MATT MERPHY`, 24106 reads `MATT MURPHY` → both carried as
+      **Matt Murphy**.
