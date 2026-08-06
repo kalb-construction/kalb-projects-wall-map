@@ -1963,3 +1963,22 @@ button {
 .detail-flags li + li {
   margin-top: 4px;
 }
+
+/* ---------- ?diag=1 on-screen diagnostics ---------- */
+.diag {
+  position: fixed;
+  left: 14px;
+  bottom: 14px;
+  z-index: 40;
+  padding: 6px 12px;
+  border-radius: 8px;
+  background: rgba(12, 11, 10, 0.88);
+  border: 1px solid var(--glass-border);
+  color: var(--sand);
+  font-family: ui-monospace, 'Cascadia Mono', Consolas, monospace;
+  font-size: 12px;
+  letter-spacing: 0.03em;
+  pointer-events: none;
+  min-height: 27px;
+  min-width: 40px;
+}

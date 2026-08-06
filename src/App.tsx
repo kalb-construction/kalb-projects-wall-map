@@ -14,7 +14,11 @@ import { SearchOverlay } from './components/SearchOverlay';
 import { ProjectDetail } from './components/ProjectDetail';
 import { IdleAttract } from './components/IdleAttract';
 import { ProjectIndex } from './components/ProjectIndex';
+import { DiagOverlay } from './components/DiagOverlay';
 import { FALLBACK_TEAMS, teamIdOf } from './lib/teams';
+
+/** `?diag=1` shows the on-screen engine/dpr/fps readout (kiosk-friendly). */
+const SHOW_DIAG = new URLSearchParams(window.location.search).has('diag');
 
 const IDLE_MS = 90_000;
 const BOOT_MIN_MS = 1800;
@@ -336,6 +340,8 @@ function Atlas({ projects, teams }: { projects: Project[]; teams: Team[] }) {
       )}
 
       {toast && <div className="toast">{toast}</div>}
+
+      {SHOW_DIAG && <DiagOverlay engine={useMapbox ? 'Mapbox' : 'MapLibre'} />}
 
       {showAttract && <IdleAttract featured={featured} />}
 
