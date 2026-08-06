@@ -118,7 +118,8 @@ within 9 seconds and explains itself in a toast.
 ## 5. Data model
 
 **Source of record:** *Kalb Industries — Job List by Project Manager*,
-48 active jobs, job-list report dated **07/27/2026** plus PM confirmations.
+47 active jobs, job-list report dated **07/27/2026** plus PM confirmations
+(latest: TP data + the voiding of 25144, confirmed 08/06/2026).
 Every field below traces to that sheet. Nothing is invented; anything the
 sheet left blank is recorded as a flag rather than filled with a guess.
 
@@ -175,8 +176,8 @@ it shows the estimated completion date. **Do not invent progress values.**
 ### Teams are the project managers
 
 `public/data/teams.json` — `[{ "id", "name", "color" }]`, one entry per PM.
-Current split: JJ 12 · RP 10 · TP 7 · MK 4 · JB 4 · RJ 4 · RC 1 ·
-SB 2 (Arizona) · NG 2 · DD 1 · Dave Brown 1 = **48**.
+Current split: JJ 12 · RP 10 · TP 6 · MK 4 · JB 4 · RJ 4 · RC 1 ·
+SB 2 (Arizona) · NG 2 · DD 1 · Dave Brown 1 = **47**.
 Names are the initials from the sheet — replace them with full names as
 they're confirmed. Marker colour, legend swatch, and index dot all come
 from here.
@@ -186,7 +187,9 @@ rulings Kalb made after it was printed:
 - **RJ says 3** above a block of five rows. One of those rows (26111
   Veritext) carries `RC` in its own PM cell and is filed under RC here; the
   25126 rows collapse to one. RJ is **4**.
-- **TP says 8**, but 25126 moved to RJ, so TP is **7**.
+- **TP says 8**, but 25126 moved to RJ and 25144 (Teriyaki Madness
+  Downtown CC) was voided by Kalb on 08/06/2026 and removed from the
+  atlas entirely, so TP is **6**.
 
 ## 6. Feature list (what "done" means)
 
@@ -240,7 +243,11 @@ note appears in an amber box in its detail panel.
    Suite 350 still unverified.
 3. **RP's 10 Northern Nevada jobs** have no estimated completion or square
    footage on the sheet. They show as In Progress with the dates blank.
-4. **TP's 8 jobs** have blank completion/sq ft cells on the sheet.
+4. ~~TP's blank completion/sq ft cells~~ — **resolved 08/06/2026**, PM
+   confirmations: 26108 (09/07/2026 · 6,254 sf), 24139 (11/23/2026 ·
+   28,500 sf), 24136 (09/12/2026 · 71.32 acres, sitework), 24138
+   (completed · 2,694 sf), 24132 (10/26/2026 · 28,500 sf), 26110
+   (12/21/2026 · 4,643 sf). 25144 was voided, not filled in.
 5. **Arizona (SB)** — 25900 superintendent conflict (MM vs Cliff Smith),
    26900 superintendent unverified; both missing dates and square footage.
 6. **B7035 Light and Wonder** — project type, superintendent, completion and

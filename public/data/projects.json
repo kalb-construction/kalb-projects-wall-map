@@ -574,15 +574,14 @@
     "projectType": "TI Office",
     "team": "tp",
     "superintendent": "JEJ",
-    "status": "In Progress",
+    "status": "Closeout",
     "year": 2026,
     "featured": false,
     "description": "TI Office in Henderson. Completion date not yet on file.",
     "heroImage": null,
-    "flags": [
-      "Est. completion blank on the PM sheet",
-      "Square footage blank on the PM sheet"
-    ]
+    "estCompletion": "09/07/2026",
+    "estCompletionDate": "2026-09-07",
+    "sqFt": 6254
   },
   {
     "id": "24139",
@@ -605,10 +604,9 @@
     "siteName": "Palm Eastern Campus",
     "description": "GU Other in Las Vegas. Completion date not yet on file.",
     "heroImage": null,
-    "flags": [
-      "Est. completion blank on the PM sheet",
-      "Square footage blank on the PM sheet"
-    ]
+    "estCompletion": "11/23/2026",
+    "estCompletionDate": "2026-11-23",
+    "sqFt": 28500
   },
   {
     "id": "24136",
@@ -624,7 +622,7 @@
     "projectType": "GU Other",
     "team": "tp",
     "superintendent": "JV (Justin Volker)",
-    "status": "In Progress",
+    "status": "Closeout",
     "year": 2024,
     "featured": false,
     "siteId": "palm-eastern",
@@ -632,10 +630,11 @@
     "description": "GU Other in Las Vegas. Completion date not yet on file.",
     "heroImage": null,
     "flags": [
-      "Co-managed with CS",
-      "Est. completion blank on the PM sheet",
-      "Square footage blank on the PM sheet"
-    ]
+      "Co-managed with CS"
+    ],
+    "estCompletion": "09/12/2026",
+    "estCompletionDate": "2026-09-12",
+    "sqFtNote": "71.32 acres (sitework)"
   },
   {
     "id": "24138",
@@ -651,7 +650,7 @@
     "projectType": "GU Industrial",
     "team": "tp",
     "superintendent": "JV (Justin Volker)",
-    "status": "In Progress",
+    "status": "Complete",
     "year": 2024,
     "featured": false,
     "siteId": "palm-eastern",
@@ -659,10 +658,11 @@
     "description": "GU Industrial in Las Vegas. Completion date not yet on file.",
     "heroImage": null,
     "flags": [
-      "Co-managed with CS",
-      "Est. completion blank on the PM sheet",
-      "Square footage blank on the PM sheet"
-    ]
+      "Co-managed with CS"
+    ],
+    "progress": 100,
+    "estCompletion": "Completed",
+    "sqFt": 2694
   },
   {
     "id": "24132",
@@ -686,10 +686,11 @@
     "description": "GU Other in Las Vegas. Completion date not yet on file.",
     "heroImage": null,
     "flags": [
-      "Co-managed with CS",
-      "Est. completion blank on the PM sheet",
-      "Square footage blank on the PM sheet"
-    ]
+      "Co-managed with CS"
+    ],
+    "estCompletion": "10/26/2026",
+    "estCompletionDate": "2026-10-26",
+    "sqFt": 28500
   },
   {
     "id": "25126",
@@ -741,34 +742,9 @@
     "featured": false,
     "description": "GU Office in Las Vegas. Completion date not yet on file.",
     "heroImage": null,
-    "flags": [
-      "Est. completion blank on the PM sheet",
-      "Square footage blank on the PM sheet"
-    ]
-  },
-  {
-    "id": "25144",
-    "number": "25144",
-    "name": "Teriyaki Madness Downtown CC",
-    "address": "525 S. Main St",
-    "city": "Las Vegas",
-    "state": "NV",
-    "region": "LV",
-    "lat": 36.166002,
-    "lng": -115.149611,
-    "category": "Restaurant",
-    "projectType": "TI Restaurant/Bar",
-    "team": "tp",
-    "superintendent": "RC",
-    "status": "In Progress",
-    "year": 2025,
-    "featured": false,
-    "description": "TI Restaurant/Bar in Las Vegas. Completion date not yet on file.",
-    "heroImage": null,
-    "flags": [
-      "Est. completion blank on the PM sheet",
-      "Square footage blank on the PM sheet"
-    ]
+    "estCompletion": "12/21/2026",
+    "estCompletionDate": "2026-12-21",
+    "sqFt": 4643
   },
   {
     "id": "25153",
