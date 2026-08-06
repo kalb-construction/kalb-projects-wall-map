@@ -4,6 +4,7 @@ import type { Map as MLMap, Marker, StyleSpecification } from 'maplibre-gl';
 import type { Project } from '../types';
 import type { BBox } from '../lib/regions';
 import { setBearing } from '../lib/bearing';
+import { addHeatLayer } from '../lib/heat';
 
 /**
  * Real-world map engine: MapLibre GL with a custom style built on the most
@@ -355,6 +356,14 @@ export function MapLibreView({
       syncTerrain();
       onLoadedRef.current();
     });
+    // The activity glow rides on 'styledata', not 'load': 'load' waits for
+    // tiles, so an unreachable tile host would silently keep the glow off.
+    // addHeatLayer is idempotent, so repeat firings are free.
+    const tryHeat = () => addHeatLayer(map, projects);
+    map.on('styledata', tryHeat);
+    tryHeat();
+    // Diagnostics handle (used by ?diag tooling and headless checks).
+    (window as unknown as { __atlasMap?: unknown }).__atlasMap = map;
     // Never let a failed tile/style fetch wedge the boot screen.
     map.on('error', () => onLoadedRef.current());
 

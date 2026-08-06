@@ -200,6 +200,10 @@ rulings Kalb made after it was printed:
 
 - Real map, real coordinates, three view modes (light streets / 3D city with
   lighting / satellite) and a north-up compass.
+- **Activity glow** — a translucent Kalb-red density layer under the pins,
+  brighter where active (non-Complete) jobs concentrate. Computed from the
+  real pins (`src/lib/heat.ts`); no invented boundaries or territory
+  polygons. Fades out entirely past z13.5 so street level stays clean.
 - Markers: Kalb pin, team-coloured, pulse when selected, label at zoom.
 - Multi-project sites collapse to one counted marker that opens a list popup.
 - Cinematic fly-to on selection, then a slow drone orbit until touched.

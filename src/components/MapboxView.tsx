@@ -3,6 +3,7 @@ import type { Project } from '../types';
 import type { BBox } from '../lib/regions';
 import { setBearing } from '../lib/bearing';
 import { clampDevicePixelRatio } from '../lib/dpr';
+import { addHeatLayer } from '../lib/heat';
 
 /**
  * Premium engine: Mapbox GL JS v3 with the "Standard" style — live vector
@@ -253,16 +254,23 @@ export function MapboxView({
         attributionControl: false
       });
       mapRef.current = map;
+      // Diagnostics handle (used by ?diag tooling and headless checks).
+      (window as unknown as { __atlasMap?: unknown }).__atlasMap = map;
 
       map.on('load', () => {
         setReady(true);
         onLoadedRef.current();
       });
       // Lighting presets exist only on the Standard (3D) style.
+      // style.load also re-fires after every setStyle (view switch), which
+      // wipes custom layers — so the activity glow is re-added here.
       map.on('style.load', () => {
         styleOkRef.current = true;
         if (viewRef.current === 'city3d') applyLight(map, lightIdxRef.current);
       });
+      // Glow on 'styledata' (fires on initial style AND after every
+      // setStyle, before tiles settle); addHeatLayer is idempotent.
+      map.on('styledata', () => addHeatLayer(map, projects));
       map.on('error', (e: any) => {
         const msg = String(
           e?.error?.message ?? e?.error?.status ?? e?.message ?? 'unknown error'
