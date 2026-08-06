@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "engines": {
-    "node": ">=20"
+    "node": "22.x"
   },
   "description": "Kalb Construction \u2014 interactive wall-map project atlas for large touch displays",
   "type": "module",

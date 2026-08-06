@@ -16,14 +16,39 @@ Checked against a clean clone, running exactly what Vercel runs
 | `npm run build` (`tsc -b && vite build`) | passes, ~20 s |
 | Build output | `dist/` — 5.1 MB, includes `data/`, `brand/`, `renders/`, `tools/` |
 | `dist/data/projects.json` | 49 jobs |
-| Node version | pinned via `engines.node` `>=20` in package.json |
+| Node version | pinned via `engines.node` `22.x` in package.json |
 | Config | `vercel.json` present — framework, build command, output dir, cache headers |
 | Secrets | `.env` is git-ignored; no token is committed |
 | Hardcoded hosts | none — no `localhost` anywhere in `src/` or `public/` |
 | Routing | hash-based (`#/project/…`), so no rewrite rules are needed |
 
-The only build warning is "chunks larger than 500 kB" — that's the Mapbox
-library, expected, and harmless on a wall display over office wifi.
+### Build warnings you can ignore
+
+Three show up in Vercel's build log and none of them need action:
+
+- **"chunks larger than 500 kB"** — that's the Mapbox library. Expected, and
+  harmless on a wall display over office wifi.
+- **`npm warn deprecated esri-loader@3.7.0`** and **`jpeg-exif@1.1.4`** —
+  neither is ours. Both arrive transitively through `deck.gl` →
+  `@deck.gl/arcgis` / `@arcgis/core`, which comes along with deck.gl even
+  though we only use its 3D-tiles layer. Removing them means dropping
+  deck.gl, i.e. dropping the optional Google Photorealistic 3D Tiles view.
+  Not worth it. Check `npm ls esri-loader jpeg-exif` to confirm.
+- **`Export "WebGLDevice" … was reexported through module`** — a luma.gl
+  packaging notice from the same dependency. Cosmetic.
+
+### Project Settings vs vercel.json
+
+Vercel may show *"Configuration Settings in the current Production deployment
+differ from your current Project Settings"* on the Settings → Build page.
+That's because `vercel.json` in this repo already declares the framework,
+build command, and output directory, and the dashboard has an override
+switched on for Output Directory as well.
+
+`vercel.json` wins, so the banner is cosmetic — but keep the config in the
+repo, not the dashboard: **Settings → Build and Deployment → turn the
+Output Directory *Override* toggle off** and leave every other override off
+too. Then there is exactly one place that defines how this site builds.
 
 ---
 
