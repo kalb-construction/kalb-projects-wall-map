@@ -54,8 +54,15 @@ updatable by Kalb staff without a developer.
 - Camera bearing lives in an external store (`src/lib/bearing.ts`), **not**
   React state — a rotating map must not re-render the component tree.
 - Panels (`ProjectIndex`, `RegionNav`, `Dock`, `TopBar`) are `memo`ized.
-- Renderers run with `antialias: false` and `fadeDuration: 0`; MapLibre caps
-  `pixelRatio` at 1.5 so 4K displays don't render 4× the pixels.
+- Renderers run with `antialias: false` and `fadeDuration: 0`, and **both**
+  engines cap render resolution at 1.5× (`src/lib/dpr.ts`) so hi-DPI
+  displays don't render up to 4× the pixels. MapLibre takes it as an
+  option; Mapbox has none, so `window.devicePixelRatio` itself is clamped
+  before the map is constructed. Regression tell-tale: wheel-zoom smearing
+  into stretched-frame blur on the wall but not on a dev laptop.
+- The site-cluster popup tracks its anchor with direct DOM transform
+  writes, never `setState` — a popup open during camera motion must not
+  re-render React per frame.
 - 3D terrain only switches on above zoom 9.5 (below that the DEM mesh tears
   the basemap into shards).
 - Before claiming a perf fix: measure or reason about what work happens

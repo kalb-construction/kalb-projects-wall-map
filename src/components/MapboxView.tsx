@@ -1,7 +1,8 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import type { Project } from '../types';
 import type { BBox } from '../lib/regions';
 import { setBearing } from '../lib/bearing';
+import { clampDevicePixelRatio } from '../lib/dpr';
 
 /**
  * Premium engine: Mapbox GL JS v3 with the "Standard" style — live vector
@@ -152,7 +153,7 @@ export function MapboxView({
   const unitsRef = useRef<MarkerUnit[]>([]);
   const [ready, setReady] = useState(false);
   const [sitePopup, setSitePopup] = useState<SiteGroup | null>(null);
-  const [popupPos, setPopupPos] = useState<{ x: number; y: number } | null>(null);
+  const popupElRef = useRef<HTMLDivElement | null>(null);
   const [lightIdx, setLightIdx] = useState(2); // default: dusk
   const [view, setView] = useState<ViewMode>('streets');
   const orbitRef = useRef<number | null>(null);
@@ -228,6 +229,13 @@ export function MapboxView({
         return;
       }
 
+      // Same 1.5 render-resolution cap the MapLibre engine has. Mapbox has
+      // no pixelRatio option — it reads window.devicePixelRatio per frame —
+      // so the property itself is clamped before the map is constructed.
+      // Without this a hi-DPI wall renders ~1.8× the pixels and wheel-zoom
+      // degrades into stretched-frame blur.
+      clampDevicePixelRatio();
+
       const map = new mapboxgl.Map({
         container,
         style: STYLES[viewRef.current],
@@ -240,6 +248,8 @@ export function MapboxView({
         antialias: false,
         // No label cross-fade: fewer full-frame repaints while panning.
         fadeDuration: 0,
+        // No per-frame telemetry collection on a kiosk.
+        performanceMetricsCollection: false,
         attributionControl: false
       });
       mapRef.current = map;
@@ -379,15 +389,17 @@ export function MapboxView({
   }, []);
 
   // ---- site popup tracking -------------------------------------------------
-  useEffect(() => {
+  // Position is written straight to the DOM: a `setState` here would
+  // re-render React on every frame of camera motion while a popup is open.
+  // Layout-timed so the popup never paints un-positioned at 0,0.
+  useLayoutEffect(() => {
     const map = mapRef.current;
-    if (!map || !sitePopup) {
-      setPopupPos(null);
-      return;
-    }
+    if (!map || !sitePopup) return;
     const update = () => {
+      const el = popupElRef.current;
+      if (!el) return;
       const pt = map.project([sitePopup.lng, sitePopup.lat]);
-      setPopupPos({ x: pt.x, y: pt.y });
+      el.style.transform = `translate(${pt.x}px, ${pt.y}px) translate(-50%, 18px)`;
     };
     update();
     map.on('move', update);
@@ -510,10 +522,10 @@ export function MapboxView({
     <div className="map-shell">
       <div ref={containerRef} className="map-stage" />
 
-      {sitePopup && popupPos && (
+      {sitePopup && (
         <div
+          ref={popupElRef}
           className="site-pop"
-          style={{ left: popupPos.x, top: popupPos.y }}
           role="menu"
           aria-label={`${sitePopup.siteName} projects`}
         >

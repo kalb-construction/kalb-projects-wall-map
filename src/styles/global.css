@@ -277,7 +277,12 @@ button {
 /* site popup (multi-project list) */
 .site-pop {
   position: absolute;
+  /* Anchored at 0,0 — actual position arrives as a JS-written transform
+     (per-frame DOM write; React must not re-render while the map moves). */
+  left: 0;
+  top: 0;
   transform: translate(-50%, 18px);
+  will-change: transform;
   min-width: 280px;
   background: var(--glass);
   border: 1px solid var(--glass-border);

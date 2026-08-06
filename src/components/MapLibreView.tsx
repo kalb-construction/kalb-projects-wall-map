@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import * as maplibregl from 'maplibre-gl';
 import type { Map as MLMap, Marker, StyleSpecification } from 'maplibre-gl';
 import type { Project } from '../types';
@@ -262,7 +262,7 @@ export function MapLibreView({
   const mapRef = useRef<MLMap | null>(null);
   const unitsRef = useRef<MarkerUnit[]>([]);
   const [sitePopup, setSitePopup] = useState<SiteGroup | null>(null);
-  const [popupPos, setPopupPos] = useState<{ x: number; y: number } | null>(null);
+  const popupElRef = useRef<HTMLDivElement | null>(null);
   const [satellite, setSatellite] = useState(false);
   const [google3d, setGoogle3d] = useState(false);
   const [g3dError, setG3dError] = useState(false);
@@ -481,15 +481,17 @@ export function MapLibreView({
   }, []);
 
   // ---- keep the site popup glued to its anchor ---------------------------
-  useEffect(() => {
+  // Position is written straight to the DOM: a `setState` here would
+  // re-render React on every frame of camera motion while a popup is open.
+  // Layout-timed so the popup never paints un-positioned at 0,0.
+  useLayoutEffect(() => {
     const map = mapRef.current;
-    if (!map || !sitePopup) {
-      setPopupPos(null);
-      return;
-    }
+    if (!map || !sitePopup) return;
     const update = () => {
+      const el = popupElRef.current;
+      if (!el) return;
       const pt = map.project([sitePopup.lng, sitePopup.lat]);
-      setPopupPos({ x: pt.x, y: pt.y });
+      el.style.transform = `translate(${pt.x}px, ${pt.y}px) translate(-50%, 18px)`;
     };
     update();
     map.on('move', update);
@@ -679,10 +681,10 @@ export function MapLibreView({
     <div className="map-shell">
       <div ref={containerRef} className="map-stage" />
 
-      {sitePopup && popupPos && (
+      {sitePopup && (
         <div
+          ref={popupElRef}
           className="site-pop"
-          style={{ left: popupPos.x, top: popupPos.y }}
           role="menu"
           aria-label={`${sitePopup.siteName} projects`}
         >
