@@ -1968,7 +1968,8 @@ button {
 .diag {
   position: fixed;
   left: 14px;
-  bottom: 14px;
+  /* clear of the bottom control bar */
+  bottom: 78px;
   z-index: 40;
   padding: 6px 12px;
   border-radius: 8px;
