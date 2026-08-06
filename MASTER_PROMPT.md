@@ -111,7 +111,7 @@ within 9 seconds and explains itself in a toast.
 ## 5. Data model
 
 **Source of record:** *Kalb Industries — Job List by Project Manager*,
-49 active jobs, job-list report dated **07/27/2026** plus PM confirmations.
+48 active jobs, job-list report dated **07/27/2026** plus PM confirmations.
 Every field below traces to that sheet. Nothing is invented; anything the
 sheet left blank is recorded as a flag rather than filled with a guess.
 
@@ -168,16 +168,18 @@ it shows the estimated completion date. **Do not invent progress values.**
 ### Teams are the project managers
 
 `public/data/teams.json` — `[{ "id", "name", "color" }]`, one entry per PM.
-Current split (matches the sheet exactly): JJ 12 · RP 10 · TP 8 · MK 4 ·
-JB 4 · RJ 4 · RC 1 · SB 2 (Arizona) · NG 2 · DD 1 · Dave Brown 1 = **49**.
+Current split: JJ 12 · RP 10 · TP 7 · MK 4 · JB 4 · RJ 4 · RC 1 ·
+SB 2 (Arizona) · NG 2 · DD 1 · Dave Brown 1 = **48**.
 Names are the initials from the sheet — replace them with full names as
 they're confirmed. Marker colour, legend swatch, and index dot all come
 from here.
 
-The sheet prints "RJ — 3 jobs" above a block of five rows. That header is
-stale, not wrong-by-one: it predates Rise and Ridge being added, and one of
-the five rows (26111 Veritext) carries `RC` in its own PM cell. Read as
-**RJ 4 + RC 1** and every section total reconciles to 49.
+Two of the sheet's own section headers are now out of date, both because of
+rulings Kalb made after it was printed:
+- **RJ says 3** above a block of five rows. One of those rows (26111
+  Veritext) carries `RC` in its own PM cell and is filed under RC here; the
+  25126 rows collapse to one. RJ is **4**.
+- **TP says 8**, but 25126 moved to RJ, so TP is **7**.
 
 ## 6. Feature list (what "done" means)
 
@@ -217,18 +219,15 @@ the five rows (26111 Veritext) carries `RC` in its own PM cell. Read as
 Everything below is flagged in-app: open a project and any data-quality
 note appears in an amber box in its detail panel.
 
-1. **Job number 25126 is used twice — BLOCKING.** Two different projects,
-   two addresses, two PMs:
-   - *Horizon Ridge Office Park* — 2551 W. Horizon Ridge Pkwy, Bldg A, PM **TP**,
-     super DM. No completion date, no sq ft on the sheet.
-   - *Rise and Ridge* — 2561 W. Horizon Ridge Pkwy, PM **RJ**, super DM,
-     est. 10/01/2026, 17,984 sf (Bldg A 6,032 + Bldg B 11,952).
+1. ~~Job number 25126 used twice~~ — **resolved by Kalb:** it is one job and
+   it belongs to **RJ**. The sheet's two rows — *Horizon Ridge Office Park*
+   (PM TP, 2551 Bldg A) and *Rise and Ridge* (PM RJ, 2561) — are merged into
+   a single record: *Rise and Ridge (Horizon Ridge Office Park)*, 17,984 sf
+   across Bldg A 6,032 + Bldg B 11,952, est. 10/01/2026, super DM.
 
-   Both are carried as separate jobs (ids `25126` and `25126-rise-ridge`)
-   because the job number is the unique key and one of the two numbers is
-   wrong. Both detail panels show the conflict in an amber flag. **Kalb must
-   supply the correct number for one of them**; renaming the id then makes
-   the flags go away.
+   Consequence to feed back to the sheet: **TP now shows 7 jobs, not the 8
+   its section header claims**, because 25126 left that block. The record
+   keeps a flag saying so.
 2. **Job 26111 (Veritext)** sits inside the RJ block on the sheet but its own
    PM cell reads **RC**. Assigned to RC, which is its own legend entry.
    Suite 350 still unverified.
