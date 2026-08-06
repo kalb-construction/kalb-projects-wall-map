@@ -1,0 +1,38 @@
+{
+  "name": "Kalb Construction — Project Atlas",
+  "short_name": "Project Atlas",
+  "description": "Interactive map of every active Kalb Construction project.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "landscape",
+  "background_color": "#0c0b0a",
+  "theme_color": "#0c0b0a",
+  "categories": ["business", "productivity"],
+  "icons": [
+    {
+      "src": "./brand/app/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./brand/app/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./brand/app/icon-maskable-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "./brand/app/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
