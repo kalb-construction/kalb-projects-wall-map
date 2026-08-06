@@ -2,7 +2,10 @@
   "name": "kalb-project-atlas",
   "private": true,
   "version": "1.0.0",
-  "description": "Kalb Construction — interactive wall-map project atlas for large touch displays",
+  "engines": {
+    "node": ">=20"
+  },
+  "description": "Kalb Construction \u2014 interactive wall-map project atlas for large touch displays",
   "type": "module",
   "scripts": {
     "dev": "vite",

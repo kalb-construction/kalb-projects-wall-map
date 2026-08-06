@@ -5,6 +5,28 @@ free and redeploys automatically whenever the repo changes.
 
 ---
 
+## Deploy readiness — verified
+
+Checked against a clean clone, running exactly what Vercel runs
+(`npm ci` → `npm run build`) on Node 22:
+
+| Check | Result |
+|---|---|
+| `npm ci` from `package-lock.json` | 424 packages, no errors |
+| `npm run build` (`tsc -b && vite build`) | passes, ~20 s |
+| Build output | `dist/` — 5.1 MB, includes `data/`, `brand/`, `renders/`, `tools/` |
+| `dist/data/projects.json` | 49 jobs |
+| Node version | pinned via `engines.node` `>=20` in package.json |
+| Config | `vercel.json` present — framework, build command, output dir, cache headers |
+| Secrets | `.env` is git-ignored; no token is committed |
+| Hardcoded hosts | none — no `localhost` anywhere in `src/` or `public/` |
+| Routing | hash-based (`#/project/…`), so no rewrite rules are needed |
+
+The only build warning is "chunks larger than 500 kB" — that's the Mapbox
+library, expected, and harmless on a wall display over office wifi.
+
+---
+
 ## One-time setup
 
 ### 1. Create the Vercel account
@@ -41,12 +63,14 @@ with it you get the smooth vector map, 3D city view, and lighting presets.
 Click **Deploy**. First build takes ~1–2 minutes and you get a URL like
 `kalb-projects-wall-map.vercel.app`.
 
-### 5. Pick the branch Vercel builds
-By default Vercel deploys the repo's default branch. This work currently
-lives on `claude/kalb-construction-wall-map-4ifnh8`, so either:
-- merge that branch into `main` (recommended once you're happy with it), or
-- **Settings → Git → Production Branch** → set it to
-  `claude/kalb-construction-wall-map-4ifnh8`.
+### 5. Branch — nothing to do
+Vercel builds the repository's **default branch**, and this repo's default
+branch is already `claude/kalb-construction-wall-map-4ifnh8` (it is the only
+branch). So the import picks up the right code with no settings change.
+
+If the repo ever gains a `main` branch and that becomes the default, set
+**Settings → Git → Production Branch** back to whichever branch holds the
+live map.
 
 ---
 
