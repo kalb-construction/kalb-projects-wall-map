@@ -2,6 +2,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import type { Project } from '../types';
 import type { BBox } from '../lib/regions';
 import { setBearing } from '../lib/bearing';
+import { toggleFullscreen } from '../lib/kiosk';
 import { clampDevicePixelRatio } from '../lib/dpr';
 import { addHeatLayer } from '../lib/heat';
 
@@ -292,6 +293,12 @@ export function MapboxView({
         onBackgroundTapRef.current();
       });
 
+      // Entering/leaving fullscreen resizes the viewport; the GL canvas
+      // must be told or it stays at the old size.
+      const onViewportChange = () => map.resize();
+      window.addEventListener('resize', onViewportChange);
+      document.addEventListener('fullscreenchange', onViewportChange);
+
       const cancelOrbit = () => stopOrbit();
       container.addEventListener('pointerdown', cancelOrbit, { capture: true });
       container.addEventListener('wheel', cancelOrbit, {
@@ -376,6 +383,8 @@ export function MapboxView({
 
       cleanup = () => {
         stopOrbit();
+        window.removeEventListener('resize', onViewportChange);
+        document.removeEventListener('fullscreenchange', onViewportChange);
         container.removeEventListener('pointerdown', cancelOrbit, {
           capture: true
         } as EventListenerOptions);
@@ -601,6 +610,23 @@ export function MapboxView({
           onClick={cycleView}
         >
           {VIEW_LABEL[view]}
+        </button>
+        <button
+          className="ctl-btn ctl-full"
+          aria-label="Toggle full screen"
+          title="Full screen"
+          onClick={() => void toggleFullscreen()}
+        >
+          <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true">
+            <path
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"
+            />
+          </svg>
         </button>
         <button className="ctl-btn ctl-home" aria-label="Reset view" onClick={home}>
           ⌂

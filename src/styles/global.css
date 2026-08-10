@@ -31,6 +31,11 @@
 
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --shadow-panel: 0 24px 80px rgba(0, 0, 0, 0.65);
+
+  /* TV overscan inset (see lib/kiosk.ts). 0 unless ?overscan=N is set;
+     every chrome edge offset adds it so nothing is clipped by a TV that
+     crops its own picture. The map itself stays full-bleed. */
+  --oi: 0px;
 }
 
 * {
@@ -342,8 +347,8 @@ button {
 
 .region-nav {
   position: absolute;
-  left: 20px;
-  top: 104px;
+  left: calc(20px + var(--oi));
+  top: calc(104px + var(--oi));
   width: 236px;
   background: var(--glass-solid);
   border: 1px solid var(--glass-edge);
@@ -404,8 +409,8 @@ button {
 /* map controls */
 .map-controls {
   position: absolute;
-  right: 20px;
-  bottom: 20px;
+  right: calc(20px + var(--oi));
+  bottom: calc(20px + var(--oi));
   display: flex;
   flex-direction: row;
   gap: 8px;
@@ -474,7 +479,8 @@ button {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 20px;
+  padding: var(--oi) calc(20px + var(--oi)) 0;
+  height: calc(84px + var(--oi));
   z-index: 10;
   pointer-events: none;
 }
@@ -605,7 +611,8 @@ button {
   display: flex;
   align-items: center;
   gap: 20px;
-  padding: 10px 20px 14px;
+  padding: 10px calc(20px + var(--oi)) calc(14px + var(--oi));
+  height: calc(78px + var(--oi));
   background: none;
   pointer-events: none;
   z-index: 8;
@@ -877,8 +884,8 @@ button {
 
 .detail-card {
   position: absolute;
-  left: 20px;
-  top: 104px;
+  left: calc(20px + var(--oi));
+  top: calc(104px + var(--oi));
   width: 396px;
   max-height: calc(100% - 200px);
   display: flex;
@@ -1561,9 +1568,9 @@ button {
 
 .index-rail {
   position: absolute;
-  top: 104px;
-  right: 20px;
-  bottom: 88px;
+  top: calc(104px + var(--oi));
+  right: calc(20px + var(--oi));
+  bottom: calc(88px + var(--oi));
   width: 320px;
   display: flex;
   flex-direction: column;
@@ -1967,9 +1974,9 @@ button {
 /* ---------- ?diag=1 on-screen diagnostics ---------- */
 .diag {
   position: fixed;
-  left: 14px;
+  left: calc(14px + var(--oi));
   /* clear of the bottom control bar */
-  bottom: 78px;
+  bottom: calc(78px + var(--oi));
   z-index: 40;
   padding: 6px 12px;
   border-radius: 8px;

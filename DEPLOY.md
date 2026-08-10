@@ -144,6 +144,52 @@ chrome.exe --kiosk --noerrdialogs --disable-pinch-zoom https://<your-vercel-url>
 Then disable OS sleep and screen blanking. The app's own idle attract loop
 takes over after 90 seconds and wakes on any touch.
 
+There is also a **full-screen button** in the bottom-right control cluster,
+so a display with no keyboard can go edge-to-edge with one tap.
+
+### Making it fit a TV exactly
+
+Work through these in order; the first two matter most and are settings on
+the TV and the PC, not in the app.
+
+**1. Turn off the TV's overscan.** Most TVs zoom the picture ~3 % and crop
+the edges — that is the usual reason a page "doesn't quite fit". In the TV's
+picture menu find the aspect/size setting and choose the 1:1 option:
+
+| Brand | Setting |
+|---|---|
+| Samsung | Picture Size → **Screen Fit** |
+| LG | Aspect Ratio → **Just Scan** |
+| Sony | Screen → Display Area → **Full Pixel** |
+| Vizio / TCL / Hisense | Aspect / Picture Size → **Native** or **Dot by Dot** |
+
+Also set the TV's picture mode to **Game** or **PC** — it disables motion
+smoothing, which otherwise adds visible lag when the map pans.
+
+**2. Match the PC's output to the panel.** In Windows, Settings → System →
+Display: set **Resolution** to the TV's native resolution (3840×2160 for a
+4K panel) and **Scale** to 100 %. Any other resolution makes the TV rescale
+the image, which is what looks soft.
+
+**3. Only if the TV still crops** — some sets can't disable overscan. Add
+`?overscan=3` to the kiosk URL. It insets all the chrome (top bar, index
+rail, buttons) by 3 % of the screen so nothing is cut off, while the map
+still bleeds edge to edge. Use any value 0–12; 3 suits most TVs.
+
+**4. Sharpness vs smoothness.** The app renders at up to 1.5× the CSS
+resolution — tuned so a hi-DPI screen stays fluid. On a 4K TV at 100 %
+scaling this already means full native pixels, so there is nothing to
+change. If you run Windows scaling above 150 % and want maximum sharpness
+over frame rate, add `?dpr=2`; on a weak PC, `?dpr=1` is the cheapest.
+
+Parameters combine: `…vercel.app/?overscan=3&dpr=2`. Add `&diag=1` while
+setting up to see the live engine, resolution ratio, and frame rate on
+screen, then drop it.
+
+**Text too small from across the room?** Use the browser's own zoom
+(Ctrl and `+`). Chrome remembers it per site, and it scales the map labels
+along with the interface — which is why it beats a fixed setting in the app.
+
 **Offline behaviour:** the app shell is cached by the browser, but map tiles
 stream from the internet. If the office loses connectivity the chrome, index,
 and project data still render; the basemap will be blank until it's back.

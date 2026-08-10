@@ -4,6 +4,7 @@ import type { Map as MLMap, Marker, StyleSpecification } from 'maplibre-gl';
 import type { Project } from '../types';
 import type { BBox } from '../lib/regions';
 import { setBearing } from '../lib/bearing';
+import { toggleFullscreen, DPR_CAP } from '../lib/kiosk';
 import { addHeatLayer } from '../lib/heat';
 
 /**
@@ -340,7 +341,7 @@ export function MapLibreView({
       bearing: HOME.bearing,
       maxPitch: 60,
       minZoom: 3,
-      pixelRatio: Math.min(window.devicePixelRatio || 1, 1.5),
+      pixelRatio: Math.min(window.devicePixelRatio || 1, DPR_CAP),
       maxTileCacheSize: 2048,
       refreshExpiredTiles: false,
       fadeDuration: 0,
@@ -371,6 +372,10 @@ export function MapLibreView({
       setSitePopup(null);
       onBackgroundTapRef.current();
     });
+
+    const onViewportChange = () => map.resize();
+    window.addEventListener('resize', onViewportChange);
+    document.addEventListener('fullscreenchange', onViewportChange);
 
     // Any manual gesture cancels the cinematic orbit.
     const cancelOrbit = () => stopOrbit();
@@ -474,6 +479,8 @@ export function MapLibreView({
 
     return () => {
       stopOrbit();
+      window.removeEventListener('resize', onViewportChange);
+      document.removeEventListener('fullscreenchange', onViewportChange);
       container.removeEventListener('pointerdown', cancelOrbit, {
         capture: true
       } as EventListenerOptions);
@@ -766,6 +773,23 @@ export function MapLibreView({
             3D
           </button>
         )}
+        <button
+          className="ctl-btn ctl-full"
+          aria-label="Toggle full screen"
+          title="Full screen"
+          onClick={() => void toggleFullscreen()}
+        >
+          <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true">
+            <path
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"
+            />
+          </svg>
+        </button>
         <button className="ctl-btn ctl-home" aria-label="Reset view" onClick={home}>
           ⌂
         </button>

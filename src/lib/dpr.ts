@@ -11,9 +11,11 @@
  * a smooth wheel-zoom and the stretched-frame blur of a GPU-bound map on
  * a 4K wall or a 150–200 % scaled Windows display.
  */
+import { DPR_CAP } from './kiosk';
+
 export const MAX_PIXEL_RATIO = 1.5;
 
-export function clampDevicePixelRatio(max: number = MAX_PIXEL_RATIO): void {
+export function clampDevicePixelRatio(max: number = DPR_CAP): void {
   try {
     // Keep reading the real value through the native getter so monitor
     // moves still register — we only clamp, we don't freeze. Firefox keeps

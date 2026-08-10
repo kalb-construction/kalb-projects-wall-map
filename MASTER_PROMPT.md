@@ -217,6 +217,11 @@ rulings Kalb made after it was printed:
 - Branded boot screen; 90s idle attract loop over featured projects.
 - `/tools/coords.html` — audit every pin against Google Maps and export a
   corrected `projects.json`.
+- TV/kiosk fit: a full-screen button (no keyboard needed) plus URL
+  parameters read in `src/lib/kiosk.ts` — `?overscan=N` insets chrome for
+  TVs that crop their own picture (the map stays full-bleed), `?dpr=N`
+  trades render sharpness against frame rate, `?diag=1` shows the
+  engine/resolution/fps readout. See DEPLOY.md.
 
 ## 7. Working agreement for future changes
 
