@@ -209,9 +209,25 @@ scaling this already means full native pixels, so there is nothing to
 change. If you run Windows scaling above 150 % and want maximum sharpness
 over frame rate, add `?dpr=2`; on a weak PC, `?dpr=1` is the cheapest.
 
-Parameters combine: `…vercel.app/?overscan=3&dpr=2`. Add `&diag=1` while
-setting up to see the live engine, resolution ratio, and frame rate on
-screen, then drop it.
+Parameters combine: `…vercel.app/?overscan=3&dpr=2`.
+
+### Reading the diagnostics
+
+Tap the **Kalb logo three times** to show a large readout across the bottom
+of the screen — no address bar and no keyboard needed, which is the point on
+a TV. Three more taps hide it. `?diag=1` does the same from the URL.
+
+```
+Mapbox  ·  dpr 1  ·  render 1.00×  ·  58 fps  ·  1920×1080
+```
+
+| Field | Means |
+|---|---|
+| engine | `Mapbox` = premium vector map; `MapLibre` = the token isn't reaching the page |
+| `dpr` | the display's device pixel ratio |
+| `render` | how many pixels per CSS pixel the map actually draws. Below `dpr` means it is upscaling — raise it with `?dpr=` if the picture looks soft |
+| `fps` | frame rate. Watch it **while panning**, not at rest |
+| last | the CSS viewport, useful for confirming the browser really is full-screen |
 
 **Text too small from across the room?** Use the browser's own zoom
 (Ctrl and `+`). Chrome remembers it per site, and it scales the map labels

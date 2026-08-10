@@ -1971,22 +1971,28 @@ button {
   margin-top: 4px;
 }
 
-/* ---------- ?diag=1 on-screen diagnostics ---------- */
+/* ---------- diagnostics readout ----------
+   Toggled by ?diag=1 or three taps on the Kalb mark. Sized to be read
+   from across a lobby, and centred so a TV cropping its own edges can't
+   hide it (which is exactly what a diagnostic must never do). */
 .diag {
   position: fixed;
-  left: calc(14px + var(--oi));
-  /* clear of the bottom control bar */
-  bottom: calc(78px + var(--oi));
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: calc(96px + var(--oi));
   z-index: 40;
-  padding: 6px 12px;
-  border-radius: 8px;
-  background: rgba(12, 11, 10, 0.88);
-  border: 1px solid var(--glass-border);
-  color: var(--sand);
+  padding: 14px 28px;
+  border-radius: 12px;
+  background: rgba(12, 11, 10, 0.96);
+  border: 2px solid var(--red);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+  color: #fff;
   font-family: ui-monospace, 'Cascadia Mono', Consolas, monospace;
-  font-size: 12px;
-  letter-spacing: 0.03em;
+  font-size: 26px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
   pointer-events: none;
-  min-height: 27px;
-  min-width: 40px;
+  min-height: 58px;
+  min-width: 120px;
 }

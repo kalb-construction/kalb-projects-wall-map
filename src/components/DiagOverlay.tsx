@@ -29,8 +29,9 @@ export function DiagOverlay({ engine }: { engine: string }) {
           c && c.clientWidth > 0 ? (c.width / c.clientWidth).toFixed(2) : '—';
         if (ref.current) {
           ref.current.textContent =
-            `${engine} · dpr ${window.devicePixelRatio} · ` +
-            `render ${ratio}× · ${fps} fps`;
+            `${engine}  ·  dpr ${window.devicePixelRatio}  ·  ` +
+            `render ${ratio}×  ·  ${fps} fps  ·  ` +
+            `${window.innerWidth}×${window.innerHeight}`;
         }
       }
       raf = requestAnimationFrame(tick);

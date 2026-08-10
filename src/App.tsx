@@ -107,6 +107,7 @@ function Atlas({ projects, teams }: { projects: Project[]; teams: Team[] }) {
   const [activeTeams, setActiveTeams] = useState<Set<string>>(new Set());
   const [northSignal, setNorthSignal] = useState(0);
   const [toast, setToast] = useState<string | null>(null);
+  const [diagOn, setDiagOn] = useState(SHOW_DIAG);
   const toastTimer = useRef<number | undefined>(undefined);
   const signalCounter = useRef(0);
   const idle = useIdle(IDLE_MS);
@@ -312,6 +313,7 @@ function Atlas({ projects, teams }: { projects: Project[]; teams: Team[] }) {
         shownCount={shownProjects.length}
         cityCount={cityCount}
         onSearch={() => setSearchOpen(true)}
+        onToggleDiag={() => setDiagOn((v) => !v)}
       />
 
       <RegionNav
@@ -359,7 +361,7 @@ function Atlas({ projects, teams }: { projects: Project[]; teams: Team[] }) {
 
       {toast && <div className="toast">{toast}</div>}
 
-      {SHOW_DIAG && <DiagOverlay engine={useMapbox ? 'Mapbox' : 'MapLibre'} />}
+      {diagOn && <DiagOverlay engine={useMapbox ? 'Mapbox' : 'MapLibre'} />}
 
       {showAttract && <IdleAttract featured={featured} />}
 

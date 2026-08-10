@@ -1,4 +1,4 @@
-import { memo } from 'react';
+import { memo, useRef } from 'react';
 import { useClock } from '../lib/useIdle';
 
 interface TopBarProps {
@@ -6,6 +6,8 @@ interface TopBarProps {
   shownCount: number;
   cityCount: number;
   onSearch: () => void;
+  /** Three taps on the Kalb mark — the kiosk has no address bar. */
+  onToggleDiag: () => void;
 }
 
 const DAY = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
@@ -14,15 +16,32 @@ const MON = [
   'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'
 ];
 
-function TopBarBase({ totalCount, shownCount, cityCount, onSearch }: TopBarProps) {
+function TopBarBase({
+  totalCount,
+  shownCount,
+  cityCount,
+  onSearch,
+  onToggleDiag
+}: TopBarProps) {
   const now = useClock();
+  const taps = useRef<number[]>([]);
+
+  /** Diagnostics need to be reachable on a display with no keyboard. */
+  const onBrandTap = () => {
+    const t = Date.now();
+    taps.current = [...taps.current, t].filter((x) => t - x < 1500);
+    if (taps.current.length >= 3) {
+      taps.current = [];
+      onToggleDiag();
+    }
+  };
   const hh = now.getHours() % 12 || 12;
   const mm = String(now.getMinutes()).padStart(2, '0');
   const ap = now.getHours() >= 12 ? 'PM' : 'AM';
 
   return (
     <header className="topbar">
-      <div className="topbar-left">
+      <div className="topbar-left" onClick={onBrandTap}>
         <img
           className="topbar-logo"
           src="./brand/kalb-lockup.png"
