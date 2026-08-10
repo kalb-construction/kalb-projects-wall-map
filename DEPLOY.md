@@ -115,6 +115,33 @@ Confirm this with Kalb before sharing the link widely.
 
 ---
 
+## How updates reach every screen
+
+Nobody has to restart anything.
+
+**A window that is already open** — the lobby display, or an installed
+desktop app left running — polls `version.json` every 15 minutes. That file
+carries the build's content hash, so it changes when the code changes and
+*doesn't* when a redeploy produces identical output. When it changes, the
+page reloads **the next time the screen is idle**, so a reload can never
+interrupt somebody mid-look. A machine waking from sleep checks immediately
+rather than waiting out the interval.
+
+**A fresh launch** is handled by cache headers in `vercel.json`:
+`index.html`, `manifest.webmanifest` and `version.json` are `no-cache`
+(revalidated every time), while the hashed files under `/assets` are
+`immutable` — they can be cached forever because a new build gives them new
+filenames.
+
+**Project data** (`data/projects.json`, `data/teams.json`) is `no-store` and
+read at load, so a data edit shows up on the next refresh — no rebuild, and
+the same idle-reload picks it up on the wall within 15 minutes.
+
+The installed desktop app is just Chrome pointed at the same URL, so all of
+the above applies to it identically. There is no separate copy to update.
+
+---
+
 ## Updating content after launch
 
 Because the app reads `data/projects.json` and `data/teams.json` at runtime,

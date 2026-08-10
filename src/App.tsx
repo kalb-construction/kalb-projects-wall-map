@@ -17,6 +17,7 @@ import { ProjectIndex } from './components/ProjectIndex';
 import { DiagOverlay } from './components/DiagOverlay';
 import { FALLBACK_TEAMS, teamIdOf } from './lib/teams';
 import { deriveStatus } from './lib/status';
+import { watchForUpdates } from './lib/version';
 
 /** `?diag=1` shows the on-screen engine/dpr/fps readout (kiosk-friendly). */
 const SHOW_DIAG = new URLSearchParams(window.location.search).has('diag');
@@ -239,6 +240,19 @@ function Atlas({ projects, teams }: { projects: Project[]; teams: Team[] }) {
   }, []);
 
   const showAttract = bootGone && idle && featured.length > 0;
+
+  /**
+   * Pick up a new deploy without anyone restarting the display. The reload
+   * is deferred until the kiosk goes idle, so it can never yank the screen
+   * out from under someone who is reading a project.
+   */
+  const [updateReady, setUpdateReady] = useState(false);
+  useEffect(() => watchForUpdates(() => setUpdateReady(true)), []);
+  useEffect(() => {
+    if (!updateReady || !idle) return;
+    const t = window.setTimeout(() => window.location.reload(), 2000);
+    return () => window.clearTimeout(t);
+  }, [updateReady, idle]);
 
   useEffect(() => {
     // Visible in DevTools → Console, so it's obvious which engine is live.

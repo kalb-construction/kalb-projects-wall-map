@@ -68,6 +68,16 @@ updatable by Kalb staff without a developer.
 - Before claiming a perf fix: measure or reason about what work happens
   *per frame*, don't just tweak settings.
 
+**Staying current**
+- A long-running window must never go stale. `src/lib/version.ts` polls the
+  build hash emitted into `version.json` by the `versionManifest` plugin in
+  `vite.config.ts`, and reloads **only when the kiosk is idle** — never
+  under someone's hands. Content hash, not a timestamp, so an identical
+  redeploy doesn't cause a pointless reload.
+- Cache headers in `vercel.json` are the other half: `index.html`,
+  the manifest and `version.json` revalidate every time; `/assets/*` is
+  immutable because those filenames are content-hashed.
+
 **Data & governance**
 - All content lives in plain JSON that non-developers can edit
   (`public/data/projects.json`, `public/data/teams.json`). On the kiosk the
