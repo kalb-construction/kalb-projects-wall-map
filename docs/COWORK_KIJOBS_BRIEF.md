@@ -32,6 +32,35 @@ Your output is merged into a live display in the Kalb lobby. A wrong value is wo
 
 ---
 
+## 0b. Two facts confirmed by Kalb (2026-08-17)
+
+**1. The job number encodes the year the job was OPENED.** The first two
+digits + 2000: `26104` → 2026, `25130` → 2025, `24118` → 2024. This is
+authoritative — use it for the `year` field and never read a year off a
+folder name or a file date.
+
+> **Do not mistake this for a completion filter.** The number says when a job
+> *started*, not when it *finished*. A `24xxx` job may have completed in 2026,
+> and a `23xxx` job may well have completed inside our 2024+ window. So:
+> - **Scan every folder numbered `23xxx` and higher.** All of them.
+> - Folders numbered `22xxx` or lower are unlikely to have finished after
+>   2024-01-01, but multi-year jobs exist. If the folder count is manageable,
+>   check them too. If you skip them, say so explicitly in the summary as a
+>   known gap — do not let them vanish silently.
+> - `B`-prefixed numbers (`B1329`, `B1335`, `B7035`) carry **no year**. Omit
+>   `year` for them and determine the window purely from the completion date.
+>
+> The completion date from §3 is the only thing that decides whether a job is
+> in scope. The number prefix only decides where to look first.
+
+**2. The site address lives in the contract.** Treat the owner contract as the
+authoritative source for `address`, `city`, and `state`. Use the building
+permit or the Certificate of Occupancy only to confirm it, or when no contract
+is present in the folder. If the contract and the permit disagree on the
+address, that is an ambiguity for Kalb (§8) — do not pick one.
+
+---
+
 ## 1. Phase 0 — reconnaissance before the full walk (do this first, then report)
 
 Do not extract 500 folders against a guessed folder taxonomy.
@@ -156,7 +185,7 @@ Required in every record: `id`, `number`, `name`, `address`, `city`, `state`, `r
 | `number` | **string** | Job number exactly as printed: `"24118"`, `"B1335"`. **Always quoted** — a JSON number silently collapses the procedural building art. Missing `number` crashes the wall; no number → review queue. |
 | `name` | string | Full project name as Kalb writes it — prefer the owner contract, then the permit, then the drawing title block. Not the folder name unless nothing else exists (then flag it). |
 | `shortName` | string, optional | Only when `name` exceeds ~24 chars or contains a parenthetical. Omit otherwise. |
-| `address` | string | Street address as printed: `"635 E. Dorrell Ln."`. Intersection-only is acceptable — use the intersection and add the flag `"Street number not supplied"`. |
+| `address` | string | Street address as printed. **Read it from the owner contract** — Kalb confirms that is where site addresses live. Permit/CofO is a cross-check, or the fallback when no contract exists. Contract and permit disagreeing → ambiguity, not a coin-flip. Intersection-only is acceptable — use the intersection and add the flag `"Street number not supplied"`. |
 | `city` | string | **Grouping key — exact spelling from §7's city list** when the city already exists. A new spelling silently creates a duplicate filter chip and index section. New city (not in the list) is allowed but must be reported in the summary under "new enum values". |
 | `state` | string | `"NV"` or `"AZ"` — two-letter postal only. |
 | `region` | `LV` \| `NNV` \| `AZ` | `DERIVED`, rule `city-region-table`: Las Vegas / North Las Vegas / Henderson → `LV`; Carson City / Reno / Sparks / Dayton → `NNV`; any AZ city → `AZ`. City not in the table → omit `region`, add to `missing`, raise an ambiguity. |
@@ -171,7 +200,7 @@ Required in every record: `id`, `number`, `name`, `address`, `city`, `state`, `r
 | `estCompletionDate` | `YYYY-MM-DD` | `DERIVED`, rule `date-normalise` from `estCompletion`. Month-only → last day of that month (existing precedent). Unparseable → omit both this and the normalised form, and use the review queue. |
 | `sqFt` | integer, optional | Digits only, no commas, no "approx". From permit, contract scope, or drawing title block. **Never convert acreage to square feet.** |
 | `sqFtNote` | string, optional | Where a number isn't available or the measure isn't sq ft: `"71.32 acres, sitework"`. |
-| `year` | number, optional | `DERIVED`, rule `year-from-number`: first two digits + 2000 (`"24118"` → `2024`). **B-jobs and BLAK records omit `year`.** |
+| `year` | number, optional | `DERIVED`, rule `year-from-number`: first two digits + 2000 (`"24118"` → `2024`). Confirmed by Kalb as the year the job was **opened**, not completed — the two routinely differ and that is fine. **B-jobs and BLAK records omit `year`.** |
 | `featured` | boolean | `CONSTANT` `false`. Featuring is Kalb's editorial call, not extractable. |
 | `heroImage` | null | `CONSTANT` literal `null`. This is the one legal null besides `superintendent`. |
 | `photos` | — | **Never populate.** Put the folder path in `source.photoFolder`. |
@@ -358,6 +387,8 @@ Run this on every folder before emitting. Any unticked line means review queue o
 ```
 [ ] Folder is a real Kalb job folder (not template/admin/personal)
 [ ] Job number read from a document, emitted as a QUOTED string
+[ ] year = 2000 + first two digits of the number (omit for B-jobs)
+[ ] address taken from the owner contract (permit only as cross-check/fallback)
 [ ] id = number, matches ^[A-Za-z0-9][A-Za-z0-9-]*$, collides with nothing in §7 or the batch
 [ ] Completion evidence located; tier (A/B/C) and document path recorded
 [ ] Completion date read off the document — not a file timestamp, not a folder name

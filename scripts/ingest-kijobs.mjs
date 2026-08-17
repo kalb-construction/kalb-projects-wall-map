@@ -167,6 +167,25 @@ for (const [i, row] of batch.entries()) {
     continue;
   }
 
+  // Kalb (2026-08-17): the first two digits of a job number are the year the
+  // job was OPENED. Purely mechanical, so derive it when absent and reject a
+  // mismatch — but never treat it as the completion year, which often differs.
+  const numeric = /^(\d{2})\d{3}$/.exec(p.number);
+  if (numeric) {
+    const expected = 2000 + Number(numeric[1]);
+    if (p.year === undefined) {
+      p.year = expected;
+    } else if (p.year !== expected) {
+      reject('R-YEAR', `year ${p.year} does not match job number ${p.number} (expected ${expected})`);
+      continue;
+    }
+    if (p.estCompletionDate && Number(p.estCompletionDate.slice(0, 4)) < expected) {
+      flag(`completed ${p.estCompletionDate} but job number says it opened in ${expected} — check the number`);
+    }
+  } else if (p.year !== undefined) {
+    flag(`year ${p.year} set on non-numeric job number "${p.number}" — B-jobs carry no year`);
+  }
+
   // --- hygiene ----------------------------------------------------------
   const bad = Object.entries(p).filter(([k, v]) => isPlaceholder(v) && k !== 'heroImage');
   if (bad.length) { reject('R-PLACEHOLDER', `placeholder values survived: ${bad.map(([k]) => k).join(', ')}`); continue; }
