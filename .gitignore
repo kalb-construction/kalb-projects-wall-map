@@ -10,3 +10,6 @@ tsconfig.tsbuildinfo
 kijobs-*.csv
 kijobs-*.json
 kijobs-*.txt
+
+# photo drop zone — originals stay local, only the optimised copies are committed
+photos-inbox/
