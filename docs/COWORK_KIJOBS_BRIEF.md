@@ -87,33 +87,42 @@ yet, so 2026 completions are still sitting at the top level among the active
 jobs. Completion evidence is what separates them; its absence there means
 `still-active`, not a gap.
 
-### The target set — 446 folders, sweep in this order
+### The target set — 178 folders (Kalb, 2026-08-17)
 
-| # | Path | Folders |
-|---|---|---|
-| 1 | `(1) COMPLETED PROJECTS\2025` | 6 |
-| 2 | `(1) COMPLETED PROJECTS\2024` | 26 |
-| 3 | `(1) COMPLETED PROJECTS\2023` | 73 |
-| 4 | `(1) COMPLETED PROJECTS\2022` | 98 |
-| 5 | `(1) COMPLETED PROJECTS\2021` | 97 |
-| 6 | the 146 top-level job folders | 146 |
+| # | Path | Folders | Why |
+|---|---|---|---|
+| 1 | `(1) COMPLETED PROJECTS\\2025` | 6 | |
+| 2 | `(1) COMPLETED PROJECTS\\2024` | 26 | |
+| 3 | the 146 top-level job folders | 146 | the only place 2026 completions live |
 
-### Excluded, and reported as such in the summary
+### Deferred — in the index, not in this run
+
+`(1) COMPLETED PROJECTS\\2021`, `2022` and `2023` (268 folders) are covered
+by the index but are **not** part of this batch. Kalb scoped the run to the
+2024 and 2025 folders plus 2026 completions.
+
+Worth knowing when the results come back: because the year folder is the
+**opening** year, `COMPLETED\\2023` (73 folders) holds jobs that largely
+*finished in 2024*. If the batch comes back thin on 2024 completion dates,
+that is where the rest of them are, and adding it is a follow-on sweep with
+no new index work. Flag it in the summary if you see that pattern — do not
+sweep it unasked.
+
+### Excluded outright
 
 - `(1) BIDDING PROJECTS` — never built, not projects.
-- `(1) COMPLETED PROJECTS\2015` … `2020` (528 folders) — reaching the
+- `(1) COMPLETED PROJECTS\\2015` … `2020` (528 folders) — reaching the
   2024+ window would require a 4-year-plus build. **Kalb confirmed on
   2026-08-17 that no job from 2020 or earlier is still in scope.** This is a
-  ruling, not an assumption; record it in the summary as an explicit
-  exclusion with that provenance.
+  ruling, not an assumption; record it in the summary with that provenance.
 - The two loose strays `12264 Eddins` and `19200 Dornin 400 S 4th Vehicle
   Damage` — both numbers pre-date the window by a decade.
 
 ### The index
 
 `kijobs-index.txt` sits in the `kalb-projects-wall-map` folder: **313,932
-full paths, one per line**, covering exactly the target set above (the
-excluded trees were filtered out at generation). It is far too large to
+full paths, one per line**, covering the target set above plus the deferred 2021-2023 folders
+(the excluded trees were filtered out at generation). It is far too large to
 read — grep it. It carries **paths only, no timestamps, deliberately**:
 the share has been migrated and mtimes are not evidence.
 
