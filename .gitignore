@@ -5,3 +5,8 @@ dist
 npm-debug.log*
 tsconfig.tsbuildinfo
 .env
+
+# Cowork extraction drops — large local artefacts, never committed
+kijobs-*.csv
+kijobs-*.json
+kijobs-*.txt
