@@ -95,18 +95,41 @@ jobs. Completion evidence is what separates them; its absence there means
 | 2 | `(1) COMPLETED PROJECTS\2024` | 26 | |
 | 3 | the 146 top-level job folders | 146 | the only place 2026 completions live |
 
-### Deferred — in the index, not in this run
+### Run 2 — `COMPLETED\2023` (Kalb, 2026-08-17)
 
-`(1) COMPLETED PROJECTS\2021`, `2022` and `2023` (268 folders) are covered
-by the index but are **not** part of this batch. Kalb scoped the run to the
-2024 and 2025 folders plus 2026 completions.
+`(1) COMPLETED PROJECTS\2023` — **73 folders**. Already in `kijobs-index.txt`,
+so no new index work. Same rules, same schema, same evidence ladder.
 
-Worth knowing when the results come back: because the year folder is the
-**opening** year, `COMPLETED\2023` (73 folders) holds jobs that largely
-*finished in 2024*. If the batch comes back thin on 2024 completion dates,
-that is where the rest of them are, and adding it is a follow-on sweep with
-no new index work. Flag it in the summary if you see that pattern — do not
-sweep it unasked.
+Because the year folder is the job's *opening* year, most of these finished
+in 2024 — which is exactly the gap run 1 left. Expect a meaningful share to
+fall **before** 2024-01-01 and be skipped as `completed-before-window`; that
+is a correct outcome, not a miss.
+
+`2021` and `2022` (195 folders) remain deferred.
+
+### What run 1 taught us — apply it from the first folder
+
+Of the 62 rows delivered, **27 merged and 35 were held**. The holds are
+avoidable work, so classify for them up front:
+
+1. **Minor works were 16 of the 35.** Demos, punch repairs, demising walls,
+   restrooms, canopies, carports, stucco patching, trailer storage. Real Kalb
+   jobs, but not what a lobby wall is for. **Add `source.workClass`** to every
+   record — `"project"` or `"minor"` — and say which signal decided it. Emit
+   both; Kalb filters.
+2. **7 rows carried document text instead of project data** — names like
+   `2414` and addresses like `779450 for construct` and
+   `110 of NRS authorizes the Direct`. Those are unusable on a wall. If the
+   best `name` or `address` you can find reads like a sentence fragment, a
+   bare number, or a form label, **omit the field and flag it** rather than
+   emitting it. An absent name sends the row to the review queue, which is
+   the right destination.
+3. **26 rows took `name` from the folder name.** That was the batch's largest
+   quality gap after coordinates. Search harder before falling back: contract
+   cover, permit `Project Name`, drawing title block, CofO description. Keep
+   the flag when you do fall back.
+4. **12 rows had no address at all**, so they could not be geocoded and never
+   reached the wall. Treat address as load-bearing, not optional.
 
 ### Excluded outright
 
