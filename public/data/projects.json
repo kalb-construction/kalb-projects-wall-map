@@ -151,7 +151,15 @@
     "siteId": "craig-valley",
     "siteName": "Craig & Valley",
     "description": "GU Restaurant/Bar · 4,625 sf in North Las Vegas. Estimated completion SEP 2026.",
-    "heroImage": null
+    "heroImage": null,
+    "photos": [
+      "./renders/25152/25152-1.jpg",
+      "./renders/25152/25152-2.jpg",
+      "./renders/25152/25152-3.jpg",
+      "./renders/25152/25152-4.jpg",
+      "./renders/25152/25152-5.jpg",
+      "./renders/25152/25152-6.jpg"
+    ]
   },
   {
     "id": "25133",
