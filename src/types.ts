@@ -66,6 +66,12 @@ export interface Project {
   budgetOutcome?: string;
   /** Real site photographs, newest first. Drives the hero carousel. */
   photos?: string[];
+  /**
+   * Archived work imported from the U:\KIJOBS job folders, as opposed to the
+   * live job list. Stamped at ingest; inert until the wall grows a history
+   * toggle, but it means the data is tagged correctly from day one.
+   */
+  historical?: boolean;
   status: ProjectStatus;
   /** 0–100. Only set where it is actually known (finished jobs). */
   progress?: number;

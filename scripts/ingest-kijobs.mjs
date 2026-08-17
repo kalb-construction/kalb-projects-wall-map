@@ -6,12 +6,19 @@
  *   node scripts/ingest-kijobs.mjs <batch.json> --write    # merge and write
  *
  * The batch is the file described in docs/COWORK_KIJOBS_BRIEF.md: an array of
- * { project, source } objects. Rows that would corrupt shared state (id/route
- * collisions, broken enums, unplottable pins) are REJECTED to a review queue.
- * Rows that are merely incomplete are KEPT and flagged — that is the project's
- * standing rule: missing data is recorded, never invented.
+ * { project, source } objects. Every row lands in exactly one of three buckets:
  *
- * Nothing is written unless --write is passed and zero rejects remain.
+ *   ACCEPTED  — complete and plottable; merged into projects.json.
+ *   PENDING   — valid in every respect EXCEPT coordinates. The brief forbids
+ *               the extractor from geocoding, so this is the normal state for
+ *               most rows, not a fault. They go to a geocoding worklist and
+ *               come back through this same gate once coordinates exist.
+ *   REJECTED  — would corrupt shared state (id/job-number collisions, broken
+ *               enums, corrupt coordinates, placeholder text). Needs a human
+ *               ruling; blocks the merge until resolved.
+ *
+ * Nothing is written unless --write is passed and zero REJECTS remain. Pending
+ * rows never block a merge — the accepted ones go in without them.
  */
 import { readFileSync, writeFileSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
@@ -68,6 +75,7 @@ if (!Array.isArray(batch)) {
 
 const today = new Date().toISOString().slice(0, 10);
 const accepted = [];
+const pending = [];
 const rejected = [];
 const flagged = [];
 const seenIds = new Set();
@@ -116,15 +124,18 @@ for (const [i, row] of batch.entries()) {
   }
 
   // --- geography --------------------------------------------------------
-  if (!Number.isFinite(p.lat) || !Number.isFinite(p.lng)) {
-    reject('R-GEO-MISSING', 'lat/lng absent — geocode before merging (expected on most rows)');
-    continue;
-  }
-  if (p.lng > 0) { reject('R-GEO-SIGN', `lng ${p.lng} is positive — missing minus sign, not auto-fixed`); continue; }
-  if (Math.abs(p.lat) > 90) { reject('R-GEO-SWAP', `lat ${p.lat} out of range — lat/lng likely swapped`); continue; }
-  if (!(p.lat > 24 && p.lat < 50 && p.lng > -125 && p.lng < -60)) {
-    reject('R-GEO-RANGE', `coordinates ${p.lat},${p.lng} fall outside the continental US`);
-    continue;
+  // Absent coordinates are NOT a fault. The brief forbids the extractor from
+  // geocoding, so this is the expected state for most rows; they are held for
+  // the geocoding pass rather than rejected. Coordinates that are PRESENT but
+  // corrupt are a different matter and still reject.
+  const needsGeocode = !Number.isFinite(p.lat) || !Number.isFinite(p.lng);
+  if (!needsGeocode) {
+    if (p.lng > 0) { reject('R-GEO-SIGN', `lng ${p.lng} is positive — missing minus sign, not auto-fixed`); continue; }
+    if (Math.abs(p.lat) > 90) { reject('R-GEO-SWAP', `lat ${p.lat} out of range — lat/lng likely swapped`); continue; }
+    if (!(p.lat > 24 && p.lat < 50 && p.lng > -125 && p.lng < -60)) {
+      reject('R-GEO-RANGE', `coordinates ${p.lat},${p.lng} fall outside the continental US`);
+      continue;
+    }
   }
   if (!STATES.has(p.state)) { reject('R-ENUM', `state ${JSON.stringify(p.state)} not NV/AZ`); continue; }
   if (!REGIONS.has(p.region)) { reject('R-ENUM', `region ${JSON.stringify(p.region)} not LV/NNV/AZ`); continue; }
@@ -194,7 +205,11 @@ for (const [i, row] of batch.entries()) {
 
   seenIds.add(idKey);
   seenNums.add(numKey);
-  accepted.push(p);
+  // Every row in this batch is historical by definition — stamped here rather
+  // than asked of the extractor, since it is a constant for the whole run.
+  p.historical = true;
+  if (needsGeocode) pending.push(row);
+  else accepted.push(p);
 }
 
 // --- report -------------------------------------------------------------
@@ -202,9 +217,10 @@ const line = (s) => console.log(s);
 line('');
 line(`Batch:    ${batchPath}`);
 line(`Rows:     ${batch.length}`);
-line(`Accepted: ${accepted.length}`);
-line(`Rejected: ${rejected.length}`);
-line(`Flagged:  ${flagged.length} (accepted, but needs a human look)`);
+line(`Accepted: ${accepted.length}  (complete — will merge)`);
+line(`Pending:  ${pending.length}  (valid, awaiting coordinates — normal)`);
+line(`Rejected: ${rejected.length}  (needs a ruling — blocks the merge)`);
+line(`Flagged:  ${flagged.length}  (kept, but worth a human look)`);
 line('');
 if (rejected.length) {
   line('--- REJECTED ------------------------------------------------------');
@@ -224,11 +240,35 @@ if (!doWrite) {
   line('\nDry run — nothing written. Re-run with --write to merge.');
   process.exit(rejected.length ? 1 : 0);
 }
+
 if (rejected.length) {
   const queue = resolve(ROOT, 'kijobs-review-queue.json');
   writeFileSync(queue, JSON.stringify(rejected, null, 2) + '\n');
   console.error(`\nRefusing to merge with ${rejected.length} reject(s). Queue written to ${queue}`);
   process.exit(1);
 }
+
+// The geocoding worklist keeps the full {project, source} shape so that once
+// lat/lng are filled in, the same file feeds straight back through this gate.
+if (pending.length) {
+  const hold = resolve(ROOT, 'kijobs-pending-geocode.json');
+  writeFileSync(hold, JSON.stringify(pending, null, 2) + '\n');
+  const csv = resolve(ROOT, 'kijobs-to-geocode.csv');
+  const esc = (v) => `"${String(v ?? '').replace(/"/g, '""')}"`;
+  writeFileSync(
+    csv,
+    'id,number,name,address,city,state,lat,lng\n' +
+      pending
+        .map((r) =>
+          [r.project.id, r.project.number, r.project.name, r.project.address,
+           r.project.city, r.project.state, '', ''].map(esc).join(',')
+        )
+        .join('\n') + '\n'
+  );
+  line(`\n${pending.length} rows held for geocoding:`);
+  line(`  ${hold}   (re-run this file through the gate once coordinates are in)`);
+  line(`  ${csv}   (fill the lat/lng columns, or use /tools/coords.html)`);
+}
+
 writeFileSync(TARGET, JSON.stringify([...existing, ...accepted], null, 2) + '\n');
 line(`\nMerged ${accepted.length} rows. ${TARGET} now holds ${existing.length + accepted.length} projects.`);
