@@ -1307,5 +1307,28 @@
     "flags": [
       "No completion date supplied"
     ]
+  },
+  {
+    "id": "25108",
+    "number": "25108",
+    "name": "The Hat Restaurant",
+    "shortName": "The Hat",
+    "address": "6215 S. Rainbow Blvd",
+    "city": "Las Vegas",
+    "state": "NV",
+    "region": "LV",
+    "lat": 36.075749,
+    "lng": -115.243303,
+    "category": "Restaurant",
+    "status": "In Progress",
+    "year": 2025,
+    "featured": false,
+    "description": "Restaurant on S. Rainbow Blvd, Las Vegas. Added from Autodesk Construction Cloud; the PM job list does not carry it.",
+    "heroImage": null,
+    "flags": [
+      "Added from Autodesk Construction Cloud, not the PM job list",
+      "Status unconfirmed — absent from the 07/27/2026 active job list, which may mean it is finished",
+      "Project type, superintendent, square footage and completion date not on file"
+    ]
   }
 ]
