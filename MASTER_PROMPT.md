@@ -239,6 +239,14 @@ rulings Kalb made after it was printed:
 - Branded boot screen; 90s idle attract loop over featured projects.
 - `/tools/coords.html` — audit every pin against Google Maps and export a
   corrected `projects.json`.
+- `/tools/geocode.html` — batch-geocode an extraction batch that arrived
+  without coordinates (the extractor is forbidden from geocoding). Uses
+  OpenStreetMap Nominatim, because its licence permits storing results
+  permanently and Mapbox's and Google's standard terms do not — these
+  coordinates go into `projects.json` and stay there. Throttled to one
+  request per second per Nominatim's policy. A result outside Nevada or
+  Arizona is shown but never written: a wrong pin is worse than a missing
+  one.
 - TV/kiosk fit: a full-screen button (no keyboard needed) plus URL
   parameters read in `src/lib/kiosk.ts` — `?overscan=N` insets chrome for
   TVs that crop their own picture (the map stays full-bleed), `?dpr=N`

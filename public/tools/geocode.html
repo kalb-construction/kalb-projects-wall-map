@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Kalb Atlas — batch geocoder</title>
+<style>
+  :root {
+    --red: #c10016; --sand: #e7e3db; --ink: #0c0b0a; --ink2: #141210;
+    --line: rgba(231,227,219,.14); --dim: rgba(231,227,219,.55);
+    --ok: #6f9d5f; --warn: #c9a227;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 28px 32px 80px; background: var(--ink); color: var(--sand);
+    font: 14px/1.55 Inter, system-ui, sans-serif;
+  }
+  h1 { font: 700 22px/1.2 Oswald, "Arial Narrow", sans-serif; letter-spacing: .06em;
+       text-transform: uppercase; margin: 0 0 6px; }
+  p.lead { color: var(--dim); max-width: 78ch; margin: 0 0 18px; }
+  .bar { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin: 18px 0; }
+  button {
+    background: var(--red); color: #fff; border: 0; border-radius: 9px;
+    padding: 10px 18px; font: 600 13px/1 Inter, sans-serif; cursor: pointer;
+  }
+  button.ghost { background: transparent; border: 1px solid var(--line); color: var(--sand); }
+  button:disabled { opacity: .4; cursor: not-allowed; }
+  table { width: 100%; border-collapse: collapse; margin-top: 14px; }
+  th, td { text-align: left; padding: 7px 9px; border-bottom: 1px solid var(--line);
+           vertical-align: top; font-size: 13px; }
+  th { color: var(--dim); font-weight: 600; font-size: 11px; letter-spacing: .08em;
+       text-transform: uppercase; position: sticky; top: 0; background: var(--ink); }
+  tr.ok td.state { color: var(--ok); }
+  tr.warn td.state { color: var(--warn); }
+  tr.bad td.state { color: var(--red); }
+  code { font-family: ui-monospace, Consolas, monospace; font-size: 12px; }
+  input.coord {
+    width: 190px; background: var(--ink2); border: 1px solid var(--line);
+    color: var(--sand); border-radius: 6px; padding: 5px 8px; font-family: ui-monospace, monospace;
+    font-size: 12px;
+  }
+  a { color: #8ab4f8; }
+  .note { background: rgba(201,162,39,.12); border: 1px solid rgba(201,162,39,.4);
+          border-radius: 10px; padding: 12px 16px; margin: 16px 0; max-width: 92ch; }
+  #status { color: var(--dim); font-size: 13px; }
+</style>
+</head>
+<body>
+
+<h1>Batch geocoder</h1>
+<p class="lead">
+  Turns the extractor's coordinate-less rows into plottable ones. Load the batch
+  JSON, geocode it, eyeball every result, then download the patched file and run
+  it back through <code>scripts/ingest-kijobs.mjs</code>.
+</p>
+
+<div class="note">
+  <strong>Uses OpenStreetMap's Nominatim.</strong> Free, and its licence permits
+  storing the results permanently — which matters, because these coordinates go
+  into <code>projects.json</code> and stay there. Mapbox and Google both
+  restrict permanent storage of geocoding results under their standard terms, so
+  neither is used here despite being faster. Nominatim asks for one request per
+  second, so 62 rows takes about a minute. Please don't hammer it.
+</div>
+
+<div class="bar">
+  <input type="file" id="file" accept=".json" />
+  <button id="go" disabled>Geocode all</button>
+  <button id="dl" class="ghost" disabled>Download patched JSON</button>
+  <span id="status">No file loaded.</span>
+</div>
+
+<table id="tbl"><thead><tr>
+  <th>Job</th><th>Name</th><th>Address sent</th><th>Nominatim returned</th>
+  <th>Coordinates</th><th class="state">State</th><th>Check</th>
+</tr></thead><tbody></tbody></table>
+
+<script>
+// The batch is an array of { project, source }. Rows already carrying valid
+// coordinates are left alone — this tool only fills gaps.
+let rows = [];
+const $ = (s) => document.querySelector(s);
+const tbody = $('#tbl tbody');
+
+const addressOf = (p) =>
+  [p.address, p.city, p.state, 'USA'].filter(Boolean).join(', ');
+
+// Anything outside the Nevada/Arizona working area is almost certainly the
+// geocoder latching onto a same-named street in another state.
+const PLAUSIBLE = { latMin: 33, latMax: 41, lngMin: -121, lngMax: -110 };
+const plausible = (lat, lng) =>
+  lat > PLAUSIBLE.latMin && lat < PLAUSIBLE.latMax &&
+  lng > PLAUSIBLE.lngMin && lng < PLAUSIBLE.lngMax;
+
+$('#file').addEventListener('change', async (e) => {
+  const f = e.target.files[0];
+  if (!f) return;
+  try {
+    rows = JSON.parse(await f.text());
+    if (!Array.isArray(rows)) throw new Error('not a JSON array');
+  } catch (err) {
+    $('#status').textContent = 'Could not read that file: ' + err.message;
+    return;
+  }
+  render();
+  const todo = rows.filter(needsGeocode).length;
+  const noAddr = rows.filter((r) => !r.project?.address).length;
+  $('#status').textContent =
+    `${rows.length} rows · ${todo} need coordinates` +
+    (noAddr ? ` · ${noAddr} have no address and cannot be geocoded` : '');
+  $('#go').disabled = todo === 0;
+  $('#dl').disabled = false;
+});
+
+const needsGeocode = (r) =>
+  r.project && r.project.address &&
+  !(Number.isFinite(r.project.lat) && Number.isFinite(r.project.lng));
+
+function render() {
+  tbody.innerHTML = '';
+  rows.forEach((r, i) => {
+    const p = r.project || {};
+    const tr = document.createElement('tr');
+    tr.id = 'r' + i;
+    const hasCoords = Number.isFinite(p.lat) && Number.isFinite(p.lng);
+    tr.innerHTML = `
+      <td><code>${p.number ?? '—'}</code></td>
+      <td>${esc(p.name ?? '—')}</td>
+      <td>${p.address ? esc(addressOf(p)) : '<em style="color:var(--red)">no address</em>'}</td>
+      <td class="res">—</td>
+      <td><input class="coord" data-i="${i}" placeholder="lat, lng"
+           value="${hasCoords ? p.lat + ', ' + p.lng : ''}" /></td>
+      <td class="state">${hasCoords ? 'already set' : p.address ? 'waiting' : 'manual only'}</td>
+      <td>${p.address
+            ? `<a target="_blank" rel="noreferrer"
+                 href="https://www.google.com/maps/search/${encodeURIComponent(addressOf(p))}">maps</a>`
+            : ''}</td>`;
+    if (hasCoords) tr.className = 'ok';
+    tbody.appendChild(tr);
+  });
+  tbody.querySelectorAll('input.coord').forEach((inp) =>
+    inp.addEventListener('change', () => {
+      const m = inp.value.split(',').map((s) => parseFloat(s.trim()));
+      const row = rows[+inp.dataset.i];
+      const tr = document.getElementById('r' + inp.dataset.i);
+      if (m.length === 2 && m.every(Number.isFinite)) {
+        row.project.lat = m[0];
+        row.project.lng = m[1];
+        tr.className = plausible(m[0], m[1]) ? 'ok' : 'bad';
+        tr.querySelector('.state').textContent =
+          plausible(m[0], m[1]) ? 'manual' : 'manual — outside NV/AZ';
+      } else {
+        delete row.project.lat; delete row.project.lng;
+        tr.className = ''; tr.querySelector('.state').textContent = 'cleared';
+      }
+    })
+  );
+}
+
+const esc = (s) => String(s).replace(/[<>&]/g, (c) => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;' }[c]));
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+$('#go').addEventListener('click', async () => {
+  $('#go').disabled = true;
+  const todo = rows.map((r, i) => [r, i]).filter(([r]) => needsGeocode(r));
+  let done = 0, hit = 0, miss = 0;
+
+  for (const [r, i] of todo) {
+    const tr = document.getElementById('r' + i);
+    tr.querySelector('.state').textContent = 'looking up…';
+    const q = addressOf(r.project);
+    try {
+      const url = 'https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1' +
+                  '&countrycodes=us&q=' + encodeURIComponent(q);
+      const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
+      const data = await res.json();
+      if (data && data[0]) {
+        const lat = +(+data[0].lat).toFixed(6);
+        const lng = +(+data[0].lon).toFixed(6);
+        const good = plausible(lat, lng);
+        // Never write an implausible result into the row — surface it and let
+        // a person decide. A wrong pin is worse than a missing one.
+        if (good) { r.project.lat = lat; r.project.lng = lng; hit++; }
+        else miss++;
+        tr.className = good ? 'ok' : 'bad';
+        tr.querySelector('.res').textContent = data[0].display_name;
+        tr.querySelector('input.coord').value = lat + ', ' + lng;
+        tr.querySelector('.state').textContent = good ? 'geocoded' : 'outside NV/AZ — not applied';
+      } else {
+        miss++;
+        tr.className = 'warn';
+        tr.querySelector('.state').textContent = 'no match — set manually';
+      }
+    } catch (err) {
+      miss++;
+      tr.className = 'warn';
+      tr.querySelector('.state').textContent = 'lookup failed';
+    }
+    done++;
+    $('#status').textContent = `${done} / ${todo.length} · ${hit} found · ${miss} need a human`;
+    await sleep(1100);   // Nominatim asks for <= 1 request per second.
+  }
+  $('#status').textContent =
+    `Done. ${hit} geocoded, ${miss} need setting by hand. Check every row before downloading.`;
+  $('#dl').disabled = false;
+});
+
+$('#dl').addEventListener('click', () => {
+  const blob = new Blob([JSON.stringify(rows, null, 2) + '\n'], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'kijobs-geocoded.json';
+  a.click();
+});
+</script>
+</body>
+</html>
