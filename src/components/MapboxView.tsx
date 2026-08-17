@@ -2,6 +2,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import type { Project } from '../types';
 import type { BBox } from '../lib/regions';
 import { setBearing } from '../lib/bearing';
+import { pinColor, pinGlyph, isBlak } from '../lib/brand';
 import { toggleFullscreen } from '../lib/kiosk';
 import { clampDevicePixelRatio } from '../lib/dpr';
 import { addHeatLayer } from '../lib/heat';
@@ -336,9 +337,12 @@ export function MapboxView({
       for (const p of singles) {
         const el = makeMarkerEl(
           p.featured ? 'km-single km-feat' : 'km-single',
-          'K',
-          `${p.number} · ${p.shortName ?? p.name}`
+          pinGlyph(p),
+          isBlak(p)
+            ? (p.shortName ?? p.name)
+            : `${p.number} · ${p.shortName ?? p.name}`
         );
+        el.style.setProperty('--km-color', pinColor(p));
         el.setAttribute('aria-label', `${p.number} ${p.name}`);
         el.addEventListener('click', (e) => {
           e.stopPropagation();

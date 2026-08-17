@@ -1668,6 +1668,7 @@ button {
   height: 7px;
   border-radius: 50%;
   flex: 0 0 auto;
+  /* colour comes from the project (Kalb red, or BLAK green/grey) */
   background: var(--red);
 }
 .index-num {
@@ -1995,4 +1996,23 @@ button {
   pointer-events: none;
   min-height: 58px;
   min-width: 120px;
+}
+
+/* ---------- legend swatch (Kalb red vs BLAK green/grey) ---------- */
+.legend-swatch {
+  width: 9px;
+  height: 9px;
+  border-radius: 3px;
+  flex: 0 0 auto;
+  margin-right: 7px;
+}
+.detail-number.is-blak {
+  font-size: 12.5px;
+  letter-spacing: 0.16em;
+}
+/* Coming Soon reads as upcoming, not active */
+.chip-status.tone-soon {
+  color: #cfd6b4;
+  border-color: rgba(95, 102, 56, 0.75);
+  background: rgba(95, 102, 56, 0.25);
 }

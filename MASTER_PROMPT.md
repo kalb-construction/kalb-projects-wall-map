@@ -24,9 +24,14 @@ updatable by Kalb staff without a developer.
 ## 2. Non-negotiables
 
 **Brand**
-- Palette is exactly: Kalb Red `#C10016`, Sand `#E7E3DB`, Concrete `#6A6762`,
-  near-black inks (`#0C0B0A` / `#141210`). No other brand colours anywhere —
-  **every map pin is Kalb red.** The PM legend is a filter, not a colour key.
+- Kalb palette: Kalb Red `#C10016`, Sand `#E7E3DB`, Concrete `#6A6762`,
+  near-black inks (`#0C0B0A` / `#141210`). **Every Kalb pin is Kalb red** —
+  the PM legend is a filter, not a colour key.
+- The wall also carries **BLAK Development**, a separate brand, in its own
+  colours (`src/lib/brand.ts`): BLAK green `#5F6638` (PMS 5747 U) for live
+  and upcoming work, BLAK grey `#54575A` (PMS 425 U) for BLAK's completed
+  work. So pin colour answers two questions at once — whose project, and is
+  it still going. No third palette without a decision from Kalb.
 - Type: **Oswald** for display/headings (condensed, construction-forward),
   **Inter** for UI text. Both self-hosted — never a font CDN.
 - The Kalb logo assets in `public/brand/` are the only marks used.
@@ -128,8 +133,10 @@ within 9 seconds and explains itself in a toast.
 ## 5. Data model
 
 **Source of record:** *Kalb Industries — Job List by Project Manager*,
-47 active jobs, job-list report dated **07/27/2026** plus PM confirmations
-(latest: TP data + the voiding of 25144, confirmed 08/06/2026).
+47 active Kalb jobs, job-list report dated **07/27/2026** plus PM
+confirmations (latest: TP data + the voiding of 25144, confirmed
+08/06/2026), **plus 4 BLAK Development projects** supplied separately —
+51 pins in total.
 Every field below traces to that sheet. Nothing is invented; anything the
 sheet left blank is recorded as a flag rather than filled with a guess.
 

@@ -64,5 +64,11 @@
     "name": "Dave Brown",
     "color": "#C10016",
     "note": "1 job"
+  },
+  {
+    "id": "blak",
+    "name": "BLAK Development",
+    "color": "#5F6638",
+    "note": "4 projects — separate developer; green when live/coming soon, grey when complete"
   }
 ]

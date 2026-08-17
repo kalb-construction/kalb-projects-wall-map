@@ -5,7 +5,14 @@ export type ProjectStatus =
   | 'Preconstruction'
   | 'In Progress'
   | 'Closeout'
+  | 'Coming Soon'
   | 'Complete';
+
+/**
+ * Which company built it. Kalb is the default and keeps the red pin; BLAK
+ * Development carries its own brand colours (see lib/brand.ts).
+ */
+export type Developer = 'kalb' | 'blak';
 
 export type Category =
   | 'Retail'
@@ -51,6 +58,12 @@ export interface Project {
   team?: string;
   /** Superintendent as written on the PM sheet. */
   superintendent?: string | null;
+  /** Defaults to 'kalb' when absent. */
+  developer?: Developer;
+  /** BLAK sheets quote a build duration, e.g. "12 months". */
+  duration?: string;
+  /** BLAK sheets quote a budget result, e.g. "On budget". */
+  budgetOutcome?: string;
   status: ProjectStatus;
   /** 0–100. Only set where it is actually known (finished jobs). */
   progress?: number;

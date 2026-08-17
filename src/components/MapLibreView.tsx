@@ -4,6 +4,7 @@ import type { Map as MLMap, Marker, StyleSpecification } from 'maplibre-gl';
 import type { Project } from '../types';
 import type { BBox } from '../lib/regions';
 import { setBearing } from '../lib/bearing';
+import { pinColor, pinGlyph, isBlak } from '../lib/brand';
 import { toggleFullscreen, DPR_CAP } from '../lib/kiosk';
 import { addHeatLayer } from '../lib/heat';
 
@@ -432,9 +433,12 @@ export function MapLibreView({
     for (const p of singles) {
       const el = makeEl(
         p.featured ? 'km-single km-feat' : 'km-single',
-        'K',
-        `${p.number} · ${p.shortName ?? p.name}`
+        pinGlyph(p),
+        isBlak(p)
+          ? (p.shortName ?? p.name)
+          : `${p.number} · ${p.shortName ?? p.name}`
       );
+      el.style.setProperty('--km-color', pinColor(p));
       el.setAttribute('aria-label', `${p.number} ${p.name}`);
       el.addEventListener('click', (e) => {
         e.stopPropagation();

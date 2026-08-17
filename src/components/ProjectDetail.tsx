@@ -4,6 +4,8 @@ import { statusTone } from '../lib/meta';
 import { teamName } from '../lib/teams';
 import { teamIdOf } from '../lib/teams';
 import { BuildingHero } from './BuildingHero';
+import { isBlak, pinColor, DEVELOPER_LABEL } from '../lib/brand';
+import { developerOf } from '../lib/brand';
 
 interface ProjectDetailProps {
   project: Project;
@@ -46,6 +48,7 @@ export function ProjectDetail({
   };
 
   const tone = statusTone(project.status);
+  const blak = isBlak(project);
 
   return (
     <aside
@@ -58,7 +61,12 @@ export function ProjectDetail({
       <span className="detail-sheen" aria-hidden="true" />
 
       <header className="detail-head">
-        <span className="detail-number">№ {project.number}</span>
+        <span
+          className={`detail-number${blak ? ' is-blak' : ''}`}
+          style={blak ? { color: pinColor(project) } : undefined}
+        >
+          {blak ? DEVELOPER_LABEL[developerOf(project)] : `№ ${project.number}`}
+        </span>
         <div className="detail-nav">
           <button className="nav-btn" aria-label="Previous project" onClick={onPrev}>
             ←
@@ -105,14 +113,29 @@ export function ProjectDetail({
         </div>
 
         <dl className="detail-facts">
-          <div>
-            <dt>Project Manager</dt>
-            <dd>{teamName(teams, teamIdOf(project))}</dd>
-          </div>
-          <div>
-            <dt>Superintendent</dt>
-            <dd>{project.superintendent ?? '—'}</dd>
-          </div>
+          {blak ? (
+            <>
+              <div>
+                <dt>Delivered</dt>
+                <dd>{project.estCompletion ?? '—'}</dd>
+              </div>
+              <div>
+                <dt>Duration</dt>
+                <dd>{project.duration ?? '—'}</dd>
+              </div>
+            </>
+          ) : (
+            <>
+              <div>
+                <dt>Project Manager</dt>
+                <dd>{teamName(teams, teamIdOf(project))}</dd>
+              </div>
+              <div>
+                <dt>Superintendent</dt>
+                <dd>{project.superintendent ?? '—'}</dd>
+              </div>
+            </>
+          )}
           <div>
             <dt>Square Feet</dt>
             <dd>
@@ -122,8 +145,8 @@ export function ProjectDetail({
             </dd>
           </div>
           <div>
-            <dt>Est. Completion</dt>
-            <dd>{project.estCompletion ?? '—'}</dd>
+            <dt>{blak ? 'Budget' : 'Est. Completion'}</dt>
+            <dd>{blak ? project.budgetOutcome ?? '—' : project.estCompletion ?? '—'}</dd>
           </div>
         </dl>
 

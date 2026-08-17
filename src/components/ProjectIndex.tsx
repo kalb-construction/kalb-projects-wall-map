@@ -2,6 +2,7 @@ import { memo, useMemo, useState } from 'react';
 import type { Project, Team } from '../types';
 import { cityGroupOf } from '../lib/meta';
 import { countByTeam, teamIdOf, teamsInUse } from '../lib/teams';
+import { pinColor } from '../lib/brand';
 
 interface ProjectIndexProps {
   projects: Project[];
@@ -99,7 +100,11 @@ function ProjectIndexBase({
                       onClick={() => onSelect(p)}
                       title={`${p.number} · ${p.name} — ${p.address}`}
                     >
-                      <span className="index-dot" aria-hidden="true" />
+                      <span
+                        className="index-dot"
+                        style={{ background: pinColor(p) }}
+                        aria-hidden="true"
+                      />
                       <span className="index-num">{p.number}</span>
                       <span className="index-name">{p.shortName ?? p.name}</span>
                     </button>
@@ -114,7 +119,7 @@ function ProjectIndexBase({
 
           <footer className="legend">
             <div className="legend-head">
-              <span className="legend-title">PROJECT MANAGERS</span>
+              <span className="legend-title">TEAMS &amp; DEVELOPERS</span>
               <button
                 className="legend-clear"
                 onClick={onClearTeams}
@@ -136,6 +141,11 @@ function ProjectIndexBase({
                     onClick={() => onToggleTeam(t.id)}
                     aria-pressed={picked}
                   >
+                    <span
+                      className="legend-swatch"
+                      style={{ background: t.color }}
+                      aria-hidden="true"
+                    />
                     <span className="legend-name">{t.name}</span>
                     <span className="legend-count">
                       {countByTeam(projects, t.id)}

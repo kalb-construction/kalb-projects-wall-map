@@ -19,6 +19,7 @@ export const CATEGORIES: Category[] = [
 export const STATUSES: ProjectStatus[] = [
   'Preconstruction',
   'In Progress',
+  'Coming Soon',
   'Complete'
 ];
 
@@ -37,8 +38,11 @@ export function cityOptionsOf(projects: Project[]): string[] {
   );
 }
 
-export function statusTone(status: ProjectStatus): 'active' | 'precon' | 'done' {
+export function statusTone(
+  status: ProjectStatus
+): 'active' | 'precon' | 'done' | 'soon' {
   if (status === 'In Progress') return 'active';
   if (status === 'Preconstruction') return 'precon';
+  if (status === 'Coming Soon') return 'soon';
   return 'done';
 }
