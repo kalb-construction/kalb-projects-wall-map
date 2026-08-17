@@ -4,6 +4,7 @@ import { statusTone } from '../lib/meta';
 import { teamName } from '../lib/teams';
 import { teamIdOf } from '../lib/teams';
 import { BuildingHero } from './BuildingHero';
+import { PhotoSlider } from './PhotoSlider';
 import { isBlak, pinColor, DEVELOPER_LABEL } from '../lib/brand';
 import { developerOf } from '../lib/brand';
 
@@ -49,6 +50,7 @@ export function ProjectDetail({
 
   const tone = statusTone(project.status);
   const blak = isBlak(project);
+  const hasPhotos = (project.photos?.length ?? 0) > 0;
 
   return (
     <aside
@@ -101,14 +103,18 @@ export function ProjectDetail({
 
         <div
           ref={heroRef}
-          className="detail-hero"
+          className={`detail-hero${hasPhotos ? ' has-photos' : ''}`}
           onPointerMove={onHeroMove}
           onPointerLeave={() => setTilt({ rx: 0, ry: 0 })}
           style={{
             transform: `perspective(900px) rotateX(${tilt.rx}deg) rotateY(${tilt.ry}deg)`
           }}
         >
-          <BuildingHero project={project} compact />
+          {project.photos && project.photos.length > 0 ? (
+            <PhotoSlider photos={project.photos} label={project.name} />
+          ) : (
+            <BuildingHero project={project} compact />
+          )}
           <span className="hero-scan" aria-hidden="true" />
         </div>
 

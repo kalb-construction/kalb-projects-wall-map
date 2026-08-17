@@ -1205,12 +1205,17 @@
     "duration": "12 months",
     "budgetOutcome": "On budget",
     "year": 2024,
-    "featured": false,
+    "featured": true,
     "description": "BLAK Development — 56,500 sf industrial warehouse, delivered May 2024 in 12 months, on budget.",
     "heroImage": null,
     "flags": [
       "City derived from the coordinates — confirm",
       "Street number not supplied"
+    ],
+    "photos": [
+      "./renders/blak/cheyenne-1-4.jpg",
+      "./renders/blak/cheyenne-8-3.jpg",
+      "./renders/blak/cheyenne-9-3.jpg"
     ]
   },
   {
@@ -1236,12 +1241,19 @@
     "duration": "12 months",
     "budgetOutcome": "On budget",
     "year": 2024,
-    "featured": false,
+    "featured": true,
     "description": "BLAK Development — 16,992 sf industrial warehouse, delivered February 2024 in 12 months, on budget.",
     "heroImage": null,
     "flags": [
       "City derived from the coordinates — confirm",
       "Street number not supplied"
+    ],
+    "photos": [
+      "./renders/blak/sunset-4-2.jpg",
+      "./renders/blak/sunset-5-2.jpg",
+      "./renders/blak/sunset-6-2.jpg",
+      "./renders/blak/sunset-9-2.jpg",
+      "./renders/blak/sunset-10-2.jpg"
     ]
   },
   {
@@ -1253,8 +1265,8 @@
     "city": "Las Vegas",
     "state": "NV",
     "region": "LV",
-    "lat": 36.29,
-    "lng": -115.31,
+    "lat": 36.264296,
+    "lng": -115.252756,
     "category": "Retail",
     "projectType": "Retail",
     "developer": "blak",
@@ -1266,7 +1278,6 @@
     "description": "BLAK Development — 44,867 sf retail development, coming soon.",
     "heroImage": null,
     "flags": [
-      "Coordinates supplied as approximate (~36.29, -115.31) — pin needs confirming",
       "Street address not supplied",
       "No completion date supplied"
     ]
@@ -1280,8 +1291,8 @@
     "city": "Avondale",
     "state": "AZ",
     "region": "AZ",
-    "lat": 33.4657,
-    "lng": -112.2726,
+    "lat": 33.469441,
+    "lng": -112.27396,
     "category": "Retail",
     "projectType": "Retail",
     "developer": "blak",
@@ -1293,8 +1304,6 @@
     "description": "BLAK Development — 77,000 sf retail development at 99th Ave & McDowell Rd, coming soon.",
     "heroImage": null,
     "flags": [
-      "LATITUDE NOT SUPPLIED — only the longitude (-112.2726) was given. 33.4657 is the 99th Ave & McDowell Rd junction; confirm before this pin is trusted",
-      "Intersection-level pin, not the actual pad",
       "No completion date supplied"
     ]
   }

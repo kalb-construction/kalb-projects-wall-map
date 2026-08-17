@@ -64,6 +64,8 @@ export interface Project {
   duration?: string;
   /** BLAK sheets quote a budget result, e.g. "On budget". */
   budgetOutcome?: string;
+  /** Real site photographs, newest first. Drives the hero carousel. */
+  photos?: string[];
   status: ProjectStatus;
   /** 0–100. Only set where it is actually known (finished jobs). */
   progress?: number;

@@ -15,8 +15,10 @@ import { ProjectDetail } from './components/ProjectDetail';
 import { IdleAttract } from './components/IdleAttract';
 import { ProjectIndex } from './components/ProjectIndex';
 import { DiagOverlay } from './components/DiagOverlay';
+import { BlakBadge } from './components/BlakBadge';
 import { FALLBACK_TEAMS, teamIdOf } from './lib/teams';
 import { deriveStatus } from './lib/status';
+import { isBlak } from './lib/brand';
 import { watchForUpdates } from './lib/version';
 
 /** `?diag=1` shows the on-screen engine/dpr/fps readout (kiosk-friendly). */
@@ -176,6 +178,7 @@ function Atlas({ projects, teams }: { projects: Project[]; teams: Team[] }) {
   );
 
   const featured = useMemo(() => projects.filter((p) => p.featured), [projects]);
+  const blakCount = useMemo(() => projects.filter(isBlak).length, [projects]);
   const cityCount = useMemo(
     () => new Set(projects.map((p) => `${p.city}|${p.state}`)).size,
     [projects]
@@ -350,6 +353,12 @@ function Atlas({ projects, teams }: { projects: Project[]; teams: Team[] }) {
           onNext={() => step(1)}
         />
       )}
+
+      <BlakBadge
+        count={blakCount}
+        active={activeTeams.has('blak')}
+        onToggle={() => toggleTeam('blak')}
+      />
 
       {searchOpen && (
         <SearchOverlay

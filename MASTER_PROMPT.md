@@ -225,9 +225,14 @@ rulings Kalb made after it was printed:
 - Multi-project sites collapse to one counted marker that opens a list popup.
 - Cinematic fly-to on selection, then a slow drone orbit until touched.
 - Detail panel: number, name, address, category, status + progress bar,
-  description, hero image slot, prev/next, CTA.
+  description, prev/next. The hero shows **real site photographs** as an
+  auto-crossfading slider when `photos[]` is populated, and falls back to
+  the generated 3D block when it isn't. Same slider runs in the attract
+  loop, where a project with photos is held longer.
 - Right index rail: cities A→Z, projects A→Z within each, team dots, counts.
-- Team legend: tap a team to highlight only its projects; "Show all" clears.
+- Team legend: tap a team (or the floating BLAK badge) and every other pin
+  **disappears** until "Show all" — filtered markers are `display: none`,
+  not dimmed, so the wall shows exactly the selection.
 - Filters: City and Type; picking a city also flies the camera there.
 - Search by job number, name, or address.
 - Regions quick-nav: Las Vegas Valley / Northern Nevada / Arizona.

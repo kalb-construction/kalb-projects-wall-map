@@ -134,12 +134,11 @@ button {
   transition: opacity 0.3s var(--ease-out);
   will-change: transform;
 }
-.km.is-dim {
-  opacity: 0.28;
-}
-.km.is-dim .km-head {
-  background: #6a6762;
-  border-color: rgba(255, 255, 255, 0.75);
+/* Filtered out by the legend or the dock: gone, not dimmed. Picking a
+   team or BLAK should leave only those pins on the wall until "Show all".
+   display:none also keeps them out of hit-testing and off the compositor. */
+.km.is-hidden {
+  display: none;
 }
 .km-head {
   position: absolute;
@@ -1040,6 +1039,11 @@ button {
   margin-bottom: 16px;
   box-shadow: inset 0 1px 0 rgba(231, 227, 219, 0.09);
 }
+/* A photo slider is absolutely positioned, so the box needs its own
+   shape — otherwise it collapses to zero height and the card looks empty. */
+.detail-hero.has-photos {
+  aspect-ratio: 3 / 2;
+}
 /* cinematic scan sweep whenever a new project loads in */
 .hero-scan {
   position: absolute;
@@ -1346,6 +1350,7 @@ button {
   }
 }
 .attract-visual {
+  position: relative;
   flex: 1.15;
   border-radius: 26px;
   border: 1px solid var(--glass-border);
@@ -2015,4 +2020,122 @@ button {
   color: #cfd6b4;
   border-color: rgba(95, 102, 56, 0.75);
   background: rgba(95, 102, 56, 0.25);
+}
+
+/* ---------- photo carousel (real site photography) ---------- */
+.pslider {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  background: var(--ink-2);
+}
+.pslide {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  /* opacity only — the compositor handles this without a repaint */
+  transition: opacity 1s var(--ease-out);
+  will-change: opacity;
+}
+.pslide.is-on {
+  opacity: 1;
+}
+/* The camera moving is not a reason to restart a fade, but it is a reason
+   not to pay for one. */
+.is-moving .pslide {
+  transition: none;
+}
+.pslider-dots {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 8px;
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  pointer-events: none;
+}
+.pdot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.38);
+  transition: background 0.3s var(--ease-out), transform 0.3s var(--ease-out);
+}
+.pdot.is-on {
+  background: #fff;
+  transform: scale(1.5);
+}
+.pslider-attract .pdot {
+  width: 8px;
+  height: 8px;
+}
+.pslider-attract .pslider-dots {
+  bottom: 16px;
+  gap: 9px;
+}
+
+/* ---------- BLAK Development badge (floating, tappable) ---------- */
+.blak-badge {
+  position: absolute;
+  left: calc(20px + var(--oi));
+  bottom: calc(92px + var(--oi));
+  z-index: 9;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 9px 16px 9px 11px;
+  border-radius: 14px;
+  background: var(--glass-solid);
+  border: 1px solid var(--glass-edge);
+  box-shadow: var(--shadow-panel);
+  transition: border-color 0.2s, transform 0.15s var(--ease-out);
+}
+.blak-badge:hover {
+  transform: translateY(-2px);
+}
+.blak-badge.is-active {
+  border-color: var(--blak);
+  box-shadow: 0 0 0 1px var(--blak), var(--shadow-panel);
+}
+.blak-logo {
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
+  flex: 0 0 auto;
+}
+.blak-wordmark {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 19px;
+  letter-spacing: 0.06em;
+  color: var(--blak);
+  line-height: 1;
+}
+.blak-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  line-height: 1.1;
+  text-align: left;
+}
+.blak-name {
+  font-family: var(--font-display);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  color: var(--sand);
+}
+.blak-count {
+  font-size: 10.5px;
+  letter-spacing: 0.05em;
+  color: var(--blak);
+  font-weight: 700;
+}
+/* The detail card takes this corner when a project is open. */
+.app.detail-open .blak-badge {
+  display: none;
 }

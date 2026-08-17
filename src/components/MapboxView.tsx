@@ -433,11 +433,11 @@ export function MapboxView({
   useEffect(() => {
     for (const u of unitsRef.current) {
       if (u.project) {
-        u.el.classList.toggle('is-dim', !visibleIds.has(u.project.id));
+        u.el.classList.toggle('is-hidden', !visibleIds.has(u.project.id));
         u.el.classList.toggle('is-selected', u.project.id === selectedId);
       } else if (u.site) {
         const vis = u.site.members.filter((m) => visibleIds.has(m.id)).length;
-        u.el.classList.toggle('is-dim', vis === 0);
+        u.el.classList.toggle('is-hidden', vis === 0);
         u.el.classList.toggle(
           'is-selected',
           u.site.members.some((m) => m.id === selectedId)

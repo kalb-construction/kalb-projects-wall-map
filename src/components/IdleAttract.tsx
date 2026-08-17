@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import type { Project } from '../types';
 import { statusTone } from '../lib/meta';
 import { BuildingHero } from './BuildingHero';
+import { PhotoSlider } from './PhotoSlider';
 
 interface IdleAttractProps {
   featured: Project[];
@@ -16,12 +17,16 @@ export function IdleAttract({ featured }: IdleAttractProps) {
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
-    const id = window.setInterval(
+    // Hold long enough for a photo set to play through before moving on.
+    const hold = featured[index % featured.length]?.photos?.length
+      ? 14000
+      : 9000;
+    const id = window.setTimeout(
       () => setIndex((i) => (i + 1) % featured.length),
-      9000
+      hold
     );
-    return () => window.clearInterval(id);
-  }, [featured.length]);
+    return () => window.clearTimeout(id);
+  }, [featured, index]);
 
   if (featured.length === 0) return null;
   const p = featured[index % featured.length];
@@ -30,11 +35,22 @@ export function IdleAttract({ featured }: IdleAttractProps) {
     <div className="attract" aria-hidden="true">
       <div className="attract-inner" key={p.id}>
         <div className="attract-visual">
-          <BuildingHero project={p} compact />
+          {p.photos && p.photos.length > 0 ? (
+            <PhotoSlider
+              photos={p.photos}
+              label={p.name}
+              interval={3600}
+              variant="attract"
+            />
+          ) : (
+            <BuildingHero project={p} compact />
+          )}
         </div>
         <div className="attract-copy">
           <span className="attract-kicker">FEATURED PROJECT</span>
-          <span className="attract-number">№ {p.number}</span>
+          <span className="attract-number">
+            {p.developer === 'blak' ? 'BLAK DEVELOPMENT' : `№ ${p.number}`}
+          </span>
           <h2 className="attract-name">{p.name}</h2>
           <p className="attract-addr">
             {p.address} · {p.city}, {p.state}
@@ -43,12 +59,14 @@ export function IdleAttract({ featured }: IdleAttractProps) {
             <span className={`chip chip-status tone-${statusTone(p.status)}`}>
               {p.status}
             </span>
-            <div className="progress-track">
-              <div
-                className={`progress-fill tone-${statusTone(p.status)}`}
-                style={{ width: `${p.progress}%` }}
-              />
-            </div>
+            {typeof p.progress === 'number' && (
+              <div className="progress-track">
+                <div
+                  className={`progress-fill tone-${statusTone(p.status)}`}
+                  style={{ width: `${p.progress}%` }}
+                />
+              </div>
+            )}
           </div>
         </div>
       </div>
