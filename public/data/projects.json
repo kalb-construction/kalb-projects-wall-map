@@ -114,8 +114,8 @@
     "city": "North Las Vegas",
     "state": "NV",
     "region": "LV",
-    "lat": 36.239167,
-    "lng": -115.198431,
+    "lat": 36.239344,
+    "lng": -115.200532,
     "category": "Restaurant",
     "projectType": "GU Restaurant/Bar",
     "team": "jj",
@@ -129,10 +129,7 @@
     "siteId": "craig-valley",
     "siteName": "Craig & Valley",
     "description": "GU Restaurant/Bar · 4,625 sf in North Las Vegas. Estimated completion SEP 2026.",
-    "heroImage": null,
-    "flags": [
-      "Address upgraded from the Craig & Valley intersection to 4388 W. Craig Rd — pin still on the junction, needs moving"
-    ]
+    "heroImage": null
   },
   {
     "id": "25133",
@@ -1074,8 +1071,8 @@
     "city": "Avondale",
     "state": "AZ",
     "region": "AZ",
-    "lat": 33.493769,
-    "lng": -112.272462,
+    "lat": 33.493472,
+    "lng": -112.270373,
     "category": "Restaurant",
     "projectType": "Restaurant",
     "team": "sb",
@@ -1088,8 +1085,7 @@
     "flags": [
       "Superintendent unverified",
       "Est. completion not on file",
-      "Square footage not on file",
-      "Address upgraded to 9811 W. Indian School Rd — confirm the pin matches the street number"
+      "Square footage not on file"
     ]
   },
   {
