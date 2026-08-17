@@ -9,6 +9,10 @@
  * { project, source } objects. Every row lands in exactly one of three buckets:
  *
  *   ACCEPTED  — complete and plottable; merged into projects.json.
+ *   MINOR     — the extractor classed it as minor works (demo, punch repair,
+ *               demising wall, restroom, canopy). Real Kalb jobs, but Kalb
+ *               ruled they don't belong on a lobby wall. Held to their own
+ *               file; pass --include-minor to merge them anyway.
  *   PENDING   — valid in every respect EXCEPT coordinates. The brief forbids
  *               the extractor from geocoding, so this is the normal state for
  *               most rows, not a fault. They go to a geocoding worklist and
@@ -50,6 +54,8 @@ const WINDOW_START = '2024-01-01';
 const args = process.argv.slice(2);
 const batchPath = args.find((a) => !a.startsWith('--'));
 const doWrite = args.includes('--write');
+// Kalb, 2026-08-17: minor works stay off the wall unless asked for.
+const includeMinor = args.includes('--include-minor');
 if (!batchPath) {
   console.error('usage: node scripts/ingest-kijobs.mjs <batch.json> [--write]');
   process.exit(2);
@@ -75,6 +81,7 @@ if (!Array.isArray(batch)) {
 
 const today = new Date().toISOString().slice(0, 10);
 const accepted = [];
+const minor = [];
 const pending = [];
 const rejected = [];
 const flagged = [];
@@ -208,8 +215,15 @@ for (const [i, row] of batch.entries()) {
   // Every row in this batch is historical by definition — stamped here rather
   // than asked of the extractor, since it is a constant for the whole run.
   p.historical = true;
-  if (needsGeocode) pending.push(row);
-  else accepted.push(p);
+  // The extractor judges project-vs-minor from the documents; that is a
+  // better call than pattern-matching the name after the fact.
+  if (!includeMinor && row?.source?.workClass === 'minor') {
+    minor.push(row);
+  } else if (needsGeocode) {
+    pending.push(row);
+  } else {
+    accepted.push(p);
+  }
 }
 
 // --- report -------------------------------------------------------------
@@ -219,6 +233,7 @@ line(`Batch:    ${batchPath}`);
 line(`Rows:     ${batch.length}`);
 line(`Accepted: ${accepted.length}  (complete — will merge)`);
 line(`Pending:  ${pending.length}  (valid, awaiting coordinates — normal)`);
+line(`Minor:    ${minor.length}  (minor works — held; --include-minor to merge)`);
 line(`Rejected: ${rejected.length}  (needs a ruling — blocks the merge)`);
 line(`Flagged:  ${flagged.length}  (kept, but worth a human look)`);
 line('');
@@ -246,6 +261,13 @@ if (rejected.length) {
   writeFileSync(queue, JSON.stringify(rejected, null, 2) + '\n');
   console.error(`\nRefusing to merge with ${rejected.length} reject(s). Queue written to ${queue}`);
   process.exit(1);
+}
+
+if (minor.length) {
+  const file = resolve(ROOT, 'kijobs-minor-works.json');
+  writeFileSync(file, JSON.stringify(minor, null, 2) + '\n');
+  line(`\n${minor.length} minor-works rows held:`);
+  line(`  ${file}   (re-run with --include-minor to merge them)`);
 }
 
 // The geocoding worklist keeps the full {project, source} shape so that once
