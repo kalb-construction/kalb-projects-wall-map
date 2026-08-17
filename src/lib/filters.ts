@@ -1,13 +1,18 @@
 import type { Filters, Project } from '../types';
 import { cityGroupOf } from './meta';
+import { isHistory } from './brand';
 
 export const EMPTY_FILTERS: Filters = {
   city: 'all',
   category: 'all',
-  status: 'all'
+  status: 'all',
+  // Completed work is shown by default; the toggle is for narrowing the
+  // wall to what Kalb is building right now.
+  history: true
 };
 
 export function matchesFilters(project: Project, filters: Filters): boolean {
+  if (!filters.history && isHistory(project)) return false;
   if (filters.city !== 'all' && cityGroupOf(project) !== filters.city) {
     return false;
   }

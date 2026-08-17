@@ -2,7 +2,7 @@ import { memo, useMemo, useState } from 'react';
 import type { Project, Team } from '../types';
 import { cityGroupOf } from '../lib/meta';
 import { countByTeam, teamIdOf, teamsInUse } from '../lib/teams';
-import { pinColor } from '../lib/brand';
+import { pinColor, KALB_RED, BLAK_GREEN, COMPLETE_GREY } from '../lib/brand';
 
 interface ProjectIndexProps {
   projects: Project[];
@@ -117,6 +117,12 @@ function ProjectIndexBase({
             )}
           </div>
 
+          <div className="colour-key" aria-label="What the pin colours mean">
+            <span><i style={{ background: KALB_RED }} />Kalb building</span>
+            <span><i style={{ background: BLAK_GREEN }} />BLAK building</span>
+            <span><i style={{ background: COMPLETE_GREY }} />Completed</span>
+          </div>
+
           <footer className="legend">
             <div className="legend-head">
               <span className="legend-title">TEAMS &amp; DEVELOPERS</span>
@@ -141,11 +147,6 @@ function ProjectIndexBase({
                     onClick={() => onToggleTeam(t.id)}
                     aria-pressed={picked}
                   >
-                    <span
-                      className="legend-swatch"
-                      style={{ background: t.color }}
-                      aria-hidden="true"
-                    />
                     <span className="legend-name">{t.name}</span>
                     <span className="legend-count">
                       {countByTeam(projects, t.id)}

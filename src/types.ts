@@ -108,4 +108,6 @@ export interface Filters {
   city: string; // 'all' | city group label
   category: string; // 'all' | Category
   status: string; // 'all' | ProjectStatus (kept for future use)
+  /** Completed work — grey pins. False hides it and leaves only live work. */
+  history: boolean;
 }

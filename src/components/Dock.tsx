@@ -1,12 +1,15 @@
 import { memo, useState } from 'react';
 import type { Filters } from '../types';
 import { CATEGORIES, STATUSES } from '../lib/meta';
+import { COMPLETE_GREY } from '../lib/brand';
 import { Compass } from './Compass';
 
 interface DockProps {
   filters: Filters;
   onFilters: (f: Filters) => void;
   shownCount: number;
+  /** How many finished projects the history toggle governs. */
+  historyCount: number;
   /** Cities present in the data, alphabetical. */
   cityOptions: string[];
   /** Snap the camera back to north-up. */
@@ -26,6 +29,7 @@ function DockBase({
   filters,
   onFilters,
   shownCount,
+  historyCount,
   cityOptions,
   onNorth
 }: DockProps) {
@@ -40,7 +44,8 @@ function DockBase({
   const isFiltered =
     filters.city !== 'all' ||
     filters.category !== 'all' ||
-    filters.status !== 'all';
+    filters.status !== 'all' ||
+    !filters.history;
 
   const setValue = (key: Exclude<TrayKey, null>, value: string) => {
     onFilters({ ...filters, [key]: value });
@@ -92,11 +97,34 @@ function DockBase({
             </svg>
           </button>
         ))}
+        <button
+          className={`dock-history${filters.history ? ' is-on' : ''}`}
+          onClick={() => onFilters({ ...filters, history: !filters.history })}
+          aria-pressed={filters.history}
+          title={
+            filters.history
+              ? `Hide ${historyCount} completed projects`
+              : `Show ${historyCount} completed projects`
+          }
+        >
+          <span
+            className="hist-swatch"
+            style={{ background: COMPLETE_GREY }}
+            aria-hidden="true"
+          />
+          History
+          <span className="hist-count">{historyCount}</span>
+        </button>
         {isFiltered && (
           <button
             className="dock-clear"
             onClick={() =>
-              onFilters({ city: 'all', category: 'all', status: 'all' })
+              onFilters({
+                city: 'all',
+                category: 'all',
+                status: 'all',
+                history: true
+              })
             }
           >
             Clear

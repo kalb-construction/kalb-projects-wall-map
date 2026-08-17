@@ -24,14 +24,19 @@ updatable by Kalb staff without a developer.
 ## 2. Non-negotiables
 
 **Brand**
-- Kalb palette: Kalb Red `#C10016`, Sand `#E7E3DB`, Concrete `#6A6762`,
-  near-black inks (`#0C0B0A` / `#141210`). **Every Kalb pin is Kalb red** —
-  the PM legend is a filter, not a colour key.
-- The wall also carries **BLAK Development**, a separate brand, in its own
-  colours (`src/lib/brand.ts`): BLAK green `#5F6638` (PMS 5747 U) for live
-  and upcoming work, BLAK grey `#54575A` (PMS 425 U) for BLAK's completed
-  work. So pin colour answers two questions at once — whose project, and is
-  it still going. No third palette without a decision from Kalb.
+- Palette: Kalb Red `#C10016`, BLAK green `#5F6638` (PMS 5747 U), complete
+  grey `#54575A` (PMS 425 U), Sand `#E7E3DB`, Concrete `#6A6762`, near-black
+  inks (`#0C0B0A` / `#141210`).
+- **Pin colour is status first, then whose project it is** (`src/lib/brand.ts`,
+  Kalb 2026-08-17 — this supersedes the earlier rule that every Kalb pin was
+  red regardless of status):
+  - **grey** — finished, whoever built it. History recedes so live work
+    carries the wall.
+  - **red** — Kalb, building now or coming.
+  - **green** — BLAK Development, building now or coming.
+- Because colour now encodes status, the **PM legend rows carry no swatches**
+  — that would imply colour meant team. A three-item key in the index rail
+  states what the colours mean instead.
 - Type: **Oswald** for display/headings (condensed, construction-forward),
   **Inter** for UI text. Both self-hosted — never a font CDN.
 - The Kalb logo assets in `public/brand/` are the only marks used.
@@ -230,6 +235,10 @@ rulings Kalb made after it was printed:
   the generated 3D block when it isn't. Same slider runs in the attract
   loop, where a project with photos is held longer.
 - Right index rail: cities A→Z, projects A→Z within each, team dots, counts.
+- **History toggle** in the dock hides every completed project, leaving only
+  what Kalb and BLAK are building now. Shown by default; the grey already
+  separates finished work visually, so the toggle is for narrowing rather
+  than for tidying.
 - Team legend: tap a team (or the floating BLAK badge) and every other pin
   **disappears** until "Show all" — filtered markers are `display: none`,
   not dimmed, so the wall shows exactly the selection. **"Unassigned" is

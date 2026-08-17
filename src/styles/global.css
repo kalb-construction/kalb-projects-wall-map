@@ -2168,3 +2168,73 @@ button {
   letter-spacing: 0.08em;
   font-size: 13px;
 }
+
+/* ---------- history toggle (completed work) ---------- */
+.dock-history {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 42px;
+  padding: 0 16px;
+  border-radius: 12px;
+  background: var(--glass-solid);
+  border: 1px solid var(--glass-edge);
+  color: var(--sand-60);
+  font-family: var(--font-display);
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  pointer-events: auto;
+  transition: color 0.18s, border-color 0.18s, background 0.18s;
+}
+.dock-history.is-on {
+  color: var(--sand);
+  border-color: rgba(231, 227, 219, 0.34);
+}
+.hist-swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  flex: 0 0 auto;
+  opacity: 0.45;
+  transition: opacity 0.18s;
+}
+.dock-history.is-on .hist-swatch {
+  opacity: 1;
+}
+.hist-count {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0;
+  color: var(--sand-40);
+}
+.dock-history.is-on .hist-count {
+  color: var(--sand-60);
+}
+
+/* ---------- pin colour key ----------
+   Colour encodes status, not team, so the legend needs to say so — the PM
+   rows lost their swatches for exactly this reason. */
+.colour-key {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  padding: 10px 14px;
+  border-top: 1px solid var(--glass-border);
+  font-size: 11px;
+  letter-spacing: 0.03em;
+  color: var(--sand-60);
+}
+.colour-key span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+.colour-key i {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex: 0 0 auto;
+}

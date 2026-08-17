@@ -18,7 +18,7 @@ import { DiagOverlay } from './components/DiagOverlay';
 import { BlakBadge } from './components/BlakBadge';
 import { FALLBACK_TEAMS, teamIdOf } from './lib/teams';
 import { deriveStatus } from './lib/status';
-import { isBlak } from './lib/brand';
+import { isBlak, isHistory } from './lib/brand';
 import { watchForUpdates } from './lib/version';
 import { validateProjects } from './lib/validate';
 
@@ -181,6 +181,7 @@ function Atlas({ projects, teams }: { projects: Project[]; teams: Team[] }) {
 
   const featured = useMemo(() => projects.filter((p) => p.featured), [projects]);
   const blakCount = useMemo(() => projects.filter(isBlak).length, [projects]);
+  const historyCount = useMemo(() => projects.filter(isHistory).length, [projects]);
   const cityCount = useMemo(
     () => new Set(projects.map((p) => `${p.city}|${p.state}`)).size,
     [projects]
@@ -331,6 +332,7 @@ function Atlas({ projects, teams }: { projects: Project[]; teams: Team[] }) {
         filters={filters}
         onFilters={handleFilters}
         shownCount={shownProjects.length}
+        historyCount={historyCount}
         cityOptions={cityOptions}
         onNorth={() => setNorthSignal((n) => n + 1)}
       />
