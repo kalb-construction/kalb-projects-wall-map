@@ -232,7 +232,11 @@ rulings Kalb made after it was printed:
 - Right index rail: cities A→Z, projects A→Z within each, team dots, counts.
 - Team legend: tap a team (or the floating BLAK badge) and every other pin
   **disappears** until "Show all" — filtered markers are `display: none`,
-  not dimmed, so the wall shows exactly the selection.
+  not dimmed, so the wall shows exactly the selection. **"Unassigned" is
+  never listed**: the legend filters by project manager, and the imported
+  historical jobs carry none, so listing them as a team would turn missing
+  data into what looks like a person with a caseload. Their cards show
+  "—" for PM, like every other absent field.
 - Filters: City and Type; picking a city also flies the camera there.
 - Search by job number, name, or address.
 - Regions quick-nav: Las Vegas Valley / Northern Nevada / Arizona.

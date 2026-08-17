@@ -134,7 +134,9 @@ export function ProjectDetail({
             <>
               <div>
                 <dt>Project Manager</dt>
-                <dd>{teamName(teams, teamIdOf(project))}</dd>
+                {/* No PM on file reads as "—" like every other absent field.
+                    "Unassigned" would imply someone chose not to assign one. */}
+                <dd>{project.team ? teamName(teams, teamIdOf(project)) : '—'}</dd>
               </div>
               <div>
                 <dt>Superintendent</dt>
