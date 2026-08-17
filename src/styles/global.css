@@ -2139,3 +2139,32 @@ button {
 .app.detail-open .blak-badge {
   display: none;
 }
+
+/* ---------- render-failure panel (ErrorBoundary) ---------- */
+.g-error-boundary {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-start;
+  max-width: 640px;
+}
+.g-error-detail {
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 13px;
+  color: var(--sand-60);
+  word-break: break-word;
+}
+.g-error-hint {
+  font-size: 13px;
+  color: var(--sand-60);
+}
+.g-error-btn {
+  margin-top: 4px;
+  padding: 9px 20px;
+  border-radius: 10px;
+  background: var(--red);
+  color: #fff;
+  font-family: var(--font-display);
+  letter-spacing: 0.08em;
+  font-size: 13px;
+}

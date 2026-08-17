@@ -20,6 +20,7 @@ import { FALLBACK_TEAMS, teamIdOf } from './lib/teams';
 import { deriveStatus } from './lib/status';
 import { isBlak } from './lib/brand';
 import { watchForUpdates } from './lib/version';
+import { validateProjects } from './lib/validate';
 
 /** `?diag=1` shows the on-screen engine/dpr/fps readout (kiosk-friendly). */
 const SHOW_DIAG = new URLSearchParams(window.location.search).has('diag');
@@ -37,10 +38,11 @@ const BOOT_MAX_MS = 8000;
 async function loadProjects(): Promise<Project[]> {
   const res = await fetch('./data/projects.json', { cache: 'no-store' });
   if (!res.ok) throw new Error(`projects.json ${res.status}`);
-  const data = (await res.json()) as Project[];
+  // Guard before render: one unrenderable row must not blank the wall.
+  const { projects } = validateProjects(await res.json());
   // Status is derived from the estimated completion date at load time, so
   // the wall stays current as dates pass without anyone editing the file.
-  return data.map((p) => deriveStatus(p));
+  return projects.map((p) => deriveStatus(p));
 }
 
 /** Teams are optional: a missing/broken file just means one grey team. */
