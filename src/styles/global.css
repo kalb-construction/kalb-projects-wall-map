@@ -614,7 +614,9 @@ button {
   height: calc(78px + var(--oi));
   background: none;
   pointer-events: none;
-  z-index: 8;
+  /* Above the BLAK badge (z-index 9): an open filter tray must cover it
+     rather than have the badge punch through the middle of the chip list. */
+  z-index: 12;
 }
 .dock > * {
   pointer-events: auto;
@@ -2139,6 +2141,11 @@ button {
 .app.detail-open .blak-badge {
   display: none;
 }
+/* So does an open filter tray. Raising the dock above it was not enough:
+   the tray is 95% opaque, so the badge ghosted through. */
+.app:has(.tray) .blak-badge {
+  display: none;
+}
 
 /* ---------- render-failure panel (ErrorBoundary) ---------- */
 .g-error-boundary {
@@ -2219,9 +2226,10 @@ button {
 .colour-key {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px 14px;
-  padding: 10px 14px;
+  gap: 5px 13px;
+  padding: 9px 14px 11px;
   border-top: 1px solid var(--glass-border);
+  flex: 0 0 auto;
   font-size: 11px;
   letter-spacing: 0.03em;
   color: var(--sand-60);

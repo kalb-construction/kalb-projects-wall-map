@@ -129,7 +129,10 @@ within 9 seconds and explains itself in a toast.
 - Selecting a project opens a **compact glass card on the left** (~396px,
   never full height) so the map and the index stay visible — the atlas
   always reads as one page. The Regions nav steps aside while it is open.
-- Side panels collapse to a single header bar.
+- Side panels collapse to a single header bar, and the **project index starts
+  collapsed** — the wall should open on the map, not on a list. Its colour key
+  stays visible while it is shut, since the pins it explains are on screen
+  either way.
 - The bottom bar has no background scrim — chips and buttons float.
 - The card has a blueprint-grid glass backdrop, a specular top sheen, a
   parallax hero, and a scan-sweep as each project loads in. Glass is faked

@@ -32,7 +32,8 @@ function ProjectIndexBase({
   onClearTeams,
   onSelect
 }: ProjectIndexProps) {
-  const [open, setOpen] = useState(true);
+  // Collapsed on boot: the wall should open on the map, not on a list.
+  const [open, setOpen] = useState(false);
 
   const groups = useMemo(() => {
     const byCity = new Map<string, Project[]>();
@@ -79,6 +80,12 @@ function ProjectIndexBase({
         </svg>
       </button>
 
+      <div className="colour-key" aria-label="What the pin colours mean">
+        <span><i style={{ background: KALB_RED }} />Kalb building</span>
+        <span><i style={{ background: BLAK_GREEN }} />BLAK building</span>
+        <span><i style={{ background: COMPLETE_GREY }} />Completed</span>
+      </div>
+
       {open && (
         <>
           <div className="index-scroll">
@@ -115,12 +122,6 @@ function ProjectIndexBase({
             {total === 0 && (
               <p className="index-empty">No projects match the current filters.</p>
             )}
-          </div>
-
-          <div className="colour-key" aria-label="What the pin colours mean">
-            <span><i style={{ background: KALB_RED }} />Kalb building</span>
-            <span><i style={{ background: BLAK_GREEN }} />BLAK building</span>
-            <span><i style={{ background: COMPLETE_GREY }} />Completed</span>
           </div>
 
           <footer className="legend">
