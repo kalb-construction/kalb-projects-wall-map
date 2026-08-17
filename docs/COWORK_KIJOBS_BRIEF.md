@@ -61,6 +61,64 @@ address, that is an ambiguity for Kalb (§8) — do not pick one.
 
 ---
 
+## 0c. The share's actual taxonomy (mapped 2026-08-17 — supersedes §1 recon)
+
+`U:\KIJOBS` was enumerated directly. Its shape:
+
+```
+U:\KIJOBS\
+    (1) BIDDING PROJECTS          <- never built. EXCLUDED ENTIRELY.
+    (1) COMPLETED PROJECTS\
+        2015 (51)  2016 (0)  2018 (207)  2019 (172)  2020 (98)
+        2021 (97)  2022 (98)  2023 (73)  2024 (26)  2025 (6)
+        12264 Eddins                      <- loose stray, pre-dates the window
+        19200 Dornin 400 S 4th ...        <- loose stray, pre-dates the window
+    <146 job folders at the top level>    <- active jobs AND 2026 completions
+```
+
+**The year folder is the job's OPENING year, not its completion year.**
+`COMPLETED PROJECTS\2025` holds `25100, 25105, 25114, 25115, 25118, 25122`
+— every one a `25xxx` number. It mirrors the job-number prefix from §0b and
+says nothing about when work finished. **Never use it as a completion
+filter.** The §3 evidence ladder remains the only thing that dates a job.
+
+**There is no `2026` folder.** Nothing finished this year has been archived
+yet, so 2026 completions are still sitting at the top level among the active
+jobs. Completion evidence is what separates them; its absence there means
+`still-active`, not a gap.
+
+### The target set — 446 folders, sweep in this order
+
+| # | Path | Folders |
+|---|---|---|
+| 1 | `(1) COMPLETED PROJECTS\2025` | 6 |
+| 2 | `(1) COMPLETED PROJECTS\2024` | 26 |
+| 3 | `(1) COMPLETED PROJECTS\2023` | 73 |
+| 4 | `(1) COMPLETED PROJECTS\2022` | 98 |
+| 5 | `(1) COMPLETED PROJECTS\2021` | 97 |
+| 6 | the 146 top-level job folders | 146 |
+
+### Excluded, and reported as such in the summary
+
+- `(1) BIDDING PROJECTS` — never built, not projects.
+- `(1) COMPLETED PROJECTS\2015` … `2020` (528 folders) — reaching the
+  2024+ window would require a 4-year-plus build. **Kalb confirmed on
+  2026-08-17 that no job from 2020 or earlier is still in scope.** This is a
+  ruling, not an assumption; record it in the summary as an explicit
+  exclusion with that provenance.
+- The two loose strays `12264 Eddins` and `19200 Dornin 400 S 4th Vehicle
+  Damage` — both numbers pre-date the window by a decade.
+
+### The index
+
+`kijobs-index.txt` sits in the `kalb-projects-wall-map` folder: **313,932
+full paths, one per line**, covering exactly the target set above (the
+excluded trees were filtered out at generation). It is far too large to
+read — grep it. It carries **paths only, no timestamps, deliberately**:
+the share has been migrated and mtimes are not evidence.
+
+---
+
 ## 1. Phase 0 — reconnaissance before the full walk (do this first, then report)
 
 Do not extract 500 folders against a guessed folder taxonomy.
