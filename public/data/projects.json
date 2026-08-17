@@ -301,7 +301,14 @@
     "year": 2026,
     "featured": false,
     "description": "IND TI · 10,000 sf in Las Vegas. Estimated completion SEP 2026.",
-    "heroImage": null
+    "heroImage": null,
+    "photos": [
+      "./renders/26119/26119-1.jpg",
+      "./renders/26119/26119-2.jpg",
+      "./renders/26119/26119-3.jpg",
+      "./renders/26119/26119-4.jpg",
+      "./renders/26119/26119-5.jpg"
+    ]
   },
   {
     "id": "25155",
@@ -786,7 +793,14 @@
     "heroImage": null,
     "estCompletion": "12/21/2026",
     "estCompletionDate": "2026-12-21",
-    "sqFt": 4643
+    "sqFt": 4643,
+    "photos": [
+      "./renders/26110/26110-1.jpg",
+      "./renders/26110/26110-2.jpg",
+      "./renders/26110/26110-3.jpg",
+      "./renders/26110/26110-4.jpg",
+      "./renders/26110/26110-5.jpg"
+    ]
   },
   {
     "id": "25153",
@@ -933,7 +947,14 @@
     "year": 2026,
     "featured": false,
     "description": "TI · 8,885 sf in Las Vegas. Estimated completion 08/28/2026.",
-    "heroImage": null
+    "heroImage": null,
+    "photos": [
+      "./renders/26105/26105-1.jpg",
+      "./renders/26105/26105-2.jpg",
+      "./renders/26105/26105-3.jpg",
+      "./renders/26105/26105-4.jpg",
+      "./renders/26105/26105-5.jpg"
+    ]
   },
   {
     "id": "24114",
@@ -1055,7 +1076,14 @@
     "year": 2025,
     "featured": false,
     "description": "TI Office · 13,730 sf in Las Vegas. Estimated completion 08/31/2026.",
-    "heroImage": null
+    "heroImage": null,
+    "photos": [
+      "./renders/25127/25127-1.jpg",
+      "./renders/25127/25127-2.jpg",
+      "./renders/25127/25127-3.jpg",
+      "./renders/25127/25127-4.jpg",
+      "./renders/25127/25127-5.jpg"
+    ]
   },
   {
     "id": "26111",
@@ -1154,7 +1182,15 @@
     "year": 2026,
     "featured": true,
     "description": "TI Office · 80,000 sf in Las Vegas. Estimated completion SEP 2026.",
-    "heroImage": null
+    "heroImage": null,
+    "photos": [
+      "./renders/26102/26102-1.jpg",
+      "./renders/26102/26102-2.jpg",
+      "./renders/26102/26102-3.jpg",
+      "./renders/26102/26102-4.jpg",
+      "./renders/26102/26102-5.jpg",
+      "./renders/26102/26102-6.jpg"
+    ]
   },
   {
     "id": "25147",

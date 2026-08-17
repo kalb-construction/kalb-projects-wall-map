@@ -1351,6 +1351,14 @@ button {
     transform: none;
   }
 }
+/* .attract-inner centres its children rather than stretching them, so this
+   panel takes its height from its own content. A PhotoSlider is absolutely
+   positioned and contributes none — without a declared ratio the panel
+   collapses to ~2px and the photo never appears. Same failure as
+   .detail-hero.has-photos, and the same fix. */
+.attract-visual:has(.pslider) {
+  aspect-ratio: 3 / 2;
+}
 .attract-visual {
   position: relative;
   flex: 1.15;
