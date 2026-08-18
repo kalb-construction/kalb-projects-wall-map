@@ -13,9 +13,9 @@ Checked against a clean clone, running exactly what Vercel runs
 | Check | Result |
 |---|---|
 | `npm ci` from `package-lock.json` | 424 packages, no errors |
-| `npm run build` (`tsc -b && vite build && node scripts/protect-build.mjs`) | passes, ~25 s |
-| Build output | `dist/` — includes `assets/`, `brand/`, `renders/`; `data/` and `tools/` are stripped out and embedded into the `api/` functions instead (see **Access gate**) |
-| `dist/data/projects.json` | not present by design — served by `api/serve.ts` behind the gate |
+| `npm run build` (`tsc -b && vite build`) | passes, ~20 s |
+| Build output | `dist/` — includes `data/`, `brand/`, `renders/`, `tools/` |
+| `dist/data/projects.json` | present, served statically |
 | Node version | pinned via `engines.node` `22.x` in package.json |
 | Config | `vercel.json` present — framework, build command, output dir, cache headers |
 | Secrets | `.env` is git-ignored; no token is committed |
@@ -68,13 +68,12 @@ Choose the **Hobby (free)** plan — a static site like this stays free.
    - Build command: `npm run build`
    - Output directory: `dist`
 
-### 3. Add the environment variables
+### 3. Add the environment variable
 Still on the import screen (or later under **Settings → Environment
-Variables**), add both:
+Variables**), add:
 
 | Name | Value | Environments |
 |---|---|---|
-| `SITE_KEY` | a long random string — see **Access gate** below | Production, Preview, Development |
 | `VITE_MAPBOX_TOKEN` | `pk.…` (from account.mapbox.com) | Production, Preview, Development |
 
 Without the Mapbox token the site still works — it falls back to the free map
@@ -99,101 +98,29 @@ looks missing. Create a new one instead:
 5. Back in Mapbox, **delete the old token** — rotation is not finished until
    the old one stops working
 
-### Access gate
+### Access — public by decision
 
-The deployment is on the public internet. Every pin carries a job number, a
-street address, a project manager's name and a square footage, so the actual
-project data is gated by a secret link.
+The site is deliberately **public**: anyone with the URL sees the map and the
+project data. An access gate (secret link + cookie) was built and abandoned —
+three routing-layer attempts failed to hold on Vercel's edge network, and the
+gate also broke the one thing the wall needs most: the display and the
+installed app loading unattended. The decision (Aug 2026) was that a lobby
+display already shows this data to every visitor, so the URL staying quiet is
+enough.
 
-Set `SITE_KEY` in Vercel to a long random string. The entry link is then:
+What still stands from that work:
 
-```
-https://kalb-projects-wall-map.vercel.app/api/gate?k=<SITE_KEY>
-```
+- **Search engines are blocked three ways** — `robots.txt`, a `noindex` meta
+  tag, and an `X-Robots-Tag` header — so the site never turns up in Google.
+  Only someone given the URL finds it.
+- **The Mapbox token is URL-restricted** (see above), so the only real secret
+  in the bundle is useless off this domain.
 
-Open it once per browser. It stores a one-year cookie and drops you on the
-map with the key never touching the address bar. Afterwards that browser
-loads normally; every other visitor gets an empty, branded map -- the app
-shell loads, but every job number, address, PM name and square footage is
-withheld.
+`SITE_KEY` in Vercel is no longer read by anything; it can be deleted.
 
-The kiosk opens the link once and is never asked again. Sharing the site means
-sharing that link, so treat it like a password.
-
-#### What is and isn't gated, and why
-
-Two earlier versions of this gate tried to block the whole site -- first with
-a root `middleware.ts` (which turned out to be a Next.js/SvelteKit/Nuxt/Astro
-adapter convention, not a Vercel-wide feature -- a plain Vite SPA has no
-adapter, so Vercel deployed the file and never ran it), then with a
-conditional `vercel.json` redirect (which stayed silently open through two
-rounds of syntax fixes, and there was no way to test the actual rule against
-Vercel's live edge network to find out why).
-
-Rather than ship a fourth unverifiable guess at routing syntax for the whole
-site, the gate now targets exactly the part that is provably possible to
-protect and provably testable locally: the data.
-
-- `api/gate.ts` issues the access cookie -- the only source of it, and only
-  after the `SITE_KEY` check passes. HttpOnly, so no page can read, set, or
-  forge it via script.
-- `api/serve.ts` is the only source of `data/projects.json`, `data/teams.json`,
-  `tools/geocode.html` and `tools/coords.html`. It 404s any of them without
-  the cookie.
-- `scripts/protect-build.mjs` runs at the end of `npm run build` and removes
-  those four files from `dist/` entirely, replacing them with plain string
-  constants `api/serve.ts` imports. This is what makes the rewrite
-  reliable: a Vercel rewrite can never win against a static file sitting at
-  the same path (the filesystem is checked first), so the only way to
-  guarantee the function is the sole path to this content is to make sure
-  nothing is left in the static output to compete with it. Both functions
-  are unit-tested against the real generated file as part of verifying this
-  works -- see the commit that introduced them for the test output.
-
-`index.html` and the JS/CSS bundle are deliberately left alone, public, and
-unrewritten -- exactly as risky to touch (Vercel's static build validation
-may require an `index.html` at the output root; that was not a risk worth
-taking blind) and, more to the point, unnecessary: the app fetches its data
-at runtime rather than embedding it in the bundle, so the shell on its own
-names no job, no address, no person. A stranger who opens the bare URL sees
-Kalb's branding and an empty map. That satisfies the actual concern this
-gate exists for -- nobody sees the data without the link -- without
-depending on a routing rule for the site root that has proven twice not to
-be verifiable in advance.
-
-There is also a best-effort `vercel.json` redirect that sends "/" and
-"/index.html" to the gate when the cookie is missing, so a visitor may get a
-clean 404 on the bare URL instead of the empty shell. Whether that fires
-depends on the same conditional-redirect matching that failed twice before,
-so treat it as a bonus, not the protection -- the data gate above is what
-actually withholds the sensitive information regardless of whether this
-redirect works.
-
-There are two secrets, deliberately:
-
-- `SITE_KEY` — the half people type. Lives only in Vercel, never in the repo.
-- the cookie value in `api/_shared.ts` (and mirrored in the `vercel.json`
-  redirect condition) — an opaque token. It is committed, because a static
-  config file cannot read an environment variable, and a serverless
-  function's source is still just source. Anyone who can read this repo
-  could forge the cookie; that is Kalb staff, and the gate is aimed at
-  strangers who find the URL.
-
-#### Rotating and lifting
-
-- **New link, old links dead** — change `SITE_KEY`, redeploy. Browsers already
-  holding a cookie stay in.
-- **Kick everyone out** — change the token in `api/_shared.ts` (`PASS`) and
-  in the `vercel.json` redirect condition (the two must match), commit,
-  redeploy. Every cookie dies at once and everyone needs the link again.
-- **Lift the gate** — delete the `rewrites` block from `vercel.json` and
-  remove `scripts/protect-build.mjs` from the `build` script in
-  `package.json`, so the data goes back into the static build output.
-
-An unset `SITE_KEY` locks everyone out of the data rather than letting
-everyone in: `api/gate.ts` 404s unconditionally with no key configured, and
-`api/serve.ts` never had a way to let anyone in except through that cookie.
-That failure is loud instead of silently open.
+If real access control is ever wanted, the honest options are Vercel's paid
+Password Protection, or hosting inside the office network instead
+(`npm run build` + `npm run kiosk` on the Mac Mini).
 
 ### 4. Deploy
 Click **Deploy**. First build takes ~1–2 minutes and you get a URL like

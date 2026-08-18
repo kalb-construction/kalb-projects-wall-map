@@ -9,7 +9,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build && node scripts/protect-build.mjs",
+    "build": "tsc -b && vite build",
     "preview": "vite preview --host --port 4173",
     "kiosk": "vite preview --host --port 4173"
   },
