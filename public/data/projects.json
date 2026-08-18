@@ -2680,5 +2680,60 @@
       "Project type not on file"
     ],
     "shortName": "Dotty's 212"
+  },
+  {
+    "id": "25116",
+    "number": "25116",
+    "name": "Bojangles UNLV Canopies",
+    "shortName": "Bojangles UNLV",
+    "address": "4650 S Maryland Pkwy",
+    "city": "Las Vegas",
+    "state": "NV",
+    "region": "LV",
+    "lat": 36.104991848323685,
+    "lng": -115.1369065441776,
+    "status": "Complete",
+    "progress": 100,
+    "estCompletion": "05/20/2026",
+    "estCompletionDate": "2026-05-20",
+    "year": 2025,
+    "featured": false,
+    "historical": true,
+    "heroImage": null,
+    "description": "Las Vegas. Completed 05/20/2026.",
+    "flags": [
+      "Address taken from the permit — no readable owner contract",
+      "Category not on file",
+      "Square footage not on file",
+      "Superintendent not on file",
+      "Project type not on file"
+    ]
+  },
+  {
+    "id": "24144",
+    "number": "24144",
+    "name": "Fort Apache Corporate",
+    "address": "4730 S. Fort Apache Rd",
+    "city": "Las Vegas",
+    "state": "NV",
+    "region": "LV",
+    "lat": 36.10347711842829,
+    "lng": -115.29660635767105,
+    "category": "Office & TI",
+    "sqFt": 2655,
+    "status": "Complete",
+    "progress": 100,
+    "estCompletion": "12/31/2024",
+    "estCompletionDate": "2024-12-31",
+    "year": 2024,
+    "featured": false,
+    "historical": true,
+    "heroImage": null,
+    "description": "2,655 sf in Las Vegas. Completed 12/31/2024.",
+    "flags": [
+      "Address taken from the permit — no readable owner contract",
+      "Superintendent not on file",
+      "Project type not on file"
+    ]
   }
 ]
