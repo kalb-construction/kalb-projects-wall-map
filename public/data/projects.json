@@ -1862,7 +1862,7 @@
     "id": "24118",
     "number": "24118",
     "name": "BC Racing",
-    "address": "723 Valle Verde Dr",
+    "address": "723 N. Valle Verde Dr",
     "city": "Henderson",
     "state": "NV",
     "region": "LV",
@@ -1883,7 +1883,9 @@
     ],
     "lat": 36.069897,
     "lng": -115.066554,
-    "historical": true
+    "historical": true,
+    "category": "Office & TI",
+    "team": "mk"
   },
   {
     "id": "24119",
@@ -2092,7 +2094,10 @@
     ],
     "lat": 36.20665,
     "lng": -115.258732,
-    "historical": true
+    "historical": true,
+    "sqFt": 15196,
+    "team": "jj",
+    "superintendent": "TM"
   },
   {
     "id": "25122",
