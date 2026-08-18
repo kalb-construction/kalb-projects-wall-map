@@ -2481,5 +2481,87 @@
       "Superintendent not on file",
       "Project type not on file"
     ]
+  },
+  {
+    "id": "23136",
+    "number": "23136",
+    "name": "Brookhollow 7",
+    "address": "8345 W. Sunset Rd",
+    "city": "Las Vegas",
+    "state": "NV",
+    "region": "LV",
+    "lat": 36.070256,
+    "lng": -115.273328,
+    "category": "Office & TI",
+    "status": "Complete",
+    "progress": 100,
+    "estCompletion": "04/22/2024",
+    "estCompletionDate": "2024-04-22",
+    "year": 2023,
+    "featured": false,
+    "historical": true,
+    "description": "Las Vegas. Completed 04/22/2024.",
+    "heroImage": null,
+    "flags": [
+      "Address taken from the permit — no readable owner contract",
+      "Square footage not on file",
+      "Superintendent not on file",
+      "Project type not on file"
+    ]
+  },
+  {
+    "id": "23152",
+    "number": "23152",
+    "name": "Skillz",
+    "address": "6625 W. Badura Ave",
+    "city": "Las Vegas",
+    "state": "NV",
+    "region": "LV",
+    "lat": 36.06130439922372,
+    "lng": -115.23664100320296,
+    "category": "Industrial",
+    "status": "Complete",
+    "progress": 100,
+    "estCompletion": "02/28/2024",
+    "estCompletionDate": "2024-02-28",
+    "year": 2023,
+    "featured": false,
+    "historical": true,
+    "description": "Las Vegas. Completed 02/28/2024.",
+    "heroImage": null,
+    "flags": [
+      "Address taken from the permit — no readable owner contract",
+      "Square footage not on file",
+      "Project manager initials do not match an existing team",
+      "Superintendent not on file",
+      "Project type not on file"
+    ]
+  },
+  {
+    "id": "23168",
+    "number": "23168",
+    "name": "Taco Bell TI",
+    "address": "6345 N. Lamb Blvd",
+    "city": "North Las Vegas",
+    "state": "NV",
+    "region": "LV",
+    "lat": 36.239429,
+    "lng": -115.080113,
+    "category": "Restaurant",
+    "status": "Complete",
+    "progress": 100,
+    "estCompletion": "10/22/2024",
+    "estCompletionDate": "2024-10-22",
+    "year": 2023,
+    "featured": false,
+    "historical": true,
+    "description": "North Las Vegas. Completed 10/22/2024.",
+    "heroImage": null,
+    "flags": [
+      "Address taken from the permit — no readable owner contract",
+      "Square footage not on file",
+      "Superintendent not on file",
+      "Project type not on file"
+    ]
   }
 ]
