@@ -2290,7 +2290,9 @@
       "Superintendent not on file",
       "Project type not on file"
     ],
-    "category": "Industrial"
+    "category": "Industrial",
+    "siteId": "silverlake",
+    "siteName": "Silverlake"
   },
   {
     "id": "23157",
@@ -2420,6 +2422,64 @@
       "Superintendent not on file",
       "Project type not on file"
     ],
-    "category": "Medical"
+    "category": "Medical",
+    "siteId": "rampart-851",
+    "siteName": "851 S. Rampart"
+  },
+  {
+    "state": "NV",
+    "region": "LV",
+    "status": "Complete",
+    "progress": 100,
+    "year": 2023,
+    "featured": false,
+    "historical": true,
+    "heroImage": null,
+    "id": "23128",
+    "number": "23128",
+    "name": "Silverlake Sitework",
+    "address": "4925 E. Tropical Parkway",
+    "city": "North Las Vegas",
+    "lat": 36.269326,
+    "lng": -115.066846,
+    "siteId": "silverlake",
+    "siteName": "Silverlake",
+    "category": "Industrial",
+    "estCompletion": "10/29/2024",
+    "estCompletionDate": "2024-10-29",
+    "description": "North Las Vegas. Completed 10/29/2024.",
+    "flags": [
+      "Square footage not on file",
+      "Superintendent not on file",
+      "Project type not on file"
+    ]
+  },
+  {
+    "state": "NV",
+    "region": "LV",
+    "status": "Complete",
+    "progress": 100,
+    "year": 2023,
+    "featured": false,
+    "historical": true,
+    "heroImage": null,
+    "id": "23167",
+    "number": "23167",
+    "name": "Rampart 250 Dr. Renk",
+    "address": "851 S Rampart Blvd",
+    "city": "Las Vegas",
+    "lat": 36.163512,
+    "lng": -115.291156,
+    "siteId": "rampart-851",
+    "siteName": "851 S. Rampart",
+    "estCompletion": "07/08/2025",
+    "estCompletionDate": "2025-07-08",
+    "description": "Las Vegas. Completed 07/08/2025.",
+    "flags": [
+      "Category not on file",
+      "Square footage not on file",
+      "Superintendent not on file",
+      "Project type not on file"
+    ]
   }
 ]
