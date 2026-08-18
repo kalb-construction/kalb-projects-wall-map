@@ -294,7 +294,9 @@
       "./renders/25140/25140-4.jpg",
       "./renders/25140/25140-5.jpg",
       "./renders/25140/25140-6.jpg"
-    ]
+    ],
+    "siteId": "bojangles-flamingo",
+    "siteName": "Bojangles Flamingo"
   },
   {
     "id": "26119",
@@ -2562,6 +2564,35 @@
     "heroImage": null,
     "flags": [
       "Address taken from the permit — no readable owner contract",
+      "Square footage not on file",
+      "Superintendent not on file",
+      "Project type not on file"
+    ]
+  },
+  {
+    "id": "25136",
+    "number": "25136",
+    "name": "Bojangles Flamingo Phase 1",
+    "shortName": "Bojangles Ph 1 Sitework",
+    "address": "3685 W. Flamingo Rd",
+    "city": "Las Vegas",
+    "state": "NV",
+    "region": "LV",
+    "lat": 36.115004,
+    "lng": -115.188047,
+    "siteId": "bojangles-flamingo",
+    "siteName": "Bojangles Flamingo",
+    "status": "Complete",
+    "progress": 100,
+    "estCompletion": "12/31/2025",
+    "estCompletionDate": "2025-12-31",
+    "year": 2025,
+    "featured": false,
+    "historical": true,
+    "heroImage": null,
+    "description": "Las Vegas. Completed 12/31/2025.",
+    "flags": [
+      "Category not on file",
       "Square footage not on file",
       "Superintendent not on file",
       "Project type not on file"
