@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 interface PhotoSliderProps {
   photos: string[];
@@ -18,6 +18,11 @@ interface PhotoSliderProps {
  * decode stall mid-fade, and nothing that fights the map for frame time.
  * The timer is paused whenever the tab is hidden, so a kiosk that has been
  * asleep doesn't wake up and burn through the set.
+ *
+ * The loop never advances onto a photo that hasn't finished downloading —
+ * it holds the current one and tries again on the next tick. Without that,
+ * a slow slide fades in as an empty box, which on the wall display reads as
+ * a broken photo rather than a slow one.
  */
 export function PhotoSlider({
   photos,
@@ -26,17 +31,37 @@ export function PhotoSlider({
   variant = 'card'
 }: PhotoSliderProps) {
   const [idx, setIdx] = useState(0);
+  const [ready, setReady] = useState<Set<number>>(() => new Set());
   const timer = useRef<number | undefined>(undefined);
+  const readyRef = useRef(ready);
+  readyRef.current = ready;
 
   // Restart cleanly whenever the photo set changes (a different project).
-  useEffect(() => setIdx(0), [photos]);
+  useEffect(() => {
+    setIdx(0);
+    setReady(new Set());
+  }, [photos]);
+
+  const markReady = useCallback((i: number) => {
+    setReady((prev) => {
+      if (prev.has(i)) return prev;
+      const next = new Set(prev);
+      next.add(i);
+      return next;
+    });
+  }, []);
 
   useEffect(() => {
     if (photos.length < 2) return;
     const start = () => {
       window.clearInterval(timer.current);
       timer.current = window.setInterval(
-        () => setIdx((i) => (i + 1) % photos.length),
+        () =>
+          setIdx((i) => {
+            const next = (i + 1) % photos.length;
+            // Hold rather than fade to a blank frame. The next tick retries.
+            return readyRef.current.has(next) ? next : i;
+          }),
         interval
       );
     };
@@ -62,10 +87,18 @@ export function PhotoSlider({
           className={`pslide${i === idx ? ' is-on' : ''}`}
           src={src}
           alt={i === idx ? `${label} — photo ${i + 1} of ${photos.length}` : ''}
-          // The first slide blocks nothing; the rest load in the background.
-          loading={i === 0 ? 'eager' : 'lazy'}
+          /* The attract loop is full-screen and every slide is shown within
+             seconds, so there is nothing to defer; a card's slider may never
+             be looked at, so there the rest load in the background. */
+          loading={variant === 'attract' || i === 0 ? 'eager' : 'lazy'}
           decoding="async"
           draggable={false}
+          onLoad={() => markReady(i)}
+          onError={() => markReady(i)}
+          ref={(el) => {
+            // A cached image can finish before React attaches onLoad.
+            if (el?.complete && el.naturalWidth > 0) markReady(i);
+          }}
         />
       ))}
       {photos.length > 1 && (

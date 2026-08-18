@@ -1352,15 +1352,15 @@ button {
   }
 }
 /* .attract-inner centres its children rather than stretching them, so this
-   panel takes its height from its own content. A PhotoSlider is absolutely
-   positioned and contributes none — without a declared ratio the panel
-   collapses to ~2px and the photo never appears. Same failure as
-   .detail-hero.has-photos, and the same fix. */
-.attract-visual:has(.pslider) {
-  aspect-ratio: 3 / 2;
-}
+   panel takes its height from its own content — and a PhotoSlider is
+   absolutely positioned, so it contributes none and the panel collapses to
+   a 2px line. The ratio is declared unconditionally rather than only for
+   photo projects: it makes the panel impossible to collapse whatever the
+   content is, and holds one constant frame across the whole loop instead of
+   resizing slightly on every project. */
 .attract-visual {
   position: relative;
+  aspect-ratio: 3 / 2;
   flex: 1.15;
   border-radius: 26px;
   border: 1px solid var(--glass-border);
@@ -1368,6 +1368,16 @@ button {
   overflow: hidden;
   box-shadow: var(--shadow-panel);
   animation: kenburns 9s ease-in-out infinite alternate;
+}
+/* The procedural hero is 8:5, the frame 3:2 — letting it fill and centre
+   keeps it from sitting against the top edge of the taller frame. */
+.attract-visual .hero-frame {
+  position: absolute;
+  inset: 0;
+}
+.attract-visual .hero-svg {
+  width: 100%;
+  height: 100%;
 }
 @keyframes kenburns {
   from {

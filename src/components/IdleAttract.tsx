@@ -28,6 +28,23 @@ export function IdleAttract({ featured }: IdleAttractProps) {
     return () => window.clearTimeout(id);
   }, [featured, index]);
 
+  // Warm the next project's photos while the current one is on screen. Each
+  // project's slider mounts only when its turn comes, so without this the
+  // first photo starts downloading at the moment it is meant to be visible
+  // and the panel shows a half-drawn image on a slow connection.
+  useEffect(() => {
+    if (featured.length < 2) return;
+    const next = featured[(index + 1) % featured.length];
+    // Deliberately not cancelled on cleanup: the effect re-runs exactly when
+    // that project becomes current, and aborting the fetch there would throw
+    // away the download the slider is about to need.
+    for (const src of next.photos ?? []) {
+      const img = new Image();
+      img.decoding = 'async';
+      img.src = src;
+    }
+  }, [featured, index]);
+
   if (featured.length === 0) return null;
   const p = featured[index % featured.length];
 
