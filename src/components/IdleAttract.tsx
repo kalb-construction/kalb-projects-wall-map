@@ -1,7 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type { Project } from '../types';
 import { statusTone } from '../lib/meta';
-import { BuildingHero } from './BuildingHero';
 import { PhotoSlider } from './PhotoSlider';
 
 interface IdleAttractProps {
@@ -13,7 +12,14 @@ interface IdleAttractProps {
  * is idle. Any touch/movement resets the idle timer upstream, which
  * unmounts this overlay.
  */
-export function IdleAttract({ featured }: IdleAttractProps) {
+export function IdleAttract({ featured: featuredAll }: IdleAttractProps) {
+  // Only projects with real photography rotate. A featured project without
+  // photos used to fall back to the procedural drawing; by request it now
+  // simply sits the screensaver out until photos exist.
+  const featured = useMemo(
+    () => featuredAll.filter((p) => p.photos && p.photos.length > 0),
+    [featuredAll]
+  );
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
@@ -52,16 +58,12 @@ export function IdleAttract({ featured }: IdleAttractProps) {
     <div className="attract" aria-hidden="true">
       <div className="attract-inner" key={p.id}>
         <div className="attract-visual">
-          {p.photos && p.photos.length > 0 ? (
-            <PhotoSlider
-              photos={p.photos}
-              label={p.name}
-              interval={3600}
-              variant="attract"
-            />
-          ) : (
-            <BuildingHero project={p} compact />
-          )}
+          <PhotoSlider
+            photos={p.photos!}
+            label={p.name}
+            interval={3600}
+            variant="attract"
+          />
         </div>
         <div className="attract-copy">
           <span className="attract-kicker">FEATURED PROJECT</span>

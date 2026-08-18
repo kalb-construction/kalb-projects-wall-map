@@ -3,7 +3,6 @@ import type { Project, Team } from '../types';
 import { statusTone } from '../lib/meta';
 import { teamName } from '../lib/teams';
 import { teamIdOf } from '../lib/teams';
-import { BuildingHero } from './BuildingHero';
 import { PhotoSlider } from './PhotoSlider';
 import { isBlak, pinColor, DEVELOPER_LABEL } from '../lib/brand';
 import { developerOf } from '../lib/brand';
@@ -101,22 +100,23 @@ export function ProjectDetail({
           </span>
         </div>
 
-        <div
-          ref={heroRef}
-          className={`detail-hero${hasPhotos ? ' has-photos' : ''}`}
-          onPointerMove={onHeroMove}
-          onPointerLeave={() => setTilt({ rx: 0, ry: 0 })}
-          style={{
-            transform: `perspective(900px) rotateX(${tilt.rx}deg) rotateY(${tilt.ry}deg)`
-          }}
-        >
-          {project.photos && project.photos.length > 0 ? (
-            <PhotoSlider photos={project.photos} label={project.name} />
-          ) : (
-            <BuildingHero project={project} compact />
-          )}
-          <span className="hero-scan" aria-hidden="true" />
-        </div>
+        {/* Photos or nothing. The procedural building drawing is retired
+            here by request -- a card without photography goes straight
+            from the chips to the facts. */}
+        {hasPhotos && (
+          <div
+            ref={heroRef}
+            className="detail-hero has-photos"
+            onPointerMove={onHeroMove}
+            onPointerLeave={() => setTilt({ rx: 0, ry: 0 })}
+            style={{
+              transform: `perspective(900px) rotateX(${tilt.rx}deg) rotateY(${tilt.ry}deg)`
+            }}
+          >
+            <PhotoSlider photos={project.photos!} label={project.name} />
+            <span className="hero-scan" aria-hidden="true" />
+          </div>
+        )}
 
         <dl className="detail-facts">
           {blak ? (
