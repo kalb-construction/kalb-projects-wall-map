@@ -810,7 +810,15 @@
     "estCompletion": "10/01/2026",
     "estCompletionDate": "2026-10-01",
     "sqFt": 17984,
-    "sqFtNote": "Building A 6,032 + Building B 11,952"
+    "sqFtNote": "Building A 6,032 + Building B 11,952",
+    "photos": [
+      "./renders/25126/25126-1.jpg",
+      "./renders/25126/25126-2.jpg",
+      "./renders/25126/25126-3.jpg",
+      "./renders/25126/25126-4.jpg",
+      "./renders/25126/25126-5.jpg",
+      "./renders/25126/25126-6.jpg"
+    ]
   },
   {
     "id": "26110",
