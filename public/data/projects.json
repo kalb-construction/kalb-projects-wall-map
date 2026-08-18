@@ -286,7 +286,15 @@
     "year": 2025,
     "featured": false,
     "description": "GU Restaurant/Bar · 3,200 sf in Las Vegas. Estimated completion 08/05/2026.",
-    "heroImage": null
+    "heroImage": null,
+    "photos": [
+      "./renders/25140/25140-1.jpg",
+      "./renders/25140/25140-2.jpg",
+      "./renders/25140/25140-3.jpg",
+      "./renders/25140/25140-4.jpg",
+      "./renders/25140/25140-5.jpg",
+      "./renders/25140/25140-6.jpg"
+    ]
   },
   {
     "id": "26119",
@@ -339,7 +347,15 @@
     "year": 2025,
     "featured": false,
     "description": "GU Retail · 5,000 sf in North Las Vegas. Estimated completion AUG 2026.",
-    "heroImage": null
+    "heroImage": null,
+    "photos": [
+      "./renders/25155/25155-1.jpg",
+      "./renders/25155/25155-2.jpg",
+      "./renders/25155/25155-3.jpg",
+      "./renders/25155/25155-4.jpg",
+      "./renders/25155/25155-5.jpg",
+      "./renders/25155/25155-6.jpg"
+    ]
   },
   {
     "id": "B1335",
@@ -385,6 +401,14 @@
     "flags": [
       "Est. completion not on file",
       "Square footage not on file"
+    ],
+    "photos": [
+      "./renders/26701/26701-1.jpg",
+      "./renders/26701/26701-2.jpg",
+      "./renders/26701/26701-3.jpg",
+      "./renders/26701/26701-4.jpg",
+      "./renders/26701/26701-5.jpg",
+      "./renders/26701/26701-6.jpg"
     ]
   },
   {
@@ -1157,6 +1181,14 @@
       "Superintendent conflict: MM vs Cliff Smith",
       "Est. completion not on file",
       "Square footage not on file"
+    ],
+    "photos": [
+      "./renders/25900/25900-1.jpg",
+      "./renders/25900/25900-2.jpg",
+      "./renders/25900/25900-3.jpg",
+      "./renders/25900/25900-4.jpg",
+      "./renders/25900/25900-5.jpg",
+      "./renders/25900/25900-6.jpg"
     ]
   },
   {
@@ -1182,6 +1214,14 @@
       "Superintendent unverified",
       "Est. completion not on file",
       "Square footage not on file"
+    ],
+    "photos": [
+      "./renders/26900/26900-1.jpg",
+      "./renders/26900/26900-2.jpg",
+      "./renders/26900/26900-3.jpg",
+      "./renders/26900/26900-4.jpg",
+      "./renders/26900/26900-5.jpg",
+      "./renders/26900/26900-6.jpg"
     ]
   },
   {
