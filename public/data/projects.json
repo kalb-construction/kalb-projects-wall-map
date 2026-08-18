@@ -20,7 +20,15 @@
     "year": 2026,
     "featured": false,
     "description": "GU Retail · 5,000 sf in North Las Vegas. Estimated completion SEP 2026.",
-    "heroImage": null
+    "heroImage": null,
+    "photos": [
+      "./renders/26104/26104-1.jpg",
+      "./renders/26104/26104-2.jpg",
+      "./renders/26104/26104-3.jpg",
+      "./renders/26104/26104-4.jpg",
+      "./renders/26104/26104-5.jpg",
+      "./renders/26104/26104-6.jpg"
+    ]
   },
   {
     "id": "25130",
