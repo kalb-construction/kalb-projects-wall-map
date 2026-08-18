@@ -1061,7 +1061,14 @@
     "siteId": "horizon-ridge",
     "siteName": "Horizon Ridge",
     "description": "TI Medical · 1,866 sf in Henderson. Estimated completion 10/31/2026.",
-    "heroImage": null
+    "heroImage": null,
+    "photos": [
+      "./renders/26109/26109-1.jpg",
+      "./renders/26109/26109-2.jpg",
+      "./renders/26109/26109-3.jpg",
+      "./renders/26109/26109-4.jpg",
+      "./renders/26109/26109-5.jpg"
+    ]
   },
   {
     "id": "25127",
@@ -1117,6 +1124,14 @@
     "heroImage": null,
     "flags": [
       "Suite 350 unverified"
+    ],
+    "photos": [
+      "./renders/26111/26111-1.jpg",
+      "./renders/26111/26111-2.jpg",
+      "./renders/26111/26111-3.jpg",
+      "./renders/26111/26111-4.jpg",
+      "./renders/26111/26111-5.jpg",
+      "./renders/26111/26111-6.jpg"
     ]
   },
   {
@@ -1414,6 +1429,14 @@
       "Added from Autodesk Construction Cloud, not the PM job list",
       "Status unconfirmed — absent from the 07/27/2026 active job list, which may mean it is finished",
       "Project type, superintendent, square footage and completion date not on file"
+    ],
+    "photos": [
+      "./renders/25108/25108-1.jpg",
+      "./renders/25108/25108-2.jpg",
+      "./renders/25108/25108-3.jpg",
+      "./renders/25108/25108-4.jpg",
+      "./renders/25108/25108-5.jpg",
+      "./renders/25108/25108-6.jpg"
     ]
   },
   {
