@@ -2292,7 +2292,12 @@
     ],
     "category": "Industrial",
     "siteId": "silverlake",
-    "siteName": "Silverlake"
+    "siteName": "Silverlake",
+    "photos": [
+      "./renders/23134/23134-1.jpg",
+      "./renders/23134/23134-2.jpg",
+      "./renders/23134/23134-3.jpg"
+    ]
   },
   {
     "id": "23157",
