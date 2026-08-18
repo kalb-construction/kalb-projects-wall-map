@@ -13,9 +13,9 @@ Checked against a clean clone, running exactly what Vercel runs
 | Check | Result |
 |---|---|
 | `npm ci` from `package-lock.json` | 424 packages, no errors |
-| `npm run build` (`tsc -b && vite build`) | passes, ~20 s |
-| Build output | `dist/` — 5.1 MB, includes `data/`, `brand/`, `renders/`, `tools/` |
-| `dist/data/projects.json` | 49 jobs |
+| `npm run build` (`tsc -b && vite build && node scripts/protect-build.mjs`) | passes, ~25 s |
+| Build output | `dist/` — includes `assets/`, `brand/`, `renders/`; `data/` and `tools/` are stripped out and embedded into the `api/` functions instead (see **Access gate**) |
+| `dist/data/projects.json` | not present by design — served by `api/serve.ts` behind the gate |
 | Node version | pinned via `engines.node` `22.x` in package.json |
 | Config | `vercel.json` present — framework, build command, output dir, cache headers |
 | Secrets | `.env` is git-ignored; no token is committed |
@@ -102,8 +102,8 @@ looks missing. Create a new one instead:
 ### Access gate
 
 The deployment is on the public internet. Every pin carries a job number, a
-street address, a project manager's name and a square footage, so the site is
-gated by a secret link.
+street address, a project manager's name and a square footage, so the actual
+project data is gated by a secret link.
 
 Set `SITE_KEY` in Vercel to a long random string. The entry link is then:
 
@@ -113,48 +113,87 @@ https://kalb-projects-wall-map.vercel.app/api/gate?k=<SITE_KEY>
 
 Open it once per browser. It stores a one-year cookie and drops you on the
 map with the key never touching the address bar. Afterwards that browser
-loads the site normally; every other visitor gets a **404**.
+loads normally; every other visitor gets an empty, branded map -- the app
+shell loads, but every job number, address, PM name and square footage is
+withheld.
 
 The kiosk opens the link once and is never asked again. Sharing the site means
 sharing that link, so treat it like a password.
 
-#### How it is wired
+#### What is and isn't gated, and why
 
-Two pieces that only work together:
+Two earlier versions of this gate tried to block the whole site -- first with
+a root `middleware.ts` (which turned out to be a Next.js/SvelteKit/Nuxt/Astro
+adapter convention, not a Vercel-wide feature -- a plain Vite SPA has no
+adapter, so Vercel deployed the file and never ran it), then with a
+conditional `vercel.json` redirect (which stayed silently open through two
+rounds of syntax fixes, and there was no way to test the actual rule against
+Vercel's live edge network to find out why).
 
-1. `vercel.json` has a **redirect** sending every request without the access
-   cookie to `/api/gate`. It has to be a redirect, not a rewrite: Vercel
-   checks the filesystem *before* rewrites, so a rewrite would never see
-   `index.html`, the JS bundle, the photos or `data/projects.json`.
-   Redirects are evaluated before the filesystem, so they catch everything.
-2. `api/gate.ts` is the only source of that cookie, and only trades one for
-   the key.
+Rather than ship a fourth unverifiable guess at routing syntax for the whole
+site, the gate now targets exactly the part that is provably possible to
+protect and provably testable locally: the data.
 
-A root `middleware.ts` does **not** work here. That file is a framework
-convention — Next, SvelteKit, Nuxt and Astro adapters implement it. A plain
-Vite SPA has no adapter, so Vercel deploys the file and never runs it.
+- `api/gate.ts` issues the access cookie -- the only source of it, and only
+  after the `SITE_KEY` check passes. HttpOnly, so no page can read, set, or
+  forge it via script.
+- `api/serve.ts` is the only source of `data/projects.json`, `data/teams.json`,
+  `tools/geocode.html` and `tools/coords.html`. It 404s any of them without
+  the cookie.
+- `scripts/protect-build.mjs` runs at the end of `npm run build` and removes
+  those four files from `dist/` entirely, replacing them with plain string
+  constants `api/serve.ts` imports. This is what makes the rewrite
+  reliable: a Vercel rewrite can never win against a static file sitting at
+  the same path (the filesystem is checked first), so the only way to
+  guarantee the function is the sole path to this content is to make sure
+  nothing is left in the static output to compete with it. Both functions
+  are unit-tested against the real generated file as part of verifying this
+  works -- see the commit that introduced them for the test output.
+
+`index.html` and the JS/CSS bundle are deliberately left alone, public, and
+unrewritten -- exactly as risky to touch (Vercel's static build validation
+may require an `index.html` at the output root; that was not a risk worth
+taking blind) and, more to the point, unnecessary: the app fetches its data
+at runtime rather than embedding it in the bundle, so the shell on its own
+names no job, no address, no person. A stranger who opens the bare URL sees
+Kalb's branding and an empty map. That satisfies the actual concern this
+gate exists for -- nobody sees the data without the link -- without
+depending on a routing rule for the site root that has proven twice not to
+be verifiable in advance.
+
+There is also a best-effort `vercel.json` redirect that sends "/" and
+"/index.html" to the gate when the cookie is missing, so a visitor may get a
+clean 404 on the bare URL instead of the empty shell. Whether that fires
+depends on the same conditional-redirect matching that failed twice before,
+so treat it as a bonus, not the protection -- the data gate above is what
+actually withholds the sensitive information regardless of whether this
+redirect works.
 
 There are two secrets, deliberately:
 
 - `SITE_KEY` — the half people type. Lives only in Vercel, never in the repo.
-- the cookie value in `vercel.json` — an opaque token the redirect rule tests
-  against. It is committed, because a static config file cannot read an
-  environment variable. Anyone who can read this repo could forge the cookie;
-  that is Kalb staff, and the gate is aimed at strangers who find the URL.
+- the cookie value in `api/_shared.ts` (and mirrored in the `vercel.json`
+  redirect condition) — an opaque token. It is committed, because a static
+  config file cannot read an environment variable, and a serverless
+  function's source is still just source. Anyone who can read this repo
+  could forge the cookie; that is Kalb staff, and the gate is aimed at
+  strangers who find the URL.
 
 #### Rotating and lifting
 
 - **New link, old links dead** — change `SITE_KEY`, redeploy. Browsers already
   holding a cookie stay in.
-- **Kick everyone out** — change the cookie token in `vercel.json` and in
-  `api/gate.ts` (the two must match), commit, redeploy. Every cookie dies at
-  once and everyone needs the link again.
-- **Lift the gate** — delete the `redirects` block from `vercel.json`.
+- **Kick everyone out** — change the token in `api/_shared.ts` (`PASS`) and
+  in the `vercel.json` redirect condition (the two must match), commit,
+  redeploy. Every cookie dies at once and everyone needs the link again.
+- **Lift the gate** — delete the `rewrites` block from `vercel.json` and
+  remove `scripts/protect-build.mjs` from the `build` script in
+  `package.json`, so the data goes back into the static build output.
 
-Note that unlike the earlier design, an unset `SITE_KEY` now locks *everyone*
-out rather than letting everyone in: the redirect is unconditional, so with no
-key configured there is no way to tell visitors apart. That failure is loud
-instead of silently open.
+An unset `SITE_KEY` locks everyone out of the data rather than letting
+everyone in: `api/gate.ts` 404s unconditionally with no key configured, and
+`api/serve.ts` never had a way to let anyone in except through that cookie.
+That failure is loud instead of silently open.
 
 ### 4. Deploy
 Click **Deploy**. First build takes ~1–2 minutes and you get a URL like

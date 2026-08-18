@@ -5,27 +5,23 @@
   "outputDirectory": "dist",
   "redirects": [
     {
-      "source": "/:path((?!api/).*)",
-      "missing": [
-        {
-          "type": "cookie",
-          "key": "ka_pass"
-        }
-      ],
+      "source": "/",
+      "missing": [{ "type": "cookie", "key": "ka_pass" }],
+      "destination": "/api/gate",
+      "permanent": false
+    },
+    {
+      "source": "/index.html",
+      "missing": [{ "type": "cookie", "key": "ka_pass" }],
       "destination": "/api/gate",
       "permanent": false
     }
   ],
+  "rewrites": [
+    { "source": "/data/:path*", "destination": "/api/serve" },
+    { "source": "/tools/:path*", "destination": "/api/serve" }
+  ],
   "headers": [
-    {
-      "source": "/data/(.*)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "no-store, must-revalidate"
-        }
-      ]
-    },
     {
       "source": "/assets/(.*)",
       "headers": [
@@ -41,15 +37,6 @@
         {
           "key": "Cache-Control",
           "value": "no-store, must-revalidate"
-        }
-      ]
-    },
-    {
-      "source": "/(index.html)?",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "no-cache, must-revalidate"
         }
       ]
     },

@@ -5,11 +5,11 @@
   "engines": {
     "node": "22.x"
   },
-  "description": "Kalb Construction — interactive wall-map project atlas for large touch displays",
+  "description": "Kalb Construction \u2014 interactive wall-map project atlas for large touch displays",
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "tsc -b && vite build && node scripts/protect-build.mjs",
     "preview": "vite preview --host --port 4173",
     "kiosk": "vite preview --host --port 4173"
   },
