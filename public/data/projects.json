@@ -462,6 +462,14 @@
       "Co-managed with MK",
       "Est. completion not on file",
       "Square footage not on file"
+    ],
+    "photos": [
+      "./renders/25701/25701-1.jpg",
+      "./renders/25701/25701-2.jpg",
+      "./renders/25701/25701-3.jpg",
+      "./renders/25701/25701-4.jpg",
+      "./renders/25701/25701-5.jpg",
+      "./renders/25701/25701-6.jpg"
     ]
   },
   {
