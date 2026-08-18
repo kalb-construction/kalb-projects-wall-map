@@ -5,12 +5,11 @@
   "outputDirectory": "dist",
   "redirects": [
     {
-      "source": "/((?!api/).*)",
+      "source": "/:path((?!api/).*)",
       "missing": [
         {
           "type": "cookie",
-          "key": "ka_pass",
-          "value": "ce2cda46b8ae09d47f8d8b2c3727d519"
+          "key": "ka_pass"
         }
       ],
       "destination": "/api/gate",
