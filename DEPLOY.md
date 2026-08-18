@@ -105,26 +105,56 @@ The deployment is on the public internet. Every pin carries a job number, a
 street address, a project manager's name and a square footage, so the site is
 gated by a secret link.
 
-Set `SITE_KEY` in Vercel to a long random string. Once it is set:
+Set `SITE_KEY` in Vercel to a long random string. The entry link is then:
 
-- `https://kalb-projects-wall-map.vercel.app/?k=<SITE_KEY>` — loads, stores a
-  one-year cookie, and drops the `?k=` from the address bar
-- the same browser afterwards — loads normally, no prompt
-- anyone else — **404**
+```
+https://kalb-projects-wall-map.vercel.app/api/gate?k=<SITE_KEY>
+```
 
-The kiosk opens the `?k=` link once and is never asked again. Sharing the site
-means sharing that link, so treat it like a password.
+Open it once per browser. It stores a one-year cookie and drops you on the
+map with the key never touching the address bar. Afterwards that browser
+loads the site normally; every other visitor gets a **404**.
 
-**If `SITE_KEY` is not set, there is no gate and the site is open.** That is
-deliberate — the gate ships in a commit that deploys before anyone can add the
-variable, and failing closed would take the lobby display down in the gap.
-Setting the variable is what arms it, so verify afterwards: open the plain URL
-in a private window and confirm you get a 404.
+The kiosk opens the link once and is never asked again. Sharing the site means
+sharing that link, so treat it like a password.
 
-To rotate the key, change `SITE_KEY` and redeploy. Every existing cookie stops
-working immediately and everyone needs the new link.
+#### How it is wired
 
-To lift the gate entirely, delete the variable and redeploy.
+Two pieces that only work together:
+
+1. `vercel.json` has a **redirect** sending every request without the access
+   cookie to `/api/gate`. It has to be a redirect, not a rewrite: Vercel
+   checks the filesystem *before* rewrites, so a rewrite would never see
+   `index.html`, the JS bundle, the photos or `data/projects.json`.
+   Redirects are evaluated before the filesystem, so they catch everything.
+2. `api/gate.ts` is the only source of that cookie, and only trades one for
+   the key.
+
+A root `middleware.ts` does **not** work here. That file is a framework
+convention — Next, SvelteKit, Nuxt and Astro adapters implement it. A plain
+Vite SPA has no adapter, so Vercel deploys the file and never runs it.
+
+There are two secrets, deliberately:
+
+- `SITE_KEY` — the half people type. Lives only in Vercel, never in the repo.
+- the cookie value in `vercel.json` — an opaque token the redirect rule tests
+  against. It is committed, because a static config file cannot read an
+  environment variable. Anyone who can read this repo could forge the cookie;
+  that is Kalb staff, and the gate is aimed at strangers who find the URL.
+
+#### Rotating and lifting
+
+- **New link, old links dead** — change `SITE_KEY`, redeploy. Browsers already
+  holding a cookie stay in.
+- **Kick everyone out** — change the cookie token in `vercel.json` and in
+  `api/gate.ts` (the two must match), commit, redeploy. Every cookie dies at
+  once and everyone needs the link again.
+- **Lift the gate** — delete the `redirects` block from `vercel.json`.
+
+Note that unlike the earlier design, an unset `SITE_KEY` now locks *everyone*
+out rather than letting everyone in: the redirect is unconditional, so with no
+key configured there is no way to tell visitors apart. That failure is loud
+instead of silently open.
 
 ### 4. Deploy
 Click **Deploy**. First build takes ~1–2 minutes and you get a URL like

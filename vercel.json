@@ -3,6 +3,20 @@
   "framework": "vite",
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
+  "redirects": [
+    {
+      "source": "/((?!api/).*)",
+      "missing": [
+        {
+          "type": "cookie",
+          "key": "ka_pass",
+          "value": "ce2cda46b8ae09d47f8d8b2c3727d519"
+        }
+      ],
+      "destination": "/api/gate",
+      "permanent": false
+    }
+  ],
   "headers": [
     {
       "source": "/data/(.*)",
