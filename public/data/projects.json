@@ -2123,5 +2123,31 @@
     "lat": 36.272577,
     "lng": -115.206158,
     "historical": true
+  },
+  {
+    "id": "25101",
+    "number": "25101",
+    "name": "Aubergine Kitchen",
+    "address": "5135 Ft. Apache",
+    "city": "Las Vegas",
+    "state": "NV",
+    "region": "LV",
+    "lat": 36.0951062253838,
+    "lng": -115.2980051319531,
+    "category": "Restaurant",
+    "status": "Complete",
+    "progress": 100,
+    "estCompletion": "06/05/2025",
+    "estCompletionDate": "2025-06-05",
+    "sqFt": 3013,
+    "year": 2025,
+    "featured": false,
+    "historical": true,
+    "description": "3,013 sf in Las Vegas. Completed 06/05/2025.",
+    "heroImage": null,
+    "flags": [
+      "Project type not on file",
+      "Superintendent not on file"
+    ]
   }
 ]
