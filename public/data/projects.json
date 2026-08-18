@@ -2597,5 +2597,88 @@
       "Superintendent not on file",
       "Project type not on file"
     ]
+  },
+  {
+    "id": "24124",
+    "number": "24124",
+    "name": "LCB Building 12 Cannabis Office",
+    "address": "700 E. Warm Springs Road",
+    "city": "Las Vegas",
+    "state": "NV",
+    "region": "LV",
+    "lat": 36.057191,
+    "lng": -115.147651,
+    "status": "Complete",
+    "progress": 100,
+    "estCompletion": "06/30/2024",
+    "estCompletionDate": "2024-06-30",
+    "year": 2024,
+    "featured": false,
+    "historical": true,
+    "description": "Las Vegas. Completed 06/30/2024.",
+    "heroImage": null,
+    "flags": [
+      "Address taken from the permit — no readable owner contract",
+      "Category not on file",
+      "Square footage not on file",
+      "Superintendent not on file",
+      "Project type not on file"
+    ],
+    "shortName": "LCB Building 12"
+  },
+  {
+    "id": "24129",
+    "number": "24129",
+    "name": "Brentwood 1401 GVP",
+    "address": "1401 Green Valley Pkwy",
+    "city": "Henderson",
+    "state": "NV",
+    "region": "LV",
+    "lat": 36.02926,
+    "lng": -115.0864,
+    "status": "Complete",
+    "progress": 100,
+    "estCompletion": "09/13/2024",
+    "estCompletionDate": "2024-09-13",
+    "year": 2024,
+    "featured": false,
+    "historical": true,
+    "description": "Henderson. Completed 09/13/2024.",
+    "heroImage": null,
+    "flags": [
+      "Address taken from the permit — no readable owner contract",
+      "Category not on file",
+      "Square footage not on file",
+      "Superintendent not on file",
+      "Project type not on file"
+    ]
+  },
+  {
+    "id": "23125",
+    "number": "23125",
+    "name": "Dotty's 212 / Points 211",
+    "address": "5021 E Craig Rd",
+    "city": "North Las Vegas",
+    "state": "NV",
+    "region": "LV",
+    "lat": 36.24025,
+    "lng": -115.089534,
+    "status": "Complete",
+    "progress": 100,
+    "estCompletion": "02/06/2024",
+    "estCompletionDate": "2024-02-06",
+    "year": 2023,
+    "featured": false,
+    "historical": true,
+    "description": "North Las Vegas. Completed 02/06/2024.",
+    "heroImage": null,
+    "flags": [
+      "Address taken from the permit — no readable owner contract",
+      "Category not on file",
+      "Square footage not on file",
+      "Superintendent not on file",
+      "Project type not on file"
+    ],
+    "shortName": "Dotty's 212"
   }
 ]
