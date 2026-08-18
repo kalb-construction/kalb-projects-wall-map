@@ -695,7 +695,15 @@
     "heroImage": null,
     "estCompletion": "11/23/2026",
     "estCompletionDate": "2026-11-23",
-    "sqFt": 28500
+    "sqFt": 28500,
+    "photos": [
+      "./renders/24139/24139-1.jpg",
+      "./renders/24139/24139-2.jpg",
+      "./renders/24139/24139-3.jpg",
+      "./renders/24139/24139-4.jpg",
+      "./renders/24139/24139-5.jpg",
+      "./renders/24139/24139-6.jpg"
+    ]
   },
   {
     "id": "24136",
@@ -972,7 +980,15 @@
     "year": 2024,
     "featured": true,
     "description": "GU Other · 69,983 sf in Las Vegas. Estimated completion 07/30/2026.",
-    "heroImage": null
+    "heroImage": null,
+    "photos": [
+      "./renders/24146/24146-1.jpg",
+      "./renders/24146/24146-2.jpg",
+      "./renders/24146/24146-3.jpg",
+      "./renders/24146/24146-4.jpg",
+      "./renders/24146/24146-5.jpg",
+      "./renders/24146/24146-6.jpg"
+    ]
   },
   {
     "id": "26105",
@@ -2209,7 +2225,12 @@
     ],
     "lat": 36.272577,
     "lng": -115.206158,
-    "historical": true
+    "historical": true,
+    "photos": [
+      "./renders/25122/25122-1.jpg",
+      "./renders/25122/25122-2.jpg",
+      "./renders/25122/25122-3.jpg"
+    ]
   },
   {
     "id": "25101",
@@ -2235,6 +2256,14 @@
     "flags": [
       "Project type not on file",
       "Superintendent not on file"
+    ],
+    "photos": [
+      "./renders/25101/25101-1.jpg",
+      "./renders/25101/25101-2.jpg",
+      "./renders/25101/25101-3.jpg",
+      "./renders/25101/25101-4.jpg",
+      "./renders/25101/25101-5.jpg",
+      "./renders/25101/25101-6.jpg"
     ]
   },
   {
