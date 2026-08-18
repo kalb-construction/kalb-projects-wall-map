@@ -68,21 +68,63 @@ Choose the **Hobby (free)** plan — a static site like this stays free.
    - Build command: `npm run build`
    - Output directory: `dist`
 
-### 3. Add the Mapbox token
+### 3. Add the environment variables
 Still on the import screen (or later under **Settings → Environment
-Variables**), add:
+Variables**), add both:
 
 | Name | Value | Environments |
 |---|---|---|
+| `SITE_KEY` | a long random string — see **Access gate** below | Production, Preview, Development |
 | `VITE_MAPBOX_TOKEN` | `pk.…` (from account.mapbox.com) | Production, Preview, Development |
 
-Without it the site still works — it falls back to the free map engine — but
-with it you get the smooth vector map, 3D city view, and lighting presets.
+Without the Mapbox token the site still works — it falls back to the free map
+engine — but with it you get the smooth vector map, 3D city view, and
+lighting presets.
 
-> The token is compiled into the public JavaScript bundle. That's normal for
-> Mapbox `pk.` tokens, but **restrict it**: Mapbox → Access tokens → your
-> token → **URL restrictions** → add your Vercel domain (and
-> `http://localhost:5173` for local work).
+#### Restricting the Mapbox token
+The token is compiled into the public JavaScript bundle. That is normal and
+unavoidable for a browser map: `pk.` tokens are designed to be public, and no
+amount of hiding changes that. What stops someone else spending your quota is
+a **URL restriction**, which ties the token to your domain.
+
+The **Default public token cannot be restricted** — that is why the option
+looks missing. Create a new one instead:
+
+1. Mapbox → **Access tokens** → **Create a token**
+2. Name it `kalb-wall-map`, leave the default public scopes
+3. Under **URL restrictions**, add:
+   - `https://kalb-projects-wall-map.vercel.app`
+   - `http://localhost:5173` (only if you build locally)
+4. Create it, put the new value in `VITE_MAPBOX_TOKEN`, redeploy
+5. Back in Mapbox, **delete the old token** — rotation is not finished until
+   the old one stops working
+
+### Access gate
+
+The deployment is on the public internet. Every pin carries a job number, a
+street address, a project manager's name and a square footage, so the site is
+gated by a secret link.
+
+Set `SITE_KEY` in Vercel to a long random string. Once it is set:
+
+- `https://kalb-projects-wall-map.vercel.app/?k=<SITE_KEY>` — loads, stores a
+  one-year cookie, and drops the `?k=` from the address bar
+- the same browser afterwards — loads normally, no prompt
+- anyone else — **404**
+
+The kiosk opens the `?k=` link once and is never asked again. Sharing the site
+means sharing that link, so treat it like a password.
+
+**If `SITE_KEY` is not set, there is no gate and the site is open.** That is
+deliberate — the gate ships in a commit that deploys before anyone can add the
+variable, and failing closed would take the lobby display down in the gap.
+Setting the variable is what arms it, so verify afterwards: open the plain URL
+in a private window and confirm you get a 404.
+
+To rotate the key, change `SITE_KEY` and redeploy. Every existing cookie stops
+working immediately and everyone needs the new link.
+
+To lift the gate entirely, delete the variable and redeploy.
 
 ### 4. Deploy
 Click **Deploy**. First build takes ~1–2 minutes and you get a URL like

@@ -1,0 +1,4 @@
+# The wall map is behind an access gate and carries live job data.
+# Nothing here is for indexing.
+User-agent: *
+Disallow: /
