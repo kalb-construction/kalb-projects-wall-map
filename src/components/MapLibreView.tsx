@@ -7,6 +7,7 @@ import { setBearing } from '../lib/bearing';
 import { pinColor, pinGlyph, isBlak } from '../lib/brand';
 import { toggleFullscreen, DPR_CAP } from '../lib/kiosk';
 import { easeInOutCubic, tourFlightMs } from '../lib/tour';
+import { isLite } from '../lib/perf';
 import { watchGlContext, clearGlRecoveryBudget } from '../lib/glRecovery';
 import { addHeatLayer } from '../lib/heat';
 
@@ -309,6 +310,9 @@ export function MapLibreView({
   /** Slow cinematic orbit around the current center, movie drone style. */
   const startOrbit = () => {
     stopOrbit();
+    // The orbit re-renders the entire map every frame. On a display that
+    // already cannot hold 60, it is the first thing to go.
+    if (isLite()) return;
     let last = performance.now();
     const tick = (now: number) => {
       const map = mapRef.current;
@@ -391,7 +395,12 @@ export function MapLibreView({
 
     // Any manual gesture cancels the cinematic orbit.
     const cancelOrbit = () => stopOrbit();
-    container.addEventListener('pointerdown', cancelOrbit, { capture: true });
+    // Legacy mouse/touch too: a TV browser fires no pointer events, and
+      // an orbit that ignores the user fights every drag they attempt.
+      const ORBIT_CANCEL = ['pointerdown', 'mousedown', 'touchstart'] as const;
+      for (const ev of ORBIT_CANCEL) {
+        container.addEventListener(ev, cancelOrbit, { capture: true });
+      }
     container.addEventListener('wheel', cancelOrbit, {
       capture: true,
       passive: true
@@ -518,9 +527,11 @@ export function MapLibreView({
       window.clearTimeout(stopTimer);
       window.removeEventListener('resize', onViewportChange);
       document.removeEventListener('fullscreenchange', onViewportChange);
-      container.removeEventListener('pointerdown', cancelOrbit, {
-        capture: true
-      } as EventListenerOptions);
+      for (const ev of ORBIT_CANCEL) {
+        container.removeEventListener(ev, cancelOrbit, {
+          capture: true
+        } as EventListenerOptions);
+      }
       container.removeEventListener('wheel', cancelOrbit, {
         capture: true
       } as EventListenerOptions);
@@ -593,7 +604,9 @@ export function MapLibreView({
     map.flyTo({
       center: [target.lng, target.lat],
       zoom: tour ? 16.2 : Math.max(map.getZoom(), 16.8),
-      pitch: 55,
+      // Flat camera in lite mode: pitch is what puts 3D building
+      // extrusions and a far horizon of extra tiles on screen.
+      pitch: isLite() ? 0 : 55,
       bearing: map.getBearing() + (tour ? 22 : 30),
       duration: tour ? tourFlightMs(map.getCenter(), target) : 2600,
       ...(tour ? { curve: 1.62, easing: easeInOutCubic } : null),

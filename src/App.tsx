@@ -22,6 +22,7 @@ import { deriveStatus } from './lib/status';
 import { isBlak, isHistory } from './lib/brand';
 import { watchForUpdates } from './lib/version';
 import { validateProjects } from './lib/validate';
+import { watchPerformance } from './lib/perf';
 import { fetchJsonForever, isReachable } from './lib/fetchJson';
 
 /** `?diag=1` shows the on-screen engine/dpr/fps readout (kiosk-friendly). */
@@ -496,6 +497,13 @@ function Atlas({
       window.clearTimeout(t);
     };
   }, [updateReady, idle]);
+
+  /**
+   * Watch the frame rate and shed the expensive flourishes if this display
+   * cannot hold a smooth one. A smart TV's own browser is a different
+   * class of hardware from the PC this was tuned on.
+   */
+  useEffect(() => watchPerformance(), []);
 
   useEffect(() => {
     // Visible in DevTools → Console, so it's obvious which engine is live.

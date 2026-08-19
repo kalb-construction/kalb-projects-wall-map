@@ -98,6 +98,35 @@ looks missing. Create a new one instead:
 5. Back in Mapbox, **delete the old token** — rotation is not finished until
    the old one stops working
 
+### Running it in a TV's own browser
+
+The wall was tuned on a PC driving a TV. A smart TV's built-in browser is
+a different class of hardware — a phone-grade GPU asked to render a 3D
+vector map at 1080p — and two things go wrong there:
+
+**It stutters.** Add `?lite=1`:
+
+```
+https://kalb-projects-wall-map.vercel.app/?lite=1
+```
+
+Lite mode renders at 1× instead of 1.5× (2.25× fewer pixels a frame),
+flattens the camera so no 3D building geometry is drawn, drops the idle
+orbit and the heat layer, and stops all CSS animation and shadow work.
+Every project, photo and fact is still there. The app also measures its
+own frame rate and switches to lite by itself after five sustained
+seconds below 26 fps, so a weak panel degrades without anyone noticing;
+`?lite=0` refuses that if you would rather have the full version.
+
+**Nothing responds to the remote.** Fixed — TV browsers drive their
+cursor with legacy mouse events and never fire Pointer Events, so the app
+saw no activity at all: the cursor stayed hidden and the auto tour flew
+the camera out from under every attempted click.
+
+A PC driving the panel is still much better if one is available. It gets
+the full 3D map, the orbit and a real 60 fps, and `kiosk/kalb-atlas-kiosk.bat`
+only exists for that setup.
+
 ### Access — public by decision
 
 The site is deliberately **public**: anyone with the URL sees the map and the

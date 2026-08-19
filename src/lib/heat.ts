@@ -1,4 +1,5 @@
 import type { Project } from '../types';
+import { isLite } from './perf';
 
 /**
  * "Activity glow" — a soft Kalb-red density layer under the markers,
@@ -67,6 +68,9 @@ export function heatLayerSpec(): any {
 
 /** Add (or re-add after a style switch) the glow to a Mapbox/MapLibre map. */
 export function addHeatLayer(map: any, projects: Project[]): void {
+  // One more full-screen blended pass per frame; a weak GPU cannot
+  // spare it, and the layer is decoration.
+  if (isLite()) return;
   try {
     if (map.getSource(HEAT_SOURCE)) return;
     map.addSource(HEAT_SOURCE, {

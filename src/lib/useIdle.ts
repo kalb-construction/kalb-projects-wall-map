@@ -1,11 +1,26 @@
 import { useEffect, useRef, useState } from 'react';
 
+/**
+ * Everything that counts as "somebody is here".
+ *
+ * Pointer Events alone are not enough. A smart-TV browser drives its
+ * on-screen cursor with legacy mouse events and never fires a single
+ * `pointermove`, so a display running in one looked permanently idle: the
+ * cursor stayed hidden, the auto tour never stood down, and the camera
+ * flew out from under every attempted click. On a modern browser the
+ * legacy events fire alongside the pointer ones and simply stamp the same
+ * timestamp twice, which costs nothing.
+ */
 const ACTIVITY: Array<keyof WindowEventMap> = [
   'pointerdown',
   'pointermove',
+  'mousedown',
+  'mousemove',
+  'click',
   'keydown',
   'wheel',
-  'touchstart'
+  'touchstart',
+  'touchmove'
 ];
 
 /**

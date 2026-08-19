@@ -2347,3 +2347,37 @@ button {
 .is-moving .tour-hint-dot {
   animation: none;
 }
+
+/* ---------- lite mode: weak display, keep it moving ---------- */
+/* Reached automatically after a sustained low frame rate, or forced with
+   ?lite=1. See lib/perf.ts. Everything here is decoration — the wall
+   still shows every project, every photo and every fact, it just stops
+   spending frames on flourish it cannot afford. */
+.perf-lite *,
+.perf-lite *::before,
+.perf-lite *::after {
+  animation: none !important;
+  transition: none !important;
+}
+/* Large soft shadows are per-pixel blur work on every composite; on a TV
+   SoC a few full-screen ones are worth several frames a second. */
+.perf-lite .detail-card,
+.perf-lite .attract-visual,
+.perf-lite .index-rail,
+.perf-lite .dock,
+.perf-lite .topbar,
+.perf-lite .tour-hint,
+.perf-lite .toast {
+  box-shadow: none;
+}
+/* The vignette is a full-screen gradient composited over the map every
+   frame for atmosphere alone. */
+.perf-lite .vignette,
+.perf-lite .hero-scan {
+  display: none;
+}
+/* Photos still crossfade — that is the content — but instantly rather
+   than over a second of blended full-frame compositing. */
+.perf-lite .pslide {
+  transition: none !important;
+}

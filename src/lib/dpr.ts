@@ -12,10 +12,16 @@
  * a 4K wall or a 150–200 % scaled Windows display.
  */
 import { DPR_CAP } from './kiosk';
+import { LITE_FORCED } from './perf';
 
 export const MAX_PIXEL_RATIO = 1.5;
 
 export function clampDevicePixelRatio(max: number = DPR_CAP): void {
+  // A display already known to be weak renders at 1× from the first
+  // frame. Lite mode reached later cannot lower this — Mapbox reads the
+  // ratio when it builds its canvas — so ?lite=1 is the only way a slow
+  // panel gets the single biggest saving available to it.
+  if (LITE_FORCED) max = Math.min(max, 1);
   try {
     // Keep reading the real value through the native getter so monitor
     // moves still register — we only clamp, we don't freeze. Firefox keeps
