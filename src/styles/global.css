@@ -467,6 +467,15 @@ button {
   z-index: 15;
 }
 
+/* A mouse is not part of the lobby setup, but one gets plugged in during
+   setup and its pointer then sits on the wall for the rest of the month.
+   Hiding it on idle costs nothing and it reappears the moment anything
+   moves, so it never gets in the way of maintenance. */
+.app.is-idle,
+.app.is-idle * {
+  cursor: none;
+}
+
 /* ---------- top bar ---------- */
 
 .topbar {

@@ -20,11 +20,19 @@ const TIMEOUT_MS = 12_000;
 /** Backoff between attempts, capped so a long outage settles into a slow poll. */
 const DELAYS_MS = [1_000, 2_000, 4_000, 8_000, 15_000, 30_000];
 
-export interface RetryOptions {
+export interface RetryOptions<T, R> {
   /** Called after each failed attempt, with the 1-based attempt number. */
   onAttemptFailed?: (attempt: number, error: unknown) => void;
   /** Abort the whole loop (e.g. React unmount). */
   signal?: AbortSignal;
+  /**
+   * Runs on each successful response. Throwing from here counts as a failed
+   * attempt and retries, which is what you want for a file that is being
+   * rewritten: a half-written projects.json parses to something unusable,
+   * and the right response is to wait and read it again rather than to
+   * treat the display as broken.
+   */
+  parse?: (raw: T) => R;
 }
 
 /** One attempt, with a deadline. Rejects on timeout, HTTP error, or bad JSON. */
@@ -47,14 +55,15 @@ export async function fetchJsonOnce<T>(url: string, signal?: AbortSignal): Promi
  * Keeps trying until it succeeds or the caller aborts. Never rejects for a
  * network reason — only for an abort, which is the caller's own doing.
  */
-export async function fetchJsonForever<T>(
+export async function fetchJsonForever<T, R = T>(
   url: string,
-  { onAttemptFailed, signal }: RetryOptions = {}
-): Promise<T> {
+  { onAttemptFailed, signal, parse }: RetryOptions<T, R> = {}
+): Promise<R> {
   for (let attempt = 1; ; attempt++) {
     if (signal?.aborted) throw new DOMException('aborted', 'AbortError');
     try {
-      return await fetchJsonOnce<T>(url, signal);
+      const raw = await fetchJsonOnce<T>(url, signal);
+      return parse ? parse(raw) : (raw as unknown as R);
     } catch (err) {
       if (signal?.aborted) throw new DOMException('aborted', 'AbortError');
       onAttemptFailed?.(attempt, err);

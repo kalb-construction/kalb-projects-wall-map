@@ -4,6 +4,7 @@ import type { BBox } from '../lib/regions';
 import { setBearing } from '../lib/bearing';
 import { pinColor, pinGlyph, isBlak } from '../lib/brand';
 import { toggleFullscreen } from '../lib/kiosk';
+import { watchGlContext, clearGlRecoveryBudget } from '../lib/glRecovery';
 import { clampDevicePixelRatio } from '../lib/dpr';
 import { addHeatLayer } from '../lib/heat';
 
@@ -220,6 +221,7 @@ export function MapboxView({
     if (!container || !MAPBOX_TOKEN) return;
     let cancelled = false;
     let cleanup: (() => void) | null = null;
+    let detachGl: () => void = () => {};
 
     (async () => {
       const mod: any = await import('mapbox-gl');
@@ -261,8 +263,13 @@ export function MapboxView({
 
       map.on('load', () => {
         setReady(true);
+        clearGlRecoveryBudget();
         onLoadedRef.current();
       });
+      // A lost GL context leaves the markers and chrome floating over a
+      // black canvas, which looks broken rather than busy. Recover by
+      // reloading.
+      detachGl = watchGlContext(map.getCanvas());
       // Lighting presets exist only on the Standard (3D) style.
       // style.load also re-fires after every setStyle (view switch), which
       // wipes custom layers — so the activity glow is re-added here.
@@ -312,8 +319,28 @@ export function MapboxView({
       map.on('zoom', syncLabels);
       // While the camera moves, freeze marker animations/transitions so
       // the only per-frame work is the map itself.
-      const setMoving = (on: boolean) =>
-        container.classList.toggle('is-moving', on);
+      //
+      // "Stopped" is debounced on purpose. The cinematic orbit drives the
+      // camera with setBearing() once per frame, and each call emits its
+      // own movestart/moveend pair — so toggling the class directly meant
+      // adding and removing it 60 times a second, which is style
+      // recalculation over every marker on every frame: the exact cost
+      // this class exists to avoid. Holding it until the camera has been
+      // quiet briefly makes one continuous motion read as one motion.
+      let stopTimer: number | undefined;
+      const setMoving = (on: boolean) => {
+        window.clearTimeout(stopTimer);
+        if (on) {
+          if (!container.classList.contains('is-moving')) {
+            container.classList.add('is-moving');
+          }
+          return;
+        }
+        stopTimer = window.setTimeout(
+          () => container.classList.remove('is-moving'),
+          120
+        );
+      };
       map.on('movestart', () => setMoving(true));
       map.on('moveend', () => setMoving(false));
       map.on('zoomstart', () => setMoving(true));
@@ -387,6 +414,8 @@ export function MapboxView({
 
       cleanup = () => {
         stopOrbit();
+        detachGl();
+        window.clearTimeout(stopTimer);
         window.removeEventListener('resize', onViewportChange);
         document.removeEventListener('fullscreenchange', onViewportChange);
         container.removeEventListener('pointerdown', cancelOrbit, {

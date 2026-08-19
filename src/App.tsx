@@ -24,7 +24,12 @@ import { validateProjects } from './lib/validate';
 import { fetchJsonForever, fetchJsonOnce, isReachable } from './lib/fetchJson';
 
 /** `?diag=1` shows the on-screen engine/dpr/fps readout (kiosk-friendly). */
-const SHOW_DIAG = new URLSearchParams(window.location.search).has('diag');
+const SHOW_DIAG = (() => {
+  // `?diag=0` documented as "off" but `.has()` is true for any value, so
+  // the one way anyone would try to turn it off switched it on instead.
+  const v = new URLSearchParams(window.location.search).get('diag');
+  return v !== null && v !== '0' && v !== 'false';
+})();
 
 const IDLE_MS = 90_000;
 const BOOT_MIN_MS = 1800;
@@ -42,15 +47,19 @@ async function loadProjects(
 ): Promise<Project[]> {
   // Retries forever rather than failing: the display boots whenever the
   // building does, so its first request can land before the network is up.
-  const raw = await fetchJsonForever<unknown>('./data/projects.json', {
+  // Validation runs inside the retry, so a file caught mid-write is
+  // re-read rather than treated as a dead display.
+  return fetchJsonForever<unknown, Project[]>('./data/projects.json', {
     onAttemptFailed,
-    signal
+    signal,
+    parse: (raw) => {
+      // Guard before render: one unrenderable row must not blank the wall.
+      const { projects } = validateProjects(raw);
+      // Status is derived from the estimated completion date at load time,
+      // so the wall stays current as dates pass without anyone editing.
+      return projects.map((p) => deriveStatus(p));
+    }
   });
-  // Guard before render: one unrenderable row must not blank the wall.
-  const { projects } = validateProjects(raw);
-  // Status is derived from the estimated completion date at load time, so
-  // the wall stays current as dates pass without anyone editing the file.
-  return projects.map((p) => deriveStatus(p));
 }
 
 /** Teams are optional: a missing/broken file just means one grey team. */
@@ -80,6 +89,13 @@ export default function App() {
       .then((p) => {
         setRetrying(0);
         setProjects(p);
+        // Reaching here means the app got past the failure that spent any
+        // of the error boundary's retry budget, so give it back.
+        try {
+          sessionStorage.removeItem('kalb-atlas-auto-reloads');
+        } catch {
+          /* nothing to clear */
+        }
       })
       .catch(() => {
         /* only ever an abort — the loader itself does not give up */
@@ -235,7 +251,15 @@ function Atlas({ projects, teams }: { projects: Project[]; teams: Team[] }) {
   const close = useCallback(() => {
     setSelectedId(null);
     if (window.location.hash) {
-      history.replaceState(null, '', window.location.pathname);
+      // Keep the query string. The kiosk is launched with ?overscan= and
+      // ?dpr= baked into its URL, and dropping them here meant the first
+      // visitor to open and close a project silently reverted the display
+      // to un-inset, default-resolution rendering for the rest of the run.
+      history.replaceState(
+        null,
+        '',
+        window.location.pathname + window.location.search
+      );
     }
   }, []);
 
@@ -281,6 +305,32 @@ function Atlas({ projects, teams }: { projects: Project[]; teams: Team[] }) {
   const showAttract = bootGone && idle && attractProjects.length > 0;
 
   /**
+   * Hand the wall back to the next visitor.
+   *
+   * Whatever the last person left open — a project card, a city filter, a
+   * team highlight, the search sheet — used to stay that way for the rest
+   * of the month, so the second visitor met the first visitor's session.
+   * Going idle is the signal that they have walked away, so the display
+   * returns to the view it boots with.
+   *
+   * This also ends the cinematic orbit. The orbit only runs while a detail
+   * card is open, and closing the card stops it — which matters because
+   * the orbit drives the camera every frame and would otherwise keep the
+   * GL map rendering at full rate underneath the screensaver, all night,
+   * for nothing.
+   */
+  useEffect(() => {
+    if (!idle) return;
+    setSelectedId(null);
+    setSearchOpen(false);
+    setFilters(EMPTY_FILTERS);
+    setActiveTeams((prev) => (prev.size === 0 ? prev : new Set()));
+    if (window.location.hash) {
+      history.replaceState(null, '', window.location.pathname + window.location.search);
+    }
+  }, [idle]);
+
+  /**
    * Pick up a new deploy without anyone restarting the display. The reload
    * is deferred until the kiosk goes idle, so it can never yank the screen
    * out from under someone who is reading a project.
@@ -320,7 +370,9 @@ function Atlas({ projects, teams }: { projects: Project[]; teams: Team[] }) {
   const useMapbox = MAPBOX_TOKEN !== null && !mapboxFailed;
 
   return (
-    <div className={`app${selected ? ' detail-open' : ''}`}>
+    <div
+      className={`app${selected ? ' detail-open' : ''}${idle ? ' is-idle' : ''}`}
+    >
       {useMapbox ? (
         <MapboxView
           projects={projects}

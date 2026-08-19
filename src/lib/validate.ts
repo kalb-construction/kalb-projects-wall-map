@@ -35,17 +35,36 @@ function fatalReason(p: Partial<Project>): string | null {
     return 'missing/non-string number (crashes the procedural hero)';
   if (typeof p.name !== 'string' || p.name === '')
     return 'missing name (crashes the index sort)';
+  // City and state are read straight into localeCompare and into the
+  // "N cities" grouping key, so a non-string is the same class of crash
+  // as a missing name.
+  if (typeof p.city !== 'string' || p.city === '') return 'missing city';
+  if (typeof p.state !== 'string' || p.state === '') return 'missing state';
   if (!isFiniteNumber(p.lat) || !isFiniteNumber(p.lng))
     return 'missing or non-numeric lat/lng';
   if (p.lat < -90 || p.lat > 90) return `latitude out of range (${p.lat})`;
   if (p.lng < -180 || p.lng > 180) return `longitude out of range (${p.lng})`;
+  // `photos` is spread into the slider and indexed; a bare string would be
+  // iterated character by character and a number would throw outright.
+  if (p.photos !== undefined && !Array.isArray(p.photos))
+    return 'photos is present but not an array';
   return null;
 }
+
+/**
+ * Thrown when the file is structurally unusable, as opposed to containing
+ * some bad rows. An empty atlas is indistinguishable on screen from "Kalb
+ * has no projects", which is a lie; the boot screen's retry loop and the
+ * error boundary are both better outcomes than a confidently empty wall.
+ */
+export class ProjectDataError extends Error {}
 
 export function validateProjects(raw: unknown): ValidationResult {
   const dropped: ValidationResult['dropped'] = [];
   if (!Array.isArray(raw)) {
-    return { projects: [], dropped: [{ index: -1, id: '—', reason: 'file is not a JSON array' }] };
+    throw new ProjectDataError(
+      'data/projects.json is not a JSON array — the whole file is unusable.'
+    );
   }
 
   const seen = new Set<string>();
@@ -73,6 +92,14 @@ export function validateProjects(raw: unknown): ValidationResult {
       `[Kalb Atlas] ${dropped.length} project row(s) could not be rendered ` +
         'and were skipped:',
       dropped
+    );
+  }
+  // Every row unusable means the file is wrong, not that the company has no
+  // work. Fail loudly rather than paint an empty valley.
+  if (projects.length === 0) {
+    throw new ProjectDataError(
+      `data/projects.json parsed but produced no renderable projects ` +
+        `(${dropped.length} row(s) rejected).`
     );
   }
   return { projects, dropped };

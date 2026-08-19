@@ -6,6 +6,7 @@ import type { BBox } from '../lib/regions';
 import { setBearing } from '../lib/bearing';
 import { pinColor, pinGlyph, isBlak } from '../lib/brand';
 import { toggleFullscreen, DPR_CAP } from '../lib/kiosk';
+import { watchGlContext, clearGlRecoveryBudget } from '../lib/glRecovery';
 import { addHeatLayer } from '../lib/heat';
 
 /**
@@ -343,7 +344,12 @@ export function MapLibreView({
       maxPitch: 60,
       minZoom: 3,
       pixelRatio: Math.min(window.devicePixelRatio || 1, DPR_CAP),
-      maxTileCacheSize: 2048,
+      // maxTileCacheSize is deliberately NOT set. MapLibre documents it as
+      // a cap "for a given source", and this style declares seven, so the
+      // 2048 that used to be here meant a ceiling of ~14k retained tiles —
+      // the shape of a display that is fine for three weeks and then dies.
+      // The default sizes the cache from the viewport instead, which on a
+      // 4K wall is generous on its own and bounded by definition.
       refreshExpiredTiles: false,
       fadeDuration: 0,
       canvasContextAttributes: { antialias: false },
@@ -356,8 +362,12 @@ export function MapLibreView({
 
     map.on('load', () => {
       syncTerrain();
+      clearGlRecoveryBudget();
       onLoadedRef.current();
     });
+    // A lost GL context leaves the markers and chrome floating over a black
+    // canvas, which looks broken rather than busy. Recover by reloading.
+    const detachGl = watchGlContext(map.getCanvas());
     // The activity glow rides on 'styledata', not 'load': 'load' waits for
     // tiles, so an unreachable tile host would silently keep the glow off.
     // addHeatLayer is idempotent, so repeat firings are free.
@@ -391,8 +401,28 @@ export function MapLibreView({
     map.on('zoom', syncLabels);
     // While the camera moves, freeze marker animations/transitions so
     // the only per-frame work is the map itself.
-    const setMoving = (on: boolean) =>
-      container.classList.toggle('is-moving', on);
+    //
+    // "Stopped" is debounced on purpose. The cinematic orbit drives the
+    // camera with setBearing() once per frame, and each call emits its own
+    // movestart/moveend pair — so toggling the class directly meant adding
+    // and removing it 60 times a second, which is style recalculation over
+    // every marker on every frame: the exact cost this class exists to
+    // avoid. Holding it until the camera has been quiet briefly makes one
+    // continuous motion read as one motion.
+    let stopTimer: number | undefined;
+    const setMoving = (on: boolean) => {
+      window.clearTimeout(stopTimer);
+      if (on) {
+        if (!container.classList.contains('is-moving')) {
+          container.classList.add('is-moving');
+        }
+        return;
+      }
+      stopTimer = window.setTimeout(
+        () => container.classList.remove('is-moving'),
+        120
+      );
+    };
     map.on('movestart', () => setMoving(true));
     map.on('moveend', () => setMoving(false));
     map.on('zoomstart', () => setMoving(true));
@@ -483,6 +513,8 @@ export function MapLibreView({
 
     return () => {
       stopOrbit();
+      detachGl();
+      window.clearTimeout(stopTimer);
       window.removeEventListener('resize', onViewportChange);
       document.removeEventListener('fullscreenchange', onViewportChange);
       container.removeEventListener('pointerdown', cancelOrbit, {

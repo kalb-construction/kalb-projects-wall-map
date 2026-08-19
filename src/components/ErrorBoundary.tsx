@@ -5,6 +5,8 @@ interface Props {
 }
 interface State {
   error: Error | null;
+  /** Set once the retry budget is spent, so the copy stops promising one. */
+  givingUp?: boolean;
 }
 
 /**
@@ -13,6 +15,26 @@ interface State {
  * that a wall nobody is watching does not stay broken.
  */
 const AUTO_RELOAD_MS = 20_000;
+
+/**
+ * How many times to rescue itself before accepting that reloading is not
+ * working. A transient fault clears on the first retry; a bad data file
+ * crashes every time, and a display that reloads every twenty seconds
+ * forever is worse than one showing a legible error, because it never
+ * holds still long enough for anyone to read what is wrong.
+ */
+const MAX_AUTO_RELOADS = 3;
+const COUNTER_KEY = 'kalb-atlas-auto-reloads';
+
+function autoReloadsSoFar(): number {
+  try {
+    return Number(sessionStorage.getItem(COUNTER_KEY) ?? '0') || 0;
+  } catch {
+    // Private mode or a locked-down profile: treat as "give up", since
+    // without a counter we cannot tell a loop from a first attempt.
+    return MAX_AUTO_RELOADS;
+  }
+}
 
 /**
  * Last line of defence for the lobby wall.
@@ -40,11 +62,24 @@ export class ErrorBoundary extends Component<Props, State> {
 
   componentDidCatch(error: Error, info: ErrorInfo): void {
     console.error('[Kalb Atlas] Render failed:', error, info.componentStack);
+    const tries = autoReloadsSoFar();
+    if (tries >= MAX_AUTO_RELOADS) {
+      console.error(
+        `[Kalb Atlas] Already reloaded ${tries}x for render errors — ` +
+          'this one is not transient. Leaving the message up.'
+      );
+      this.setState({ givingUp: true });
+      return;
+    }
     window.clearTimeout(this.reloadTimer);
-    this.reloadTimer = window.setTimeout(
-      () => window.location.reload(),
-      AUTO_RELOAD_MS
-    );
+    this.reloadTimer = window.setTimeout(() => {
+      try {
+        sessionStorage.setItem(COUNTER_KEY, String(tries + 1));
+      } catch {
+        /* counter unavailable — the guard above already handles that */
+      }
+      window.location.reload();
+    }, AUTO_RELOAD_MS);
   }
 
   componentWillUnmount(): void {
@@ -52,7 +87,7 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   render(): ReactNode {
-    const { error } = this.state;
+    const { error, givingUp } = this.state;
     if (!error) return this.props.children;
     return (
       <div className="app">
@@ -60,8 +95,12 @@ export class ErrorBoundary extends Component<Props, State> {
           <strong>The atlas hit an error and stopped.</strong>
           <span className="g-error-detail">{error.message}</span>
           <span className="g-error-hint">
-            Reloading automatically in a few seconds. Full details are in the
-            browser console.
+            {givingUp
+              ? 'Reloading did not clear this, so the display has stopped ' +
+                'retrying. Check data/projects.json. Full details are in the ' +
+                'browser console.'
+              : 'Reloading automatically in a few seconds. Full details are ' +
+                'in the browser console.'}
           </span>
           <button className="g-error-btn" onClick={() => window.location.reload()}>
             Reload
