@@ -3,7 +3,8 @@ import type { Filters, Project, Team } from './types';
 import { EMPTY_FILTERS, matchesFilters } from './lib/filters';
 import { cityGroupOf, cityOptionsOf } from './lib/meta';
 import { boundsOf, REGIONS, type BBox } from './lib/regions';
-import { useIdle } from './lib/useIdle';
+import { useIdleStage } from './lib/useIdle';
+import { tourRoute } from './lib/tour';
 import { BootScreen } from './components/BootScreen';
 import { TopBar } from './components/TopBar';
 import { MapLibreView } from './components/MapLibreView';
@@ -31,7 +32,23 @@ const SHOW_DIAG = (() => {
   return v !== null && v !== '0' && v !== 'false';
 })();
 
-const IDLE_MS = 90_000;
+/**
+ * The unattended ladder. Left alone, the wall escalates:
+ *
+ *   45s   the camera tour takes over — flies job to job, playing photos
+ *   225s  the tour hands off to the full-screen screensaver
+ *
+ * Any touch, key or mouse move drops straight back to stage 0 and the
+ * display is manual again. 45 seconds is long enough that it never
+ * interrupts somebody reading a card, short enough that a lobby with
+ * nobody in it is never showing a still frame.
+ */
+const TOUR_IDLE_MS = 45_000;
+const ATTRACT_IDLE_MS = 225_000;
+
+/** Per stop: a ~5s flight, then long enough for three photos to play. */
+const TOUR_STEP_MS = 13_500;
+
 const BOOT_MIN_MS = 1800;
 const BOOT_MAX_MS = 8000;
 
@@ -151,9 +168,11 @@ function Atlas({
   const [bootGone, setBootGone] = useState(false);
   const [filters, setFilters] = useState<Filters>(EMPTY_FILTERS);
   const [selectedId, setSelectedId] = useState<string | null>(idFromHash);
-  const [focusSignal, setFocusSignal] = useState<{ id: string; n: number } | null>(
-    null
-  );
+  const [focusSignal, setFocusSignal] = useState<{
+    id: string;
+    n: number;
+    tour?: boolean;
+  } | null>(null);
   const [regionSignal, setRegionSignal] = useState<{ bounds: BBox; n: number } | null>(
     null
   );
@@ -165,7 +184,10 @@ function Atlas({
   const [diagOn, setDiagOn] = useState(SHOW_DIAG);
   const toastTimer = useRef<number | undefined>(undefined);
   const signalCounter = useRef(0);
-  const idle = useIdle(IDLE_MS);
+  const idleStage = useIdleStage([TOUR_IDLE_MS, ATTRACT_IDLE_MS]);
+  const idle = idleStage > 0;
+  const tourPos = useRef(0);
+  const wasUnattended = useRef(false);
 
   const bootDone = mapLoaded && bootMinDone;
 
@@ -280,11 +302,17 @@ function Atlas({
     setRegionSignal({ bounds, n: signalCounter.current });
   }, []);
 
-  const select = useCallback((p: Project) => {
+  const select = useCallback((p: Project, opts?: { tour?: boolean }) => {
+    const tour = opts?.tour === true;
     setSelectedId(p.id);
-    window.location.hash = `#/project/${p.id}`;
+    const url = `#/project/${p.id}`;
+    // A tour replaces rather than pushes: an unattended display steps
+    // through hundreds of projects a day, and every one of those would
+    // otherwise be a back-button entry piling up in a tab nobody reloads.
+    if (tour) history.replaceState(null, '', url);
+    else window.location.hash = url;
     signalCounter.current += 1;
-    setFocusSignal({ id: p.id, n: signalCounter.current });
+    setFocusSignal({ id: p.id, n: signalCounter.current, tour });
   }, []);
 
   const close = useCallback(() => {
@@ -341,7 +369,84 @@ function Atlas({
     toastTimer.current = window.setTimeout(() => setToast(null), 3400);
   }, []);
 
-  const showAttract = bootGone && idle && attractProjects.length > 0;
+  /**
+   * The tour route: every photographed project that survives the current
+   * filters, ordered into short hops so the camera drives the valley
+   * instead of ricocheting across it.
+   */
+  const route = useMemo(() => tourRoute(shownProjects), [shownProjects]);
+
+  const touring = bootGone && idleStage === 1 && route.length > 0;
+  const showAttract = bootGone && idleStage >= 2 && attractProjects.length > 0;
+
+  /**
+   * Drive the tour. Each step opens the next project, which flies the
+   * camera and starts its photographs playing; the orbit takes over once
+   * the flight lands.
+   *
+   * `tourPos` survives between tours on purpose, so an emptying lobby
+   * picks the route up where it left off rather than replaying the same
+   * first dozen jobs every time.
+   */
+  useEffect(() => {
+    if (!touring) return;
+    let cancelled = false;
+    let timer: number | undefined;
+
+    const visit = () => {
+      if (cancelled) return;
+      const stop = route[tourPos.current % route.length];
+      tourPos.current += 1;
+      select(stop, { tour: true });
+
+      // Warm the next stop's photographs during this one's dwell, so its
+      // card opens on a picture rather than an empty frame.
+      const next = route[tourPos.current % route.length];
+      for (const src of next?.photos ?? []) {
+        const img = new Image();
+        img.decoding = 'async';
+        img.src = src;
+      }
+      timer = window.setTimeout(visit, TOUR_STEP_MS);
+    };
+
+    // A beat before the first flight, so the tour eases in rather than
+    // lurching the instant the threshold trips.
+    timer = window.setTimeout(visit, 700);
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timer);
+    };
+  }, [touring, route, select]);
+
+  /**
+   * The screensaver covers the map completely, but a card the tour left
+   * open underneath keeps the cinematic orbit running — and the orbit
+   * drives the camera every frame, so the GL map would render at full
+   * rate all night behind an opaque overlay for nobody.
+   */
+  useEffect(() => {
+    if (showAttract) setSelectedId(null);
+  }, [showAttract]);
+
+  /**
+   * Somebody walked up. Hand the wall back: close whatever the tour left
+   * open and return to the valley, so the first thing they touch is a
+   * clean map and not the middle of a tour they did not start.
+   */
+  useEffect(() => {
+    if (touring || showAttract) {
+      wasUnattended.current = true;
+      return;
+    }
+    if (!wasUnattended.current) return;
+    wasUnattended.current = false;
+    setSelectedId(null);
+    if (window.location.hash) {
+      history.replaceState(null, '', window.location.pathname + window.location.search);
+    }
+    flyToBounds(REGIONS[0].bounds);
+  }, [touring, showAttract, flyToBounds]);
 
   /**
    * Hand the wall back to the next visitor.
@@ -508,6 +613,13 @@ function Atlas({
       {toast && <div className="toast">{toast}</div>}
 
       {diagOn && <DiagOverlay engine={useMapbox ? 'Mapbox' : 'MapLibre'} />}
+
+      {touring && (
+        <div className="tour-hint" aria-hidden="true">
+          <span className="tour-hint-dot" />
+          AUTO TOUR · TOUCH TO EXPLORE
+        </div>
+      )}
 
       {showAttract && <IdleAttract featured={attractProjects} />}
 

@@ -4,6 +4,7 @@ import type { BBox } from '../lib/regions';
 import { setBearing } from '../lib/bearing';
 import { pinColor, pinGlyph, isBlak } from '../lib/brand';
 import { toggleFullscreen } from '../lib/kiosk';
+import { easeInOutCubic, tourFlightMs } from '../lib/tour';
 import { watchGlContext, clearGlRecoveryBudget } from '../lib/glRecovery';
 import { clampDevicePixelRatio } from '../lib/dpr';
 import { addHeatLayer } from '../lib/heat';
@@ -86,7 +87,7 @@ interface MapboxViewProps {
   visibleIds: Set<string>;
   selectedId: string | null;
   detailOpen: boolean;
-  focusSignal: { id: string; n: number } | null;
+  focusSignal: { id: string; n: number; tour?: boolean } | null;
   regionSignal: { bounds: BBox; n: number } | null;
   onSelect: (p: Project) => void;
   onBackgroundTap: () => void;
@@ -493,12 +494,22 @@ export function MapboxView({
       : w > 1500
         ? 360
         : 300;
+    // An unattended tour flies slower and arcs higher than a tap does. A
+    // tap is a response and should feel immediate; a tour is the wall
+    // showing off to a room, and wants the long lens.
+    const tour = focusSignal.tour === true;
     map.flyTo({
       center: [target.lng, target.lat],
-      zoom: Math.max(map.getZoom(), 16.8),
+      // A tap never zooms out from wherever you were. A tour settles on
+      // one altitude for every stop, so a route that crosses the valley
+      // does not creep tighter with each hop.
+      zoom: tour ? 16.2 : Math.max(map.getZoom(), 16.8),
       pitch: viewRef.current === 'streets' ? 35 : 55,
-      bearing: map.getBearing() + 30,
-      duration: 2600,
+      bearing: map.getBearing() + (tour ? 22 : 30),
+      duration: tour ? tourFlightMs(map.getCenter(), target) : 2600,
+      // Higher curve pulls the camera up and out mid-flight, so the hop
+      // reads as travel across the city rather than a cut.
+      ...(tour ? { curve: 1.62, easing: easeInOutCubic } : null),
       offset: [-panelW / 2 + 30, -20],
       essential: true
     });

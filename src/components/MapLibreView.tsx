@@ -6,6 +6,7 @@ import type { BBox } from '../lib/regions';
 import { setBearing } from '../lib/bearing';
 import { pinColor, pinGlyph, isBlak } from '../lib/brand';
 import { toggleFullscreen, DPR_CAP } from '../lib/kiosk';
+import { easeInOutCubic, tourFlightMs } from '../lib/tour';
 import { watchGlContext, clearGlRecoveryBudget } from '../lib/glRecovery';
 import { addHeatLayer } from '../lib/heat';
 
@@ -214,7 +215,7 @@ interface MapLibreViewProps {
   visibleIds: Set<string>;
   selectedId: string | null;
   detailOpen: boolean;
-  focusSignal: { id: string; n: number } | null;
+  focusSignal: { id: string; n: number; tour?: boolean } | null;
   regionSignal: { bounds: BBox; n: number } | null;
   onSelect: (p: Project) => void;
   onBackgroundTap: () => void;
@@ -587,12 +588,15 @@ export function MapLibreView({
       : w > 1500
         ? 360
         : 300;
+    // See MapboxView: a tour flies slower and arcs higher than a tap.
+    const tour = focusSignal.tour === true;
     map.flyTo({
       center: [target.lng, target.lat],
-      zoom: Math.max(map.getZoom(), 16.8),
+      zoom: tour ? 16.2 : Math.max(map.getZoom(), 16.8),
       pitch: 55,
-      bearing: map.getBearing() + 30,
-      duration: 2600,
+      bearing: map.getBearing() + (tour ? 22 : 30),
+      duration: tour ? tourFlightMs(map.getCenter(), target) : 2600,
+      ...(tour ? { curve: 1.62, easing: easeInOutCubic } : null),
       offset: [-panelW / 2 + 30, -20],
       essential: true
     });

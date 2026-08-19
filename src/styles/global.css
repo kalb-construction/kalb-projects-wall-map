@@ -2298,3 +2298,52 @@ button {
   border-radius: 50%;
   flex: 0 0 auto;
 }
+
+/* ---------- auto tour hint ---------- */
+/* A wall that drives itself looks broken unless it says so. Top centre is
+   the only strip of chrome that is empty on every layout — the logo owns
+   the left, the count and clock own the right. */
+.tour-hint {
+  position: absolute;
+  top: calc(104px + var(--oi));
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 18px;
+  border-radius: 999px;
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-panel);
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  color: var(--sand-60);
+  white-space: nowrap;
+  pointer-events: none;
+  animation: trayIn 0.5s var(--ease-out);
+}
+.tour-hint-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--red);
+  box-shadow: 0 0 10px rgba(193, 0, 22, 0.8);
+  animation: tourPulse 2.4s ease-in-out infinite;
+}
+@keyframes tourPulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.28;
+  }
+}
+/* The hint is decoration; it must never animate while the map is moving. */
+.is-moving .tour-hint-dot {
+  animation: none;
+}
