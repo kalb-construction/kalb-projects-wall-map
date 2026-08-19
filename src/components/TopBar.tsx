@@ -44,7 +44,7 @@ function TopBarBase({
       <div className="topbar-left" onClick={onBrandTap}>
         <img
           className="topbar-logo"
-          src="./brand/kalb-lockup.png"
+          src="./brand/kalb-lockup-ui.png"
           alt="Kalb Construction"
         />
         <div className="topbar-divider" />

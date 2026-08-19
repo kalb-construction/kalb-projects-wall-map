@@ -8,7 +8,7 @@ export function BootScreen({ leaving }: BootScreenProps) {
     <div className={`boot${leaving ? ' boot-leave' : ''}`} aria-hidden="true">
       <div className="boot-mark">
         <div className="boot-ring" />
-        <img src="./brand/kalb-k-red.png" alt="" className="boot-k" />
+        <img src="./brand/kalb-k-red-ui.png" alt="" className="boot-k" />
       </div>
       <div className="boot-word">KALB CONSTRUCTION</div>
       <div className="boot-sub">PROJECT ATLAS</div>

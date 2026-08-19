@@ -615,12 +615,16 @@ button {
   left: 0;
   right: 0;
   bottom: 0;
-  height: 78px;
   display: flex;
   align-items: center;
   gap: 20px;
   padding: 10px calc(20px + var(--oi)) calc(14px + var(--oi));
-  height: calc(78px + var(--oi));
+  /* Auto height, anchored to the bottom, so a filter row that wraps grows
+     UPWARD into the screen. Fixed height sent the second row below the
+     bottom edge, which is how the HISTORY toggle disappeared off a
+     narrower display. */
+  height: auto;
+  min-height: calc(78px + var(--oi));
   background: none;
   pointer-events: none;
   /* Above the BLAK badge (z-index 9): an open filter tray must cover it
@@ -643,7 +647,7 @@ button {
   align-items: center;
   gap: 10px;
   flex-wrap: wrap;
-  max-width: 46%;
+  max-width: 62%;
 }
 .dock-filter {
   height: 50px;
@@ -897,7 +901,11 @@ button {
   left: calc(20px + var(--oi));
   top: calc(104px + var(--oi));
   width: 396px;
-  max-height: calc(100% - 200px);
+  /* Clear of both the top bar and the dock, and the overscan inset counts
+     twice — it pushes the card down from the top and lifts the dock up
+     from the bottom. Ignoring the second one let the card sit over the
+     compass on a short display. */
+  max-height: calc(100% - 200px - 2 * var(--oi));
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -1054,6 +1062,11 @@ button {
    shape — otherwise it collapses to zero height and the card looks empty. */
 .detail-hero.has-photos {
   aspect-ratio: 3 / 2;
+  /* ...but never taller than the screen can show. Capped against the
+     viewport, the whole photograph is always above the fold; uncapped, a
+     short display showed the top half and hid the rest behind a scroll
+     nobody on a wall is going to perform. */
+  max-height: 30vh;
 }
 /* cinematic scan sweep whenever a new project loads in */
 .hero-scan {

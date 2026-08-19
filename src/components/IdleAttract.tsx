@@ -99,7 +99,7 @@ export function IdleAttract({ featured }: IdleAttractProps) {
       </div>
 
       <div className="attract-cta">
-        <img src="./brand/kalb-k-red.png" alt="" className="attract-k" />
+        <img src="./brand/kalb-k-red-ui.png" alt="" className="attract-k" />
         <span>TOUCH TO EXPLORE THE PROJECT MAP</span>
       </div>
     </div>

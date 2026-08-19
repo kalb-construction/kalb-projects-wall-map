@@ -45,6 +45,16 @@ const SHOW_DIAG = (() => {
  * nobody in it is never showing a still frame.
  */
 const TOUR_IDLE_MS = 45_000;
+
+/**
+ * `?tour=0` switches the camera tour off and leaves the wall on a still
+ * map until the screensaver. Some rooms want the movement, some find it
+ * distracting behind a meeting; it is a display setting, not a rebuild.
+ */
+const TOUR_ENABLED = (() => {
+  const v = new URLSearchParams(window.location.search).get('tour');
+  return v === null || (v !== '0' && v !== 'false');
+})();
 const ATTRACT_IDLE_MS = 225_000;
 
 /** Per stop: a ~5s flight, then long enough for three photos to play. */
@@ -377,8 +387,15 @@ function Atlas({
    */
   const route = useMemo(() => tourRoute(shownProjects), [shownProjects]);
 
-  const touring = bootGone && idleStage === 1 && route.length > 0;
-  const showAttract = bootGone && idleStage >= 2 && attractProjects.length > 0;
+  const touring =
+    TOUR_ENABLED && bootGone && idleStage === 1 && route.length > 0;
+  // Without the tour there is nothing to fill the first idle stage, so
+  // the screensaver takes over at the earlier threshold instead of
+  // leaving the wall on a frozen map for three extra minutes.
+  const showAttract =
+    bootGone &&
+    idleStage >= (TOUR_ENABLED ? 2 : 1) &&
+    attractProjects.length > 0;
 
   /**
    * Drive the tour. Each step opens the next project, which flies the
