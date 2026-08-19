@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { Project } from '../types';
 import { statusTone } from '../lib/meta';
 import { PhotoSlider } from './PhotoSlider';
@@ -8,18 +8,17 @@ interface IdleAttractProps {
 }
 
 /**
- * Kiosk attract loop: cycles through featured projects while the display
- * is idle. Any touch/movement resets the idle timer upstream, which
- * unmounts this overlay.
+ * Kiosk attract loop: cycles through projects while the display is idle.
+ * Any touch/movement resets the idle timer upstream, which unmounts this
+ * overlay.
+ *
+ * Every project handed here is expected to have photos — App decides which
+ * ones qualify (see `attractProjects`) so that the caller's "should the
+ * screensaver run" test and this component's "is there anything to show"
+ * test can never disagree. They did once, and the result was a screensaver
+ * that mounted and drew nothing.
  */
-export function IdleAttract({ featured: featuredAll }: IdleAttractProps) {
-  // Only projects with real photography rotate. A featured project without
-  // photos used to fall back to the procedural drawing; by request it now
-  // simply sits the screensaver out until photos exist.
-  const featured = useMemo(
-    () => featuredAll.filter((p) => p.photos && p.photos.length > 0),
-    [featuredAll]
-  );
+export function IdleAttract({ featured }: IdleAttractProps) {
   const [index, setIndex] = useState(0);
 
   useEffect(() => {

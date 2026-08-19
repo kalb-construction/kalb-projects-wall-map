@@ -195,7 +195,23 @@ function Atlas({ projects, teams }: { projects: Project[]; teams: Team[] }) {
     [projects, visibleIds]
   );
 
-  const featured = useMemo(() => projects.filter((p) => p.featured), [projects]);
+  /**
+   * What the screensaver rotates through.
+   *
+   * Only projects with photography qualify — the procedural drawings were
+   * retired, so a project without photos has nothing to show. Featured
+   * projects are the intent; any photographed project is the fallback,
+   * because the one outcome to avoid is an empty rotation. That would
+   * leave the same static map on the panel for the entire night, which is
+   * both a wasted display and a burn-in risk, and it would fail silently:
+   * before this, `featured.length > 0` was true while the attract loop's
+   * own filtered list was empty, so it mounted and rendered nothing.
+   */
+  const attractProjects = useMemo(() => {
+    const withPhotos = (p: Project) => (p.photos?.length ?? 0) > 0;
+    const chosen = projects.filter((p) => p.featured && withPhotos(p));
+    return chosen.length > 0 ? chosen : projects.filter(withPhotos);
+  }, [projects]);
   const blakCount = useMemo(() => projects.filter(isBlak).length, [projects]);
   const historyCount = useMemo(() => projects.filter(isHistory).length, [projects]);
   const cityCount = useMemo(
@@ -262,7 +278,7 @@ function Atlas({ projects, teams }: { projects: Project[]; teams: Team[] }) {
     toastTimer.current = window.setTimeout(() => setToast(null), 3400);
   }, []);
 
-  const showAttract = bootGone && idle && featured.length > 0;
+  const showAttract = bootGone && idle && attractProjects.length > 0;
 
   /**
    * Pick up a new deploy without anyone restarting the display. The reload
@@ -402,7 +418,7 @@ function Atlas({ projects, teams }: { projects: Project[]; teams: Team[] }) {
 
       {diagOn && <DiagOverlay engine={useMapbox ? 'Mapbox' : 'MapLibre'} />}
 
-      {showAttract && <IdleAttract featured={featured} />}
+      {showAttract && <IdleAttract featured={attractProjects} />}
 
       {!bootGone && <BootScreen leaving={bootDone} />}
     </div>
