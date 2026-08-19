@@ -21,7 +21,7 @@ import { deriveStatus } from './lib/status';
 import { isBlak, isHistory } from './lib/brand';
 import { watchForUpdates } from './lib/version';
 import { validateProjects } from './lib/validate';
-import { fetchJsonForever, fetchJsonOnce, isReachable } from './lib/fetchJson';
+import { fetchJsonForever, isReachable } from './lib/fetchJson';
 
 /** `?diag=1` shows the on-screen engine/dpr/fps readout (kiosk-friendly). */
 const SHOW_DIAG = (() => {
@@ -63,11 +63,23 @@ async function loadProjects(
 }
 
 /** Teams are optional: a missing/broken file just means one grey team. */
-async function loadTeams(): Promise<Team[]> {
+async function loadTeams(signal: AbortSignal): Promise<Team[]> {
   try {
-    const data = await fetchJsonOnce<Team[]>('./data/teams.json');
-    return Array.isArray(data) && data.length > 0 ? data : FALLBACK_TEAMS;
+    // Retries like projects.json does. A boot-time blip used to be
+    // permanent here: teams got one attempt, and losing it silently
+    // replaced every project manager on the wall with one grey
+    // "Unassigned" for the rest of the run.
+    return await fetchJsonForever<Team[], Team[]>('./data/teams.json', {
+      signal,
+      parse: (data) => {
+        if (!Array.isArray(data) || data.length === 0) {
+          throw new Error('teams.json is empty or not an array');
+        }
+        return data;
+      }
+    });
   } catch {
+    // Abort only (unmount) — the loop itself does not give up.
     return FALLBACK_TEAMS;
   }
 }
@@ -100,7 +112,7 @@ export default function App() {
       .catch(() => {
         /* only ever an abort — the loader itself does not give up */
       });
-    loadTeams().then(setTeams);
+    loadTeams(ac.signal).then(setTeams);
     return () => ac.abort();
   }, []);
 
@@ -126,7 +138,14 @@ export default function App() {
   return <Atlas projects={projects} teams={teams} />;
 }
 
-function Atlas({ projects, teams }: { projects: Project[]; teams: Team[] }) {
+function Atlas({
+  projects: initialProjects,
+  teams
+}: {
+  projects: Project[];
+  teams: Team[];
+}) {
+  const [projects, setLiveProjects] = useState<Project[]>(initialProjects);
   const [mapLoaded, setMapLoaded] = useState(false);
   const [bootMinDone, setBootMinDone] = useState(false);
   const [bootGone, setBootGone] = useState(false);
@@ -165,6 +184,26 @@ function Atlas({ projects, teams }: { projects: Project[]; teams: Team[] }) {
     const t = window.setTimeout(() => setBootGone(true), 700);
     return () => window.clearTimeout(t);
   }, [bootDone]);
+
+  /**
+   * Re-derive statuses as dates pass.
+   *
+   * `deriveStatus` turns an estimated completion date in the past into a
+   * Complete (grey) pin, but it ran once at load — so on a display that
+   * stays up for a month, a job that finished in week two kept showing as
+   * In Progress until someone reloaded the page. Re-running it hourly
+   * costs nothing and keeps the wall honest; the identity check means a
+   * day where nothing crosses its date produces no re-render at all.
+   */
+  useEffect(() => {
+    const id = window.setInterval(() => {
+      setLiveProjects((prev) => {
+        const next = prev.map((p) => deriveStatus(p));
+        return next.some((p, i) => p !== prev[i]) ? next : prev;
+      });
+    }, 60 * 60 * 1000);
+    return () => window.clearInterval(id);
+  }, []);
 
   // Hash <-> selection sync (deep links like #/project/26104).
   useEffect(() => {

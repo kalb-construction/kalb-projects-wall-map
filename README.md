@@ -57,7 +57,7 @@ current Map Tiles API pricing and set a budget alert on the project. The
 ### Kiosk deployment (Mac Mini / any box)
 
 1. `npm run build`, serve `dist/` with any static server (or `npm run kiosk`).
-2. Launch Chrome/Chromium with `--kiosk --noerrdialogs --disable-pinch-zoom http://localhost:4173` (the app handles its own pinch gestures).
+2. For the real lobby display use `kiosk/kalb-atlas-kiosk.bat` (auto-start, auto-relaunch, sleep disabled) — see DEPLOY.md → *Pointing the lobby display at it*. For a quick local look, `chrome --kiosk --noerrdialogs --disable-pinch http://localhost:4173`.
 3. Disable OS sleep; the built-in idle attract loop takes over after 90 s and any touch wakes the map.
 
 ## Updating the dashboard yourself (no developer needed)

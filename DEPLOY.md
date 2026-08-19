@@ -198,19 +198,54 @@ patched `projects.json`, and upload it to GitHub the same way.
 
 ## Pointing the lobby display at it
 
-On the kiosk machine, launch Chrome in kiosk mode against the Vercel URL:
+**Use the launcher, not a plain Chrome shortcut:** `kiosk/kalb-atlas-kiosk.bat`.
+
+Copy that file onto the kiosk PC, edit `ATLAS_URL` at the top if you need
+`?overscan=3`, then put a shortcut to it in `shell:startup` (press
+Win+R, type `shell:startup`, drop the shortcut in that folder).
+
+It does four things a shortcut cannot:
+
+- **relaunches Chrome if it closes or crashes**, forever, so a GPU crash or
+  an accidental close does not leave a black wall until Monday
+- **runs its own Chrome profile**, so the display can never inherit tabs,
+  bookmarks or a signed-in account from someone's normal browsing
+- **suppresses the "Restore pages?" bar**, which after a power cut otherwise
+  sits across the top of the wall until someone dismisses it
+- **turns off sleep, screen blanking and disk spindown** — a TV that goes
+  black at 3pm because Windows decided to sleep is the most common way a
+  lobby display "breaks"
+
+If you must launch by hand, the flags that matter are:
 
 ```
-chrome.exe --kiosk --noerrdialogs --disable-pinch-zoom https://<your-vercel-url>
+chrome.exe --kiosk --noerrdialogs --disable-session-crashed-bubble
+           --disable-infobars --no-first-run --disable-pinch
+           --user-data-dir="%LOCALAPPDATA%\KalbAtlasKiosk"
+           https://<your-vercel-url>
 ```
 
 (macOS: `open -a "Google Chrome" --args --kiosk …`)
 
-Then disable OS sleep and screen blanking. The app's own idle attract loop
-takes over after 90 seconds and wakes on any touch.
+> Earlier revisions of this document suggested `--disable-pinch-zoom`. That
+> is not a Chromium switch and did nothing; the real one is `--disable-pinch`.
 
 There is also a **full-screen button** in the bottom-right control cluster,
 so a display with no keyboard can go edge-to-edge with one tap.
+
+### What the display does on its own
+
+Worth knowing before you walk away from it:
+
+| After | It does this |
+|---|---|
+| 90 seconds idle | Clears the last visitor's project, filters and search, returns the camera home, hides the mouse cursor, and starts the photo screensaver |
+| Any touch | Screensaver ends, back to the live map |
+| A network blip | Keeps retrying on its own and says so on screen; recovers with no help |
+| A new deploy | Reloads itself, but only while idle and only if the network answers |
+| A render error | Shows the error, then reloads itself — up to three times, then stops so the message can be read |
+| A GPU/driver reset | Detects the lost graphics context and reloads |
+| Hours passing | Re-checks project statuses hourly, so a job that passes its completion date turns grey without a reload |
 
 ### Making it fit a TV exactly
 
@@ -253,7 +288,8 @@ Parameters combine: `…vercel.app/?overscan=3&dpr=2`.
 
 Tap the **Kalb logo three times** to show a large readout across the bottom
 of the screen — no address bar and no keyboard needed, which is the point on
-a TV. Three more taps hide it. `?diag=1` does the same from the URL.
+a TV. Three more taps hide it. `?diag=1` does the same from the URL, and
+`?diag=0` explicitly turns it off.
 
 ```
 Mapbox  ·  dpr 1  ·  render 1.00×  ·  58 fps  ·  1920×1080

@@ -1455,9 +1455,15 @@ button {
   background: var(--red);
   transform: scale(1.3);
 }
+/* The screensaver is the one full-screen surface, so it is the one most
+   exposed to a TV that crops its own picture. Its own edge content has to
+   respect the same inset the rest of the chrome uses. */
+.attract-dots {
+  bottom: calc(96px + var(--oi));
+}
 .attract-cta {
   position: absolute;
-  bottom: 46px;
+  bottom: calc(46px + var(--oi));
   left: 50%;
   transform: translateX(-50%);
   display: flex;
