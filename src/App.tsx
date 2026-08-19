@@ -21,6 +21,7 @@ import { deriveStatus } from './lib/status';
 import { isBlak, isHistory } from './lib/brand';
 import { watchForUpdates } from './lib/version';
 import { validateProjects } from './lib/validate';
+import { fetchJsonForever, fetchJsonOnce, isReachable } from './lib/fetchJson';
 
 /** `?diag=1` shows the on-screen engine/dpr/fps readout (kiosk-friendly). */
 const SHOW_DIAG = new URLSearchParams(window.location.search).has('diag');
@@ -35,11 +36,18 @@ const BOOT_MAX_MS = 8000;
  * public/ during development, or directly inside dist/ on the kiosk),
  * then refresh the page.
  */
-async function loadProjects(): Promise<Project[]> {
-  const res = await fetch('./data/projects.json', { cache: 'no-store' });
-  if (!res.ok) throw new Error(`projects.json ${res.status}`);
+async function loadProjects(
+  onAttemptFailed: (attempt: number, error: unknown) => void,
+  signal: AbortSignal
+): Promise<Project[]> {
+  // Retries forever rather than failing: the display boots whenever the
+  // building does, so its first request can land before the network is up.
+  const raw = await fetchJsonForever<unknown>('./data/projects.json', {
+    onAttemptFailed,
+    signal
+  });
   // Guard before render: one unrenderable row must not blank the wall.
-  const { projects } = validateProjects(await res.json());
+  const { projects } = validateProjects(raw);
   // Status is derived from the estimated completion date at load time, so
   // the wall stays current as dates pass without anyone editing the file.
   return projects.map((p) => deriveStatus(p));
@@ -48,9 +56,7 @@ async function loadProjects(): Promise<Project[]> {
 /** Teams are optional: a missing/broken file just means one grey team. */
 async function loadTeams(): Promise<Team[]> {
   try {
-    const res = await fetch('./data/teams.json', { cache: 'no-store' });
-    if (!res.ok) return FALLBACK_TEAMS;
-    const data = (await res.json()) as Team[];
+    const data = await fetchJsonOnce<Team[]>('./data/teams.json');
     return Array.isArray(data) && data.length > 0 ? data : FALLBACK_TEAMS;
   } catch {
     return FALLBACK_TEAMS;
@@ -65,29 +71,39 @@ function idFromHash(): string | null {
 export default function App() {
   const [projects, setProjects] = useState<Project[] | null>(null);
   const [teams, setTeams] = useState<Team[]>(FALLBACK_TEAMS);
-  const [loadError, setLoadError] = useState(false);
+  /** Failed attempts so far. Non-zero only while the data is unreachable. */
+  const [retrying, setRetrying] = useState(0);
 
   useEffect(() => {
-    loadProjects()
-      .then(setProjects)
-      .catch(() => setLoadError(true));
+    const ac = new AbortController();
+    loadProjects((attempt) => setRetrying(attempt), ac.signal)
+      .then((p) => {
+        setRetrying(0);
+        setProjects(p);
+      })
+      .catch(() => {
+        /* only ever an abort — the loader itself does not give up */
+      });
     loadTeams().then(setTeams);
+    return () => ac.abort();
   }, []);
 
-  if (loadError) {
-    return (
-      <div className="app">
-        <BootScreen leaving={false} />
-        <div className="g-error">
-          Could not read data/projects.json — check the file and refresh.
-        </div>
-      </div>
-    );
-  }
   if (!projects) {
     return (
       <div className="app">
         <BootScreen leaving={false} />
+        {/* The boot screen alone would look identical to a slow start, so
+            say what is happening once it is clearly not just slow. The
+            loader is still going; nobody needs to do anything. */}
+        {retrying > 2 && (
+          <div className="g-error g-error-retry">
+            Waiting for data/projects.json — retrying…
+            <span className="g-error-hint">
+              Attempt {retrying}. This recovers on its own once the network
+              is back.
+            </span>
+          </div>
+        )}
       </div>
     );
   }
@@ -257,8 +273,18 @@ function Atlas({ projects, teams }: { projects: Project[]; teams: Team[] }) {
   useEffect(() => watchForUpdates(() => setUpdateReady(true)), []);
   useEffect(() => {
     if (!updateReady || !idle) return;
-    const t = window.setTimeout(() => window.location.reload(), 2000);
-    return () => window.clearTimeout(t);
+    let cancelled = false;
+    const t = window.setTimeout(async () => {
+      // Confirm the origin is still answering first. Reloading into a dead
+      // network replaces a working wall with the browser's own error page,
+      // and unlike this app that page never retries. The update is not
+      // urgent; it can wait for the next idle window.
+      if (!cancelled && (await isReachable())) window.location.reload();
+    }, 2000);
+    return () => {
+      cancelled = true;
+      window.clearTimeout(t);
+    };
   }, [updateReady, idle]);
 
   useEffect(() => {

@@ -2183,6 +2183,25 @@ button {
   font-size: 13px;
   color: var(--sand-60);
 }
+/* Boot-time "still trying" notice. Sits below the boot mark rather than at
+   the top of the screen, and is sized to be legible from across a lobby --
+   whoever eventually walks past should be able to read it without leaning
+   in, since that is the only way anyone learns the network was down. */
+.g-error-retry {
+  /* Above .boot (z-index 50) -- this notice only ever renders while the
+     boot screen is still up, so anything lower is invisible. */
+  z-index: 51;
+  top: auto;
+  bottom: 18%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  text-align: center;
+  padding: 14px 26px;
+  font-size: 15px;
+  border-color: rgba(231, 227, 219, 0.22);
+}
 .g-error-btn {
   margin-top: 4px;
   padding: 9px 20px;
