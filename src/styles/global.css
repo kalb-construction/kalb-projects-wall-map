@@ -2381,3 +2381,34 @@ button {
 .perf-lite .pslide {
   transition: none !important;
 }
+
+/* Sticky city headers were 95% opaque, so rows scrolling underneath stayed
+   faintly visible through them. Invisible on a desktop panel; on a
+   high-contrast TV it reads as two overlapping lines of text. */
+.index-city {
+  background: #0e0c0b;
+}
+
+/* ---------- lite mode, part two: the map itself ---------- */
+/* Each marker is four elements with a border, a shadow and a transition,
+   and Mapbox repositions every one of them on every frame of every camera
+   move. Ninety-seven of those is the dominant cost on a weak GPU, so lite
+   mode reduces each to a single flat disc. The pin still shows its colour,
+   its count and its selection state — it just stops being expensive. */
+.perf-lite .km-pulse,
+.perf-lite .km-label {
+  display: none;
+}
+.perf-lite .km-head,
+.perf-lite .km-tip {
+  box-shadow: none;
+}
+.perf-lite .km-head {
+  border-width: 1px;
+}
+/* Sticky positioning is poorly implemented in several TV browsers and is
+   what produced the overlapping headers in the first place. The list is
+   short enough per city to read fine without it. */
+.perf-lite .index-city {
+  position: static;
+}

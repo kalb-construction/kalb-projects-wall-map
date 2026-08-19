@@ -253,7 +253,13 @@ export function MapboxView({
         zoom: HOME.zoom,
         pitch: HOME.pitch,
         bearing: HOME.bearing,
-        maxPitch: 58,
+        maxPitch: isLite() ? 0 : 58,
+        // Mapbox v3 switches to a globe when zoomed out, which draws an
+        // atmosphere, a starfield and curved-earth geometry on top of the
+        // map itself. It is the single most expensive thing this app can
+        // put on screen, and on a TV's GPU it is the difference between a
+        // slideshow and a map. Flat earth for weak displays.
+        projection: isLite() ? 'mercator' : undefined,
         // MSAA is costly on a large display and buys little at this scale.
         antialias: false,
         // No label cross-fade: fewer full-frame repaints while panning.
