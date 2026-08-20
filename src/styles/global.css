@@ -409,15 +409,20 @@ button {
 .map-controls {
   position: absolute;
   right: calc(20px + var(--oi));
-  bottom: calc(20px + var(--oi));
+  /* Matches the dock's bottom padding exactly. These controls live in the
+     map, not the dock, so nothing lines them up automatically -- at 20px
+     they sat six pixels below the filter row and read as crooked. */
+  bottom: calc(14px + var(--oi));
   display: flex;
   flex-direction: row;
   gap: 8px;
   z-index: 9;
 }
 .ctl-btn {
-  width: 48px;
-  height: 48px;
+  /* 50px is the shared height of every bottom-row control: the compass,
+     the filter chips, the history toggle and these. */
+  width: 50px;
+  height: 50px;
   border-radius: 14px;
   background: var(--glass-solid);
   border: 1px solid var(--glass-border);
@@ -648,6 +653,12 @@ button {
   gap: 10px;
   flex-wrap: wrap;
   max-width: 62%;
+}
+/* The dock and the map controls share a baseline, so the dock must align
+   its content to the bottom too -- otherwise a wrapped row re-centres the
+   buttons and breaks the line again. */
+.dock {
+  align-items: flex-end;
 }
 .dock-filter {
   height: 50px;
@@ -2246,7 +2257,7 @@ button {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  height: 42px;
+  height: 50px;
   padding: 0 16px;
   border-radius: 12px;
   background: var(--glass-solid);
@@ -2424,4 +2435,92 @@ button {
    short enough per city to read fine without it. */
 .perf-lite .index-city {
   position: static;
+}
+
+/* ---------- compact chrome for a small reported viewport ---------- */
+/* A TV browser can report a 960x540 CSS viewport for a 4K panel: the page
+   is laid out at quarter size and the TV upscales the result. Chrome sized
+   for a 1920 desktop then occupies four times the share of the screen it
+   was drawn for, which is why the wall looked chunky rather than broken.
+   Everything below is the same design at the right scale. */
+@media (max-width: 1000px) {
+  /* The topbar already reads "97 OF 97 PROJECTS", so the dock's own count
+     is a duplicate — and it is the element that pushed the filter row into
+     wrapping, which is what knocked the buttons off the baseline. */
+  .dock-count {
+    display: none;
+  }
+  .dock {
+    gap: 12px;
+  }
+  .dock-left {
+    gap: 8px;
+    max-width: 66%;
+  }
+  .dock-filter,
+  .dock-history,
+  .compass-btn,
+  .ctl-btn {
+    height: 44px;
+  }
+  .compass-btn,
+  .ctl-btn {
+    width: 44px;
+  }
+  .dock-filter {
+    padding: 0 13px;
+    font-size: 12.5px;
+  }
+  .dock-history {
+    padding: 0 12px;
+    font-size: 12px;
+  }
+  .ctl-btn {
+    font-size: 19px;
+  }
+  .map-controls {
+    gap: 6px;
+  }
+  .topbar {
+    height: 62px;
+  }
+  .topbar-left,
+  .topbar-right {
+    gap: 8px;
+    padding: 6px 10px;
+  }
+  .topbar-logo {
+    height: 26px;
+  }
+  .index-rail {
+    width: 214px;
+    top: calc(78px + var(--oi));
+  }
+  .detail-card {
+    width: 320px;
+    top: calc(78px + var(--oi));
+    max-height: calc(100% - 150px - 2 * var(--oi));
+  }
+  .blak-badge {
+    bottom: calc(74px + var(--oi));
+    padding: 6px 11px 6px 8px;
+  }
+  .tour-hint {
+    top: calc(72px + var(--oi));
+    font-size: 10px;
+    padding: 6px 12px;
+  }
+}
+
+/* The diagnostics readout is deliberately large — it is meant to be read
+   from across a lobby — but at a small reported viewport it spanned the
+   whole screen and covered the dock it was sitting above. */
+@media (max-width: 1000px) {
+  .diag {
+    font-size: 14px;
+    padding: 7px 14px;
+    min-height: 0;
+    border-width: 1px;
+    bottom: calc(72px + var(--oi));
+  }
 }
