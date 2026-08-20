@@ -1,3 +1,5 @@
+import { KalbMark } from './KalbMarks';
+
 interface BootScreenProps {
   leaving: boolean;
 }
@@ -8,7 +10,7 @@ export function BootScreen({ leaving }: BootScreenProps) {
     <div className={`boot${leaving ? ' boot-leave' : ''}`} aria-hidden="true">
       <div className="boot-mark">
         <div className="boot-ring" />
-        <img src="./brand/kalb-k-red-ui.png" alt="" className="boot-k" />
+        <KalbMark className="boot-k" />
       </div>
       <div className="boot-word">KALB CONSTRUCTION</div>
       <div className="boot-sub">PROJECT ATLAS</div>

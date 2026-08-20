@@ -1,5 +1,6 @@
 import { memo, useRef } from 'react';
 import { useClock } from '../lib/useIdle';
+import { KalbLockup } from './KalbMarks';
 
 interface TopBarProps {
   totalCount: number;
@@ -42,11 +43,7 @@ function TopBarBase({
   return (
     <header className="topbar">
       <div className="topbar-left" onClick={onBrandTap}>
-        <img
-          className="topbar-logo"
-          src="./brand/kalb-lockup-ui.png"
-          alt="Kalb Construction"
-        />
+        <KalbLockup className="topbar-logo" />
         <div className="topbar-divider" />
         <div className="topbar-title">
           <span className="tt-main">PROJECT ATLAS</span>

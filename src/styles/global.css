@@ -519,8 +519,11 @@ button {
 }
 .topbar-logo {
   height: 42px;
+  width: auto;
   display: block;
-  border-radius: 6px;
+  /* The mark is vector now, so it is sized by its own viewBox ratio. An
+     <img> got that from the file; an inline <svg> needs it stated. */
+  aspect-ratio: 2430 / 983;
 }
 .topbar-divider {
   width: 1px;
@@ -1501,6 +1504,8 @@ button {
 }
 .attract-k {
   height: 26px;
+  width: auto;
+  aspect-ratio: 695 / 844;
 }
 @keyframes breathe {
   0%,
@@ -1541,6 +1546,8 @@ button {
 }
 .boot-k {
   height: 74px;
+  width: auto;
+  aspect-ratio: 695 / 844;
   animation: bootK 1.2s var(--ease-out);
 }
 @keyframes bootK {
@@ -2490,7 +2497,7 @@ button {
     padding: 6px 10px;
   }
   .topbar-logo {
-    height: 26px;
+    height: 30px;
   }
   .index-rail {
     width: 214px;

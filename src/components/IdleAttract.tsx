@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { KalbMark } from './KalbMarks';
 import type { Project } from '../types';
 import { statusTone } from '../lib/meta';
 import { PhotoSlider } from './PhotoSlider';
@@ -99,7 +100,7 @@ export function IdleAttract({ featured }: IdleAttractProps) {
       </div>
 
       <div className="attract-cta">
-        <img src="./brand/kalb-k-red-ui.png" alt="" className="attract-k" />
+        <KalbMark className="attract-k" />
         <span>TOUCH TO EXPLORE THE PROJECT MAP</span>
       </div>
     </div>
