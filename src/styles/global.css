@@ -1485,7 +1485,6 @@ button {
   margin-bottom: 22px;
   display: flex;
   align-items: center;
-  gap: 15px;
 }
 .attract-progress-track {
   width: 280px;
@@ -1500,18 +1499,6 @@ button {
   border-radius: 2px;
   background: var(--red);
   transition: width 0.7s var(--ease-out);
-}
-.attract-progress-count {
-  font-family: var(--font-display);
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.16em;
-  color: var(--sand-60);
-  font-variant-numeric: tabular-nums;
-}
-.attract-progress-count em {
-  font-style: normal;
-  opacity: 0.55;
 }
 /* The screensaver is the one full-screen surface, so it is the one most
    exposed to a TV that crops its own picture. Its own edge content has to

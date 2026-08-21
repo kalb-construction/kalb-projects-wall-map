@@ -115,10 +115,6 @@ export function IdleAttract({ featured, startAt }: IdleAttractProps) {
             }}
           />
         </span>
-        <span className="attract-progress-count">
-          {pos + 1}
-          <em> / {featured.length}</em>
-        </span>
       </div>
 
       <div className="attract-cta">
