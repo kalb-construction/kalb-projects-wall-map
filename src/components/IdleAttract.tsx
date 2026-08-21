@@ -64,7 +64,8 @@ export function IdleAttract({ featured, startAt }: IdleAttractProps) {
   }, [featured, index]);
 
   if (featured.length === 0) return null;
-  const p = featured[index % featured.length];
+  const pos = index % featured.length;
+  const p = featured[pos];
 
   return (
     <div className="attract" aria-hidden="true">
@@ -102,13 +103,22 @@ export function IdleAttract({ featured, startAt }: IdleAttractProps) {
         </div>
       </div>
 
-      <div className="attract-dots">
-        {featured.map((f, i) => (
+      {/* A dot per project worked at eight and became a dotted line across
+          the screen at twenty-nine. A bar carries the same two facts — how
+          far through the rotation, and how much is left — at any count. */}
+      <div className="attract-progress" aria-hidden="true">
+        <span className="attract-progress-track">
           <span
-            key={f.id}
-            className={`attract-dot${i === index % featured.length ? ' is-on' : ''}`}
+            className="attract-progress-fill"
+            style={{
+              width: `${((pos + 1) / Math.max(featured.length, 1)) * 100}%`
+            }}
           />
-        ))}
+        </span>
+        <span className="attract-progress-count">
+          {pos + 1}
+          <em> / {featured.length}</em>
+        </span>
       </div>
 
       <div className="attract-cta">

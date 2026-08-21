@@ -1463,29 +1463,48 @@ button {
   flex: 1;
   max-width: 280px;
 }
-.attract-dots {
+/* Rotation progress. One dot per project stopped scaling the moment the
+   screensaver grew past a handful of projects — a bar says the same thing
+   in a fixed width however many there are. */
+.attract-progress {
   position: absolute;
   bottom: 118px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
-  gap: 10px;
+  align-items: center;
+  gap: 15px;
 }
-.attract-dot {
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
-  background: rgba(231, 227, 219, 0.2);
-  transition: all 0.3s;
+.attract-progress-track {
+  width: 280px;
+  height: 3px;
+  border-radius: 2px;
+  background: rgba(231, 227, 219, 0.16);
+  overflow: hidden;
 }
-.attract-dot.is-on {
+.attract-progress-fill {
+  display: block;
+  height: 100%;
+  border-radius: 2px;
   background: var(--red);
-  transform: scale(1.3);
+  transition: width 0.7s var(--ease-out);
+}
+.attract-progress-count {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  color: var(--sand-60);
+  font-variant-numeric: tabular-nums;
+}
+.attract-progress-count em {
+  font-style: normal;
+  opacity: 0.55;
 }
 /* The screensaver is the one full-screen surface, so it is the one most
    exposed to a TV that crops its own picture. Its own edge content has to
    respect the same inset the rest of the chrome uses. */
-.attract-dots {
+.attract-progress {
   bottom: calc(96px + var(--oi));
 }
 .attract-cta {
