@@ -1366,11 +1366,21 @@ button {
     radial-gradient(85% 70% at 30% 45%, rgba(193, 0, 22, 0.13) 0%, transparent 60%),
     linear-gradient(120deg, #100e0c 0%, var(--ink) 100%);
   display: flex;
+  /* A column, not a centred box with furniture floating over it. The
+     progress bar and the prompt used to be absolutely positioned on top
+     of vertically-centred content, so a project whose name wrapped to a
+     third line grew down into them and the status chip covered the
+     readout. In flow they cannot collide. */
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
+  padding: calc(24px + var(--oi)) 0 calc(34px + var(--oi));
   animation: fadeIn 0.8s ease;
 }
 .attract-inner {
+  /* Absorbs the free space above and below, which centres it in whatever
+     is left once the furniture has taken its share. */
+  margin: auto 0;
+  min-height: 0;
   display: flex;
   align-items: center;
   gap: 5vw;
@@ -1397,6 +1407,10 @@ button {
 .attract-visual {
   position: relative;
   aspect-ratio: 3 / 2;
+  /* Never taller than the space the column actually has, or the panel
+     pushes the copy and the furniture off the bottom of the screen. */
+  max-height: 100%;
+  min-height: 0;
   flex: 1.15;
   border-radius: 26px;
   border: 1px solid var(--glass-border);
@@ -1467,10 +1481,8 @@ button {
    screensaver grew past a handful of projects — a bar says the same thing
    in a fixed width however many there are. */
 .attract-progress {
-  position: absolute;
-  bottom: 118px;
-  left: 50%;
-  transform: translateX(-50%);
+  flex: 0 0 auto;
+  margin-bottom: 22px;
   display: flex;
   align-items: center;
   gap: 15px;
@@ -1504,14 +1516,8 @@ button {
 /* The screensaver is the one full-screen surface, so it is the one most
    exposed to a TV that crops its own picture. Its own edge content has to
    respect the same inset the rest of the chrome uses. */
-.attract-progress {
-  bottom: calc(96px + var(--oi));
-}
 .attract-cta {
-  position: absolute;
-  bottom: calc(46px + var(--oi));
-  left: 50%;
-  transform: translateX(-50%);
+  flex: 0 0 auto;
   display: flex;
   align-items: center;
   gap: 14px;
