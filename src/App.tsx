@@ -198,6 +198,7 @@ function Atlas({
   const idleStage = useIdleStage([TOUR_IDLE_MS, ATTRACT_IDLE_MS]);
   const idle = idleStage > 0;
   const tourPos = useRef(0);
+  const attractPos = useRef(0);
   const wasUnattended = useRef(false);
 
   const bootDone = mapLoaded && bootMinDone;
@@ -296,9 +297,15 @@ function Atlas({
    * own filtered list was empty, so it mounted and rendered nothing.
    */
   const attractProjects = useMemo(() => {
-    const withPhotos = (p: Project) => (p.photos?.length ?? 0) > 0;
-    const chosen = projects.filter((p) => p.featured && withPhotos(p));
-    return chosen.length > 0 ? chosen : projects.filter(withPhotos);
+    // Every photographed project belongs in the screensaver, not just the
+    // featured handful -- if a job was worth photographing it is worth
+    // showing on the wall. Featured ones lead, so the rotation opens on
+    // the curated set and then keeps going through the rest.
+    const withPhotos = projects.filter((p) => (p.photos?.length ?? 0) > 0);
+    return [
+      ...withPhotos.filter((p) => p.featured),
+      ...withPhotos.filter((p) => !p.featured)
+    ];
   }, [projects]);
   const blakCount = useMemo(() => projects.filter(isBlak).length, [projects]);
   const historyCount = useMemo(() => projects.filter(isHistory).length, [projects]);
@@ -646,7 +653,9 @@ function Atlas({
         </div>
       )}
 
-      {showAttract && <IdleAttract featured={attractProjects} />}
+      {showAttract && (
+        <IdleAttract featured={attractProjects} startAt={attractPos} />
+      )}
 
       {!bootGone && <BootScreen leaving={bootDone} />}
     </div>

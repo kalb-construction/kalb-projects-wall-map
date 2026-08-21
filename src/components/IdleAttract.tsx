@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type MutableRefObject } from 'react';
 import { KalbMark } from './KalbMarks';
 import type { Project } from '../types';
 import { statusTone } from '../lib/meta';
@@ -6,6 +6,13 @@ import { PhotoSlider } from './PhotoSlider';
 
 interface IdleAttractProps {
   featured: Project[];
+  /**
+   * Where to pick the rotation up. Owned by the caller so it survives this
+   * overlay unmounting: with every photographed project in the loop a full
+   * lap runs several minutes, and starting from zero each time somebody
+   * walked past would mean the back half was never seen.
+   */
+  startAt?: MutableRefObject<number>;
 }
 
 /**
@@ -19,8 +26,13 @@ interface IdleAttractProps {
  * test can never disagree. They did once, and the result was a screensaver
  * that mounted and drew nothing.
  */
-export function IdleAttract({ featured }: IdleAttractProps) {
-  const [index, setIndex] = useState(0);
+export function IdleAttract({ featured, startAt }: IdleAttractProps) {
+  const [index, setIndex] = useState(() => startAt?.current ?? 0);
+
+  // Hand the position back so the next screensaver resumes from here.
+  useEffect(() => {
+    if (startAt) startAt.current = index % Math.max(featured.length, 1);
+  }, [index, featured.length, startAt]);
 
   useEffect(() => {
     // Hold long enough for a photo set to play through before moving on.
