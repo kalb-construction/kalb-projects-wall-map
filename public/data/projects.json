@@ -792,45 +792,6 @@
     ]
   },
   {
-    "id": "25126",
-    "number": "25126",
-    "name": "Rise and Ridge (Horizon Ridge Office Park)",
-    "address": "2551 & 2561 W. Horizon Ridge Pkwy",
-    "city": "Henderson",
-    "state": "NV",
-    "region": "LV",
-    "lat": 36.002786,
-    "lng": -115.100549,
-    "category": "Medical",
-    "projectType": "GU Medical",
-    "team": "rj",
-    "superintendent": "DM (Doug Manning)",
-    "status": "In Progress",
-    "year": 2025,
-    "featured": false,
-    "siteId": "horizon-ridge",
-    "siteName": "Horizon Ridge",
-    "description": "Two-building ground-up medical development on W. Horizon Ridge Pkwy, Henderson — Building A 6,032 sf at 2551, Building B 11,952 sf at 2561. Estimated completion 10/01/2026.",
-    "heroImage": null,
-    "flags": [
-      "One job, two rows on the PM sheet: \"Horizon Ridge Office Park\" (PM TP, 2551 Bldg A) and \"Rise and Ridge\" (PM RJ, 2561). Confirmed by Kalb as a single job under RJ — update the sheet to match.",
-      "Pin is on 2551 (Bldg A); Bldg B at 2561 is about 1,065 ft north-east"
-    ],
-    "shortName": "Rise and Ridge",
-    "estCompletion": "10/01/2026",
-    "estCompletionDate": "2026-10-01",
-    "sqFt": 17984,
-    "sqFtNote": "Building A 6,032 + Building B 11,952",
-    "photos": [
-      "./renders/25126/25126-1.jpg",
-      "./renders/25126/25126-2.jpg",
-      "./renders/25126/25126-3.jpg",
-      "./renders/25126/25126-4.jpg",
-      "./renders/25126/25126-5.jpg",
-      "./renders/25126/25126-6.jpg"
-    ]
-  },
-  {
     "id": "26110",
     "number": "26110",
     "name": "Office Bldg Rainbow-Quail",
@@ -1116,8 +1077,6 @@
     "sqFt": 1866,
     "year": 2026,
     "featured": false,
-    "siteId": "horizon-ridge",
-    "siteName": "Horizon Ridge",
     "description": "TI Medical · 1,866 sf in Henderson. Estimated completion 10/31/2026.",
     "heroImage": null,
     "photos": [

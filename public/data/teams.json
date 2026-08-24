@@ -3,7 +3,7 @@
     "id": "jj",
     "name": "JJ",
     "color": "#C10016",
-    "note": "12 jobs — colour is Kalb red for every PM; the legend is a filter, not a colour key"
+    "note": "15 jobs — colour is Kalb red for every PM; the legend is a filter, not a colour key"
   },
   {
     "id": "rp",
@@ -15,13 +15,13 @@
     "id": "tp",
     "name": "TP",
     "color": "#C10016",
-    "note": "6 jobs — the PM sheet says 8: 25126 moved to RJ by Kalb, 25144 voided"
+    "note": "6 jobs — the PM sheet says 8; 25126 and 25144 were both voided by Kalb"
   },
   {
     "id": "mk",
     "name": "MK",
     "color": "#C10016",
-    "note": "4 jobs"
+    "note": "5 jobs"
   },
   {
     "id": "jb",
@@ -33,7 +33,7 @@
     "id": "rj",
     "name": "RJ",
     "color": "#C10016",
-    "note": "4 jobs — includes 25126, confirmed by Kalb as RJ's job"
+    "note": "3 jobs"
   },
   {
     "id": "rc",
@@ -51,7 +51,7 @@
     "id": "ng",
     "name": "NG",
     "color": "#C10016",
-    "note": "2 jobs"
+    "note": "3 jobs"
   },
   {
     "id": "dd",
