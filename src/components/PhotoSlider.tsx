@@ -32,15 +32,35 @@ export function PhotoSlider({
 }: PhotoSliderProps) {
   const [idx, setIdx] = useState(0);
   const [ready, setReady] = useState<Set<number>>(() => new Set());
+  /**
+   * Photos that failed to load. A file can go missing for reasons that
+   * have nothing to do with this component — a job removed from the data,
+   * a path corrected, a request lost — and a slide that cannot be drawn
+   * must leave the rotation rather than take its turn as an empty frame
+   * on a wall nobody is standing at.
+   */
+  const [broken, setBroken] = useState<Set<number>>(() => new Set());
   const timer = useRef<number | undefined>(undefined);
   const readyRef = useRef(ready);
   readyRef.current = ready;
+  const brokenRef = useRef(broken);
+  brokenRef.current = broken;
 
   // Restart cleanly whenever the photo set changes (a different project).
   useEffect(() => {
     setIdx(0);
     setReady(new Set());
+    setBroken(new Set());
   }, [photos]);
+
+  const markBroken = useCallback((i: number) => {
+    setBroken((prev) => {
+      if (prev.has(i)) return prev;
+      const next = new Set(prev);
+      next.add(i);
+      return next;
+    });
+  }, []);
 
   const markReady = useCallback((i: number) => {
     setReady((prev) => {
@@ -58,9 +78,16 @@ export function PhotoSlider({
       timer.current = window.setInterval(
         () =>
           setIdx((i) => {
-            const next = (i + 1) % photos.length;
-            // Hold rather than fade to a blank frame. The next tick retries.
-            return readyRef.current.has(next) ? next : i;
+            // Walk forward to the next slide that is loaded and not
+            // broken. A full lap without finding one means nothing is
+            // showable yet, so hold and let the next tick retry.
+            for (let step = 1; step <= photos.length; step++) {
+              const next = (i + step) % photos.length;
+              if (brokenRef.current.has(next)) continue;
+              if (readyRef.current.has(next)) return next;
+              break; // not broken, just not loaded — wait for it
+            }
+            return i;
           }),
         interval
       );
@@ -78,13 +105,16 @@ export function PhotoSlider({
   }, [photos, interval]);
 
   if (photos.length === 0) return null;
+  // Every photo failed: render nothing so the caller's panel is empty by
+  // design rather than showing a frame of broken images.
+  if (broken.size >= photos.length) return null;
 
   return (
     <div className={`pslider pslider-${variant}`}>
       {photos.map((src, i) => (
         <img
           key={src}
-          className={`pslide${i === idx ? ' is-on' : ''}`}
+          className={`pslide${i === idx && !broken.has(i) ? ' is-on' : ''}`}
           src={src}
           alt={i === idx ? `${label} — photo ${i + 1} of ${photos.length}` : ''}
           /* The attract loop is full-screen and every slide is shown within
@@ -94,18 +124,20 @@ export function PhotoSlider({
           decoding="async"
           draggable={false}
           onLoad={() => markReady(i)}
-          onError={() => markReady(i)}
+          onError={() => markBroken(i)}
           ref={(el) => {
             // A cached image can finish before React attaches onLoad.
             if (el?.complete && el.naturalWidth > 0) markReady(i);
           }}
         />
       ))}
-      {photos.length > 1 && (
+      {photos.length - broken.size > 1 && (
         <div className="pslider-dots" aria-hidden="true">
-          {photos.map((src, i) => (
-            <span key={src} className={`pdot${i === idx ? ' is-on' : ''}`} />
-          ))}
+          {photos.map((src, i) =>
+            broken.has(i) ? null : (
+              <span key={src} className={`pdot${i === idx ? ' is-on' : ''}`} />
+            )
+          )}
         </div>
       )}
     </div>
