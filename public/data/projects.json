@@ -2694,5 +2694,30 @@
       "Superintendent not on file",
       "Project type not on file"
     ]
+  },
+  {
+    "id": "25144",
+    "number": "25144",
+    "name": "Teriyaki Madness Downtown CC",
+    "shortName": "Teriyaki Madness",
+    "address": "525 S. Main St",
+    "city": "Las Vegas",
+    "state": "NV",
+    "region": "LV",
+    "lat": 36.166002,
+    "lng": -115.149611,
+    "category": "Restaurant",
+    "projectType": "TI Restaurant/Bar",
+    "team": "tp",
+    "superintendent": "RC",
+    "status": "In Progress",
+    "sqFt": 2465,
+    "year": 2025,
+    "featured": false,
+    "description": "TI Restaurant/Bar · 2,465 sf in Las Vegas. Completion date not yet on file.",
+    "heroImage": null,
+    "flags": [
+      "Est. completion not on file"
+    ]
   }
 ]
