@@ -557,8 +557,11 @@ button {
   font-family: var(--font-display);
   font-weight: 700;
   font-size: 24px;
-  color: #ff2136;
-  text-shadow: 0 0 18px rgba(193, 0, 22, 0.5);
+  /* Was #ff2136 — a brightened red chosen to pop on a desk monitor. It is
+     not Kalb red, and on a television it reads as pink next to the real
+     thing. The glow went with it: a halo around small text spreads it and
+     washes the colour out further at wall distance. */
+  color: var(--red);
 }
 .stat-label {
   font-size: 11px;
@@ -608,7 +611,9 @@ button {
 .clock-time em {
   font-style: normal;
   font-size: 12px;
-  color: #ff5060;
+  /* Was #ff5060 — salmon, not brand red. See .stat-num. */
+  color: var(--red);
+  font-weight: 700;
 }
 .clock-date {
   font-size: 10px;
@@ -869,7 +874,8 @@ button {
   color: var(--sand-40);
 }
 .feat-status.tone-active {
-  color: #e05a6a;
+  /* Was #e05a6a — pink. */
+  color: var(--red);
 }
 
 /* ---------- chips / shared ---------- */
@@ -1445,9 +1451,12 @@ button {
 }
 .attract-kicker {
   font-family: var(--font-display);
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.42em;
+  /* Bigger, heavier, less tracked than it was. Small letterspaced text is
+     nearly all antialiased edge, and edge is what a television's upscaler
+     and sharpener turn pale. */
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.3em;
   color: var(--red);
 }
 .attract-number {
@@ -1515,7 +1524,8 @@ button {
   animation: breathe 2.6s ease-in-out infinite;
 }
 .attract-k {
-  height: 26px;
+  /* Same reasoning as .attract-kicker: at 26px the K was mostly edge. */
+  height: 34px;
   width: auto;
   aspect-ratio: 695 / 844;
 }
@@ -2011,7 +2021,8 @@ button {
   stroke-width: 1.5;
 }
 .compass-n {
-  fill: #e11026;
+  /* Was #e11026 — a brighter red than brand. */
+  fill: var(--red);
   filter: drop-shadow(0 0 5px rgba(193, 0, 22, 0.65));
 }
 .compass-s {
