@@ -7,10 +7,12 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import './styles/global.css';
 import App from './App';
 import { ErrorBoundary } from './components/ErrorBoundary';
-import { applyKioskInsets } from './lib/kiosk';
+import { applyKioskInsets, applyRedOverride } from './lib/kiosk';
 
 // Publish the TV overscan inset before first paint so chrome never jumps.
 applyKioskInsets();
+// Before first paint, so no element is ever drawn in the old red.
+applyRedOverride();
 
 // A long press on a touch panel raises Chrome's context menu — "Save image
 // as…", "Open in new tab" — sitting on the lobby wall with no keyboard and

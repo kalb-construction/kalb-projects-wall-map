@@ -1,4 +1,5 @@
 import type { Developer, Project } from '../types';
+import { KALB_RED_ACTIVE } from './kiosk';
 
 /**
  * Pin colours — status first, then whose project it is.
@@ -11,7 +12,7 @@ import type { Developer, Project } from '../types';
  * green = BLAK building now. (Kalb, 2026-08-17 — this supersedes the
  * earlier rule that every Kalb pin was red regardless of status.)
  */
-export const KALB_RED = '#C10016';
+export const KALB_RED = KALB_RED_ACTIVE;
 /** BLAK brand green — PMS 5747 U. */
 export const BLAK_GREEN = '#5F6638';
 /** BLAK brand grey — PMS 425 U. Now used for ALL completed work. */

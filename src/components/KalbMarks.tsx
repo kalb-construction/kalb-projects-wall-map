@@ -15,10 +15,18 @@
  * given a brighter one without touching the artwork or the brand files.
  */
 
-/** Kalb brand values, sampled from the original lockup. */
+/**
+ * Kalb brand values.
+ *
+ * The red is the company's #C10016, not the #BC1224 that came out of
+ * sampling the bitmap — a scan of printed artwork is a measurement of a
+ * print run, not the specification, and the app had two nearly-identical
+ * reds as a result. One canonical value now, shared with every other red
+ * on the wall.
+ */
 export const KALB_INK = '#231F20';
-export const KALB_RED_BRAND = '#BC1224';
-export const KALB_SAND = '#E5E2DA';
+export const KALB_RED_BRAND = '#C10016';
+export const KALB_SAND = '#E7E3DB';
 
 /**
  * Read through CSS so a display can be corrected in one line without
@@ -26,8 +34,8 @@ export const KALB_SAND = '#E5E2DA';
  * given a brighter one by setting --kalb-red on :root; nothing else in
  * the app has to know.
  */
-const RED = `var(--kalb-red, ${KALB_RED_BRAND})`;
-const SAND = `var(--kalb-sand, ${KALB_SAND})`;
+const RED = 'var(--kalb-red, var(--red))';
+const SAND = 'var(--kalb-sand, var(--sand))';
 
 interface MarkProps {
   className?: string;

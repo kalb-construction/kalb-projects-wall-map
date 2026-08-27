@@ -9,6 +9,11 @@
  *                 or the clock costs everything).
  *   ?dpr=2        raise the render-resolution cap from the 1.5 default.
  *                 Sharper, heavier. `?dpr=1` is the cheapest and softest.
+ *   ?red=8f0011   override Kalb red everywhere — the logo, the pins, the
+ *                 chips, the progress bar. A television that reproduces a
+ *                 deep red poorly can be compensated for from the address
+ *                 bar instead of a rebuild, so a value can be judged on
+ *                 the wall in the time it takes to type it.
  *   ?diag=1       on-screen engine / dpr / fps readout.
  *
  * See DEPLOY.md → "Pointing the lobby display at it".
@@ -63,4 +68,45 @@ export async function toggleFullscreen(): Promise<void> {
   } catch {
     /* denied or unsupported — the button simply does nothing */
   }
+}
+
+/**
+ * `?red=RRGGBB` — Kalb red, overridden for this display.
+ *
+ * Deep reds are the first thing a mis-set television gets wrong: lift the
+ * black level and #C10016 arrives as pink. That is a panel problem, not a
+ * markup one, but the panel is not always ours to fix, so the value it is
+ * sent can be moved instead. Null unless a valid six-digit hex is given —
+ * a typo must never blank every red on the wall.
+ */
+export const RED_OVERRIDE: string | null = (() => {
+  const raw = params.get('red');
+  if (raw === null) return null;
+  const hex = raw.trim().replace(/^#/, '');
+  return /^[0-9a-fA-F]{6}$/.test(hex) ? `#${hex.toLowerCase()}` : null;
+})();
+
+/** Kalb red as this display should draw it. */
+export const KALB_RED_ACTIVE = RED_OVERRIDE ?? '#C10016';
+
+/**
+ * Publish the override as CSS. The derived reds are recomputed from it
+ * rather than left at their old values, or a darker override would keep a
+ * glow tuned for the colour it replaced.
+ */
+export function applyRedOverride(): void {
+  if (!RED_OVERRIDE) return;
+  const hex = RED_OVERRIDE.slice(1);
+  const [r, g, b] = [0, 2, 4].map((i) => parseInt(hex.slice(i, i + 2), 16));
+  const darker = (f: number) =>
+    '#' +
+    [r, g, b]
+      .map((c) => Math.round(c * f).toString(16).padStart(2, '0'))
+      .join('');
+  const root = document.documentElement.style;
+  root.setProperty('--red', RED_OVERRIDE);
+  root.setProperty('--kalb-red', RED_OVERRIDE);
+  root.setProperty('--red-deep', darker(0.72));
+  root.setProperty('--red-glow', `rgba(${r}, ${g}, ${b}, 0.55)`);
+  console.info(`[Kalb Atlas] Kalb red overridden to ${RED_OVERRIDE}.`);
 }
