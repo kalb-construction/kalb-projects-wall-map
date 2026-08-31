@@ -15,7 +15,7 @@
     "id": "tp",
     "name": "TP",
     "color": "#C10016",
-    "note": "7 jobs — the PM sheet says 8; 25126 was voided by Kalb"
+    "note": "7 jobs"
   },
   {
     "id": "mk",
@@ -27,19 +27,13 @@
     "id": "jb",
     "name": "JB",
     "color": "#C10016",
-    "note": "4 jobs"
+    "note": "3 jobs — JB is no longer with Kalb (per Ricardo Jimenez, 31 Aug). Spanish Ridge moved to RJ; 24146, 24114 and 26103 still need a PM."
   },
   {
     "id": "rj",
     "name": "RJ",
     "color": "#C10016",
-    "note": "3 jobs"
-  },
-  {
-    "id": "rc",
-    "name": "RC",
-    "color": "#C10016",
-    "note": "1 job — 26111 Veritext; the PM cell on the sheet reads RC even though the row sits in the RJ block"
+    "note": "7 jobs — took Veritext (26111), Spanish Ridge (26105) and Western States Shop (24106) per Ricardo Jimenez, 31 Aug"
   },
   {
     "id": "sb",
@@ -52,12 +46,6 @@
     "name": "NG",
     "color": "#C10016",
     "note": "3 jobs"
-  },
-  {
-    "id": "dd",
-    "name": "DD",
-    "color": "#C10016",
-    "note": "1 job"
   },
   {
     "id": "db",

@@ -214,12 +214,16 @@ from here.
 
 Two of the sheet's own section headers are now out of date, both because of
 rulings Kalb made after it was printed:
-- **RJ says 3** above a block of five rows. One of those rows (26111
-  Veritext) carries `RC` in its own PM cell and is filed under RC here; the
-  25126 rows collapse to one. RJ is **4**.
-- **TP says 8**, but 25126 moved to RJ and 25144 (Teriyaki Madness
-  Downtown CC) was voided by Kalb on 08/06/2026 and removed from the
-  atlas entirely, so TP is **6**.
+- **RJ says 3** above a block of five rows, and has grown since. The 25126
+  rows collapse to one; 26111 Veritext carries `RC` in its own PM cell but
+  Ricardo Jimenez confirms it is his; and he also took over 26105 Spanish
+  Ridge from JB and 24106 Western States Shop from DD, both of whom have
+  left Kalb. RJ is **7**.
+- **TP says 8**, but 25126 moved to RJ, so TP is **7**. (25144 Teriyaki
+  Madness Downtown CC was briefly marked void on 08/06/2026 and removed;
+  Kalb reinstated it and it is back in the atlas, still under TP.)
+- **RC and DD no longer appear.** Neither holds a job after Ricardo's
+  corrections, and the legend only lists managers with live work.
 
 ## 6. Feature list (what "done" means)
 
@@ -293,14 +297,20 @@ note appears in an amber box in its detail panel.
    it belongs to **RJ**. The sheet's two rows — *Horizon Ridge Office Park*
    (PM TP, 2551 Bldg A) and *Rise and Ridge* (PM RJ, 2561) — are merged into
    a single record: *Rise and Ridge (Horizon Ridge Office Park)*, 17,984 sf
-   across Bldg A 6,032 + Bldg B 11,952, est. 10/01/2026, super DM.
+   across Bldg A 6,032 + Bldg B 11,952, est. 09/30/2026, super DM.
 
    Consequence to feed back to the sheet: **TP now shows 7 jobs, not the 8
    its section header claims**, because 25126 left that block. The record
    keeps a flag saying so.
-2. **Job 26111 (Veritext)** sits inside the RJ block on the sheet but its own
-   PM cell reads **RC**. Assigned to RC, which is its own legend entry.
-   Suite 350 still unverified.
+
+   The job was removed from the atlas on 24/08/2026 as void, then restored
+   on 31/08/2026: Ricardo Jimenez confirms it is live, that he is the PM and
+   Doug Manning the superintendent, and that completion is Sep 2026.
+2. ~~**Job 26111 (Veritext)** sits inside the RJ block on the sheet but its
+   own PM cell reads **RC**~~ — **settled by the PM:** Ricardo Jimenez says
+   the job is his, so the sheet's `RC` cell is the error and the row's
+   placement in the RJ block was right all along. Suite 350 still
+   unverified.
 3. **RP's 10 Northern Nevada jobs** have no estimated completion or square
    footage on the sheet. They show as In Progress with the dates blank.
 4. ~~TP's blank completion/sq ft cells~~ — **resolved 08/06/2026**, PM

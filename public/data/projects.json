@@ -1,5 +1,45 @@
 [
   {
+    "id": "25126",
+    "number": "25126",
+    "name": "Rise and Ridge (Horizon Ridge Office Park)",
+    "shortName": "Rise and Ridge",
+    "address": "2551 & 2561 W. Horizon Ridge Pkwy",
+    "city": "Henderson",
+    "state": "NV",
+    "region": "LV",
+    "lat": 36.002786,
+    "lng": -115.100549,
+    "category": "Medical",
+    "projectType": "GU Medical",
+    "team": "rj",
+    "superintendent": "DM (Doug Manning)",
+    "status": "In Progress",
+    "estCompletion": "09/30/2026",
+    "estCompletionDate": "2026-09-30",
+    "sqFt": 17984,
+    "sqFtNote": "Building A 6,032 + Building B 11,952",
+    "year": 2025,
+    "featured": false,
+    "siteId": "horizon-ridge",
+    "siteName": "Horizon Ridge",
+    "description": "Two-building ground-up medical development on W. Horizon Ridge Pkwy, Henderson — Building A 6,032 sf at 2551, Building B 11,952 sf at 2561. Estimated completion 09/30/2026.",
+    "heroImage": null,
+    "flags": [
+      "Removed on 24 Aug as void, restored on 31 Aug: Ricardo Jimenez confirms the job is live and is its PM, with Doug Manning as superintendent and completion in Sep 2026.",
+      "One job, two rows on the PM sheet: \"Horizon Ridge Office Park\" (2551, Bldg A) and \"Rise and Ridge\" (2561, Bldg B). Single job under RJ — update the sheet to match.",
+      "Pin is on 2551 (Bldg A); Bldg B at 2561 is about 1,065 ft north-east"
+    ],
+    "photos": [
+      "./renders/25126/25126-1.jpg",
+      "./renders/25126/25126-2.jpg",
+      "./renders/25126/25126-3.jpg",
+      "./renders/25126/25126-4.jpg",
+      "./renders/25126/25126-5.jpg",
+      "./renders/25126/25126-6.jpg"
+    ]
+  },
+  {
     "id": "26104",
     "number": "26104",
     "name": "Dorrell Retail Building",
@@ -965,7 +1005,7 @@
     "lng": -115.286614,
     "category": "Office & TI",
     "projectType": "TI",
-    "team": "jb",
+    "team": "rj",
     "superintendent": "JMC (Joe McCulloch)",
     "status": "In Progress",
     "estCompletion": "08/28/2026",
@@ -1085,7 +1125,9 @@
       "./renders/26109/26109-3.jpg",
       "./renders/26109/26109-4.jpg",
       "./renders/26109/26109-5.jpg"
-    ]
+    ],
+    "siteId": "horizon-ridge",
+    "siteName": "Horizon Ridge"
   },
   {
     "id": "25127",
@@ -1129,7 +1171,7 @@
     "lng": -115.273,
     "category": "Office & TI",
     "projectType": "TI Office",
-    "team": "rc",
+    "team": "rj",
     "superintendent": "MC",
     "status": "In Progress",
     "estCompletion": "09/30/2026",
@@ -1283,7 +1325,7 @@
     "lng": -114.929433,
     "category": "Industrial",
     "projectType": "GU Industrial",
-    "team": "dd",
+    "team": "rj",
     "superintendent": "Matt Murphy",
     "status": "In Progress",
     "estCompletion": "12/27/2026",
