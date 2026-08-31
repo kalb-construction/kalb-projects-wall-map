@@ -52,6 +52,20 @@ body,
   overflow: hidden;
 }
 
+/* The colour card (?cal=1) is the one screen taller than the viewport.
+   The kiosk locks scrolling away so a stray swipe can never drag the map
+   page around; here it has to come back, or the reds below the fold are
+   unreachable on a TV with only a remote. */
+html.cal-mode,
+html.cal-mode body,
+html.cal-mode #root {
+  height: auto;
+  overflow: visible;
+}
+html.cal-mode body {
+  user-select: text;
+}
+
 body {
   background: var(--ink);
   color: var(--sand);

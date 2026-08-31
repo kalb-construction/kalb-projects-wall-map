@@ -110,3 +110,19 @@ export function applyRedOverride(): void {
   root.setProperty('--red-glow', `rgba(${r}, ${g}, ${b}, 0.55)`);
   console.info(`[Kalb Atlas] Kalb red overridden to ${RED_OVERRIDE}.`);
 }
+
+/**
+ * Colour calibration screen, opened with `?cal=1`.
+ *
+ * A display can render a colour correctly and still show the wrong one.
+ * When the wall looked pink, the stylesheet, the computed styles and the
+ * rendered pixels all measured bit-exact #C10016 — so the shift was
+ * happening in the panel, and no amount of editing CSS was going to move
+ * it. Describing a colour to each other over chat had already failed
+ * twice. This puts the candidates on the wall itself, at size, so the
+ * answer is something you look at rather than something we argue about.
+ */
+export const CALIBRATE: boolean = (() => {
+  const raw = params.get('cal');
+  return raw !== null && raw !== '0' && raw !== 'false';
+})();
