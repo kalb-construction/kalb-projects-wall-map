@@ -24,7 +24,7 @@ REM       tour=0      no automatic camera tour; delete this to turn the
 REM                   tour back on.
 REM       lite=1      only for a weak display. A PC does not need it and
 REM                   loses the 3D city, the orbit and sharper rendering.
-set ATLAS_URL=https://kalb-projects-wall-map.vercel.app/?overscan=3^&tour=0
+set ATLAS_URL=https://kalb-projects-wall-map.vercel.app/?overscan=3
 
 REM --- A profile that belongs to the kiosk and nothing else.
 set ATLAS_PROFILE=%LOCALAPPDATA%\KalbAtlasKiosk

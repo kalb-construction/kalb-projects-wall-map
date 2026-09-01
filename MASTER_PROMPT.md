@@ -296,7 +296,8 @@ note appears in an amber box in its detail panel.
 1. ~~Job number 25126 used twice~~ — **resolved by Kalb:** it is one job and
    it belongs to **RJ**. The sheet's two rows — *Horizon Ridge Office Park*
    (PM TP, 2551 Bldg A) and *Rise and Ridge* (PM RJ, 2561) — are merged into
-   a single record: *Rise and Ridge (Horizon Ridge Office Park)*, 17,984 sf
+   a single record named **Horizon Ridge** — the name Ricardo uses and the
+   only one the atlas shows — 17,984 sf
    across Bldg A 6,032 + Bldg B 11,952, est. 09/30/2026, super DM.
 
    Consequence to feed back to the sheet: **TP now shows 7 jobs, not the 8

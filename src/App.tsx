@@ -47,13 +47,22 @@ const SHOW_DIAG = (() => {
 const TOUR_IDLE_MS = 45_000;
 
 /**
- * `?tour=0` switches the camera tour off and leaves the wall on a still
- * map until the screensaver. Some rooms want the movement, some find it
- * distracting behind a meeting; it is a display setting, not a rebuild.
+ * The camera tour is off unless `?tour=1` asks for it.
+ *
+ * It was built to run by default and it does not earn that. In the lobby
+ * it reads as the map wandering off on its own: somebody glances up, the
+ * camera is already moving, and it is not obvious whether the wall is
+ * broken, showing something deliberately, or ignoring them. The
+ * screensaver already covers an empty room, and it does it without
+ * pretending to be interactive.
+ *
+ * Kept behind a flag rather than deleted -- it is the right behaviour for
+ * an open house or a trade stand, where nobody is going to walk up and
+ * touch anything.
  */
 const TOUR_ENABLED = (() => {
   const v = new URLSearchParams(window.location.search).get('tour');
-  return v === null || (v !== '0' && v !== 'false');
+  return v !== null && v !== '0' && v !== 'false';
 })();
 const ATTRACT_IDLE_MS = 225_000;
 
