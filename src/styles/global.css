@@ -6,7 +6,28 @@
 :root {
   --red: #c10016;
   --red-deep: #8c0011;
-  --red-glow: rgba(193, 0, 22, 0.55);
+
+  /* Red tints, pre-composited against the panel ground rgb(17,15,13)
+     rather than left as rgba() for the compositor to blend at paint time.
+
+     A translucent red does not paint red. Measured on the wall: the pins,
+     which are a solid fill, paint #c10016 for 79% of their pixels; the
+     rgba() tints next to them paint rgb(129,4,17) and rgb(165,0,18) and
+     never once hit brand red. That is the whole reason half the screen
+     read pink while the pins looked right. Baking the blend in makes the
+     value deterministic — what is written here is what the panel gets. */
+  --red-t14: #2a0d0e;
+  --red-t16: #2d0d0e;
+  --red-t18: #310c0f;
+  --red-t22: #380c0f;
+  --red-t25: #3d0b0f;
+  --red-t30: #460b10;
+  --red-t35: #4f0a10;
+
+  /* What the vector Kalb marks paint. Same red; named separately so the
+     logo can never drift from the brand value by accident. */
+  --kalb-red: #c10016;
+  --kalb-sand: #e7e3db;
   --sand: #e7e3db;
   --sand-60: rgba(231, 227, 219, 0.6);
   --sand-40: rgba(231, 227, 219, 0.4);
@@ -71,6 +92,8 @@ body {
   color: var(--sand);
   font-family: var(--font-ui);
   user-select: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 button {
@@ -200,7 +223,7 @@ button {
 }
 .km.is-selected .km-head {
   border-color: var(--ink);
-  box-shadow: 0 0 0 3px #fff, 0 0 24px rgba(193, 0, 22, 0.6);
+  box-shadow: 0 0 0 3px #fff;
 }
 
 .km-pulse {
@@ -345,7 +368,7 @@ button {
 }
 .site-pop-row:hover,
 .site-pop-row:active {
-  background: rgba(193, 0, 22, 0.16);
+  background: var(--red-t16);
 }
 .site-pop-row.is-dim {
   opacity: 0.35;
@@ -391,7 +414,7 @@ button {
 }
 .region-row:hover,
 .region-row:active {
-  background: rgba(193, 0, 22, 0.16);
+  background: var(--red-t16);
 }
 .region-info {
   display: flex;
@@ -447,7 +470,7 @@ button {
 }
 .ctl-btn:active {
   transform: scale(0.93);
-  background: rgba(193, 0, 22, 0.25);
+  background: var(--red-t25);
 }
 .ctl-sat {
   font-family: var(--font-display);
@@ -456,7 +479,7 @@ button {
   letter-spacing: 0.08em;
 }
 .ctl-sat.is-on {
-  background: rgba(193, 0, 22, 0.35);
+  background: var(--red-t35);
   border-color: var(--red);
 }
 
@@ -480,7 +503,7 @@ button {
   padding: 10px 18px;
   border-radius: 10px;
   background: rgba(12, 11, 10, 0.85);
-  border: 1px solid rgba(193, 0, 22, 0.6);
+  border: 1px solid var(--red);
   color: var(--sand);
   font-size: 12.5px;
   z-index: 15;
@@ -607,7 +630,7 @@ button {
 }
 .search-btn:active {
   border-color: var(--red);
-  background: rgba(193, 0, 22, 0.3);
+  background: var(--red-t30);
 }
 .topbar-clock {
   display: flex;
@@ -708,8 +731,8 @@ button {
   transform: rotate(0deg);
 }
 .dock-filter.is-set {
-  border-color: rgba(193, 0, 22, 0.65);
-  background: rgba(193, 0, 22, 0.14);
+  border-color: var(--red);
+  background: var(--red-t14);
 }
 .dock-clear {
   height: 50px;
@@ -915,7 +938,7 @@ button {
 }
 .chip-status.tone-precon {
   color: var(--red);
-  border-color: rgba(193, 0, 22, 0.6);
+  border-color: var(--red);
 }
 .chip-status.tone-done {
   color: var(--sand);
@@ -974,9 +997,8 @@ button {
   opacity: 0.5;
   background-image:
     linear-gradient(rgba(231, 227, 219, 0.055) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(231, 227, 219, 0.055) 1px, transparent 1px),
-    radial-gradient(120% 80% at 12% 0%, rgba(193, 0, 22, 0.2) 0%, transparent 62%);
-  background-size: 26px 26px, 26px 26px, 100% 100%;
+    linear-gradient(90deg, rgba(231, 227, 219, 0.055) 1px, transparent 1px);
+  background-size: 26px 26px, 26px 26px;
 }
 /* soft specular sweep along the top edge — reads as glass without blur */
 .detail-sheen {
@@ -1024,7 +1046,7 @@ button {
 }
 .nav-btn:active {
   transform: scale(0.9);
-  background: rgba(193, 0, 22, 0.3);
+  background: var(--red-t30);
 }
 .nav-close {
   color: var(--red);
@@ -1326,7 +1348,7 @@ button {
   transition: background 0.15s;
 }
 .search-row:active {
-  background: rgba(193, 0, 22, 0.14);
+  background: var(--red-t14);
 }
 .sr-number {
   font-family: var(--font-display);
@@ -1365,7 +1387,7 @@ button {
   left: 50%;
   transform: translateX(-50%);
   background: var(--glass);
-  border: 1px solid rgba(193, 0, 22, 0.55);
+  border: 1px solid var(--red);
   border-radius: 14px;
   padding: 14px 24px;
   font-size: 14px;
@@ -1382,9 +1404,7 @@ button {
   position: absolute;
   inset: 0;
   z-index: 40;
-  background:
-    radial-gradient(85% 70% at 30% 45%, rgba(193, 0, 22, 0.13) 0%, transparent 60%),
-    linear-gradient(120deg, #100e0c 0%, var(--ink) 100%);
+  background: linear-gradient(120deg, #100e0c 0%, var(--ink) 100%);
   display: flex;
   /* A column, not a centred box with furniture floating over it. The
      progress bar and the prompt used to be absolutely positioned on top
@@ -1763,8 +1783,8 @@ button {
   background: rgba(231, 227, 219, 0.07);
 }
 .index-row.is-active {
-  background: rgba(193, 0, 22, 0.22);
-  box-shadow: inset 0 0 0 1px rgba(193, 0, 22, 0.55);
+  background: var(--red-t22);
+  box-shadow: inset 0 0 0 1px var(--red);
 }
 .index-row.is-muted {
   opacity: 0.3;
@@ -1906,7 +1926,7 @@ button {
     display: none;
   }
   .topbar-logo {
-    height: 34px;
+    height: 40px;
   }
   .stat-label {
     display: none;
@@ -2014,19 +2034,18 @@ button {
   transition: border-color 0.2s, background 0.2s, transform 0.15s;
 }
 .compass-btn:hover {
-  background: rgba(193, 0, 22, 0.18);
+  background: var(--red-t18);
 }
 .compass-btn:active {
   transform: scale(0.94);
 }
 /* Lit up whenever the map is off north, hinting "tap to straighten". */
 .compass-btn.is-turned {
-  border-color: rgba(193, 0, 22, 0.75);
-  box-shadow: 0 0 16px rgba(193, 0, 22, 0.35);
+  border-color: var(--red);
 }
 .compass-btn svg {
-  width: 34px;
-  height: 34px;
+  width: 40px;
+  height: 40px;
   display: block;
 }
 .compass-ring {
@@ -2037,18 +2056,15 @@ button {
 .compass-n {
   /* Was #e11026 — a brighter red than brand. */
   fill: var(--red);
-  filter: drop-shadow(0 0 5px rgba(193, 0, 22, 0.65));
 }
 .compass-s {
-  fill: rgba(231, 227, 219, 0.85);
-}
-.compass-label {
-  fill: #fff;
-  font-family: var(--font-display);
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-anchor: middle;
+  /* Solid, not rgba(...,0.85). The two needles overlap by six units of
+     the viewBox, so a translucent south needle let 15% of the red north
+     needle through and painted a pale pink wedge across the middle of
+     the compass -- a pink mark sitting inside the one control that is
+     meant to read as brand red. This is that colour flattened against
+     the button, which looks identical and cannot blend with anything. */
+  fill: #c6c3bc;
 }
 
 /* PM dot in the detail panel + data-quality flags */
@@ -2399,7 +2415,6 @@ button {
   height: 7px;
   border-radius: 50%;
   background: var(--red);
-  box-shadow: 0 0 10px rgba(193, 0, 22, 0.8);
   animation: tourPulse 2.4s ease-in-out infinite;
 }
 @keyframes tourPulse {
@@ -2534,7 +2549,7 @@ button {
     padding: 6px 10px;
   }
   .topbar-logo {
-    height: 30px;
+    height: 40px;
   }
   .index-rail {
     width: 214px;

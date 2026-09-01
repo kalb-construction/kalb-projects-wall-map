@@ -22,9 +22,14 @@ export function Compass({ onNorth }: { onNorth: () => void }) {
           <path className="compass-n" d="M22 6 L28.5 25 L22 21.5 L15.5 25 Z" />
           <path className="compass-s" d="M22 38 L15.5 19 L22 22.5 L28.5 19 Z" />
         </g>
-        <text className="compass-label" x="22" y="12.5">
-          N
-        </text>
+        {/* No "N" glyph. It was a white letter at 9px sitting directly on
+            top of the red needle, and since the label did not rotate with
+            the needle the two overlapped whenever the map was near north
+            -- which is nearly always. White antialiased over red is pink,
+            and on a wall that upscales this icon it was a visible pink
+            smear on the one element whose whole job is to be brand red.
+            A red north needle is the convention anyway; the button keeps
+            its title and aria-label for anyone who needs the word. */}
       </svg>
     </button>
   );

@@ -103,11 +103,30 @@ export function applyRedOverride(): void {
     [r, g, b]
       .map((c) => Math.round(c * f).toString(16).padStart(2, '0'))
       .join('');
+  // The tints are solid, pre-composited values rather than rgba(), so
+  // they cannot follow --red on their own the way a translucent fill
+  // would. Recompute them here against the same panel ground the
+  // stylesheet used, or an override would repaint every red in the app
+  // except the tinted rows and buttons, which would keep the old hue and
+  // make the comparison worthless.
+  const GROUND: [number, number, number] = [17, 15, 13];
+  const tint = (a: number) =>
+    '#' +
+    [r, g, b]
+      .map((c, i) =>
+        Math.round(GROUND[i] + a * (c - GROUND[i]))
+          .toString(16)
+          .padStart(2, '0')
+      )
+      .join('');
+
   const root = document.documentElement.style;
   root.setProperty('--red', RED_OVERRIDE);
   root.setProperty('--kalb-red', RED_OVERRIDE);
   root.setProperty('--red-deep', darker(0.72));
-  root.setProperty('--red-glow', `rgba(${r}, ${g}, ${b}, 0.55)`);
+  for (const a of [14, 16, 18, 22, 25, 30, 35]) {
+    root.setProperty(`--red-t${a}`, tint(a / 100));
+  }
   console.info(`[Kalb Atlas] Kalb red overridden to ${RED_OVERRIDE}.`);
 }
 
