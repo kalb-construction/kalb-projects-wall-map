@@ -114,9 +114,17 @@ export default function RedCalibration() {
         ))}
       </div>
       <p style={{ margin: '0 0 16px', color: '#E0A0A8', maxWidth: 900, fontSize: 13 }}>
-        If any of those greys look pink, warm or tinted, stop here — the TV is
-        colouring everything, including every project photo on the wall. Fix it
-        in the TV's picture menu rather than in the app: set{' '}
+        <b>Turn Sharpness down to 0 first.</b> Edge enhancement is what makes
+        thin red type and thin red rules look pink while the big solid map
+        pins look right: it rings a bright overshoot around every
+        high-contrast edge, and a thin mark is nothing but edges. It is the
+        single biggest change you can make on the set, and it is on by
+        default on every TCL.
+      </p>
+      <p style={{ margin: '0 0 16px', color: '#E0A0A8', maxWidth: 900, fontSize: 13 }}>
+        If any of those greys look pink, warm or tinted, the TV is colouring
+        everything, including every project photo on the wall. Fix that in the
+        TV's picture menu rather than in the app: set{' '}
         <b>Colour Temperature</b> to <b>Warm</b>, <b>Picture Mode</b> to{' '}
         <b>Movie</b> or <b>Standard</b> (never <b>Vivid</b> or{' '}
         <b>Dynamic</b>), <b>Colour Space</b>/<b>Gamut</b> to <b>Auto</b> or{' '}

@@ -2583,3 +2583,107 @@ button {
     bottom: calc(72px + var(--oi));
   }
 }
+
+/* ============================================================
+   RED ON A TELEVISION
+   ============================================================
+   The wall reads correct red for the map pins and washed-out pink for
+   everything else, on the TV only, with the same page correct on a
+   desktop. That is not a colour value — every red in this file is
+   #c10016 and measures as #c10016 when it paints. It is a question of
+   how much solid red there is to survive the trip to the panel.
+
+   A pin is a filled disc: a few thousand contiguous red pixels. Every
+   other red here is 11–24px text or a 1–2px rule. The TV reports a
+   960px viewport, the browser rasterises it at 1.5x, and the panel then
+   upscales that to 4K — about 2.7x more than was ever drawn. A hairline
+   arrives as a soft ramp from red down to background with no core left,
+   and the set's edge enhancement rings a bright overshoot around it,
+   which is where the pink comes from. Large flat areas have almost no
+   edge relative to their area, so the pins come through untouched.
+
+   So on a TV-sized viewport red stops being used as fine detail. Marks
+   get weight, rules get thickness, and the smallest labels become solid
+   red chips — the same thing that already works for the pins.
+
+   Desktop is deliberately untouched; it renders these correctly today. */
+@media (max-width: 1000px) {
+  /* Red type: heavier and larger, so a glyph has an interior and not
+     just two edges. */
+  .stat-num,
+  .region-count,
+  .index-count,
+  .panel-toggle-meta,
+  .sr-number,
+  .attract-kicker {
+    font-weight: 800;
+    letter-spacing: 0.02em;
+  }
+  .stat-num {
+    font-size: 27px;
+  }
+  .region-count,
+  .panel-toggle-meta {
+    font-size: 17px;
+  }
+  .index-count {
+    font-size: 20px;
+  }
+  .sr-number {
+    font-size: 17px;
+  }
+  .site-pop-count,
+  .clock-time em,
+  .feat-number,
+  .detail-number,
+  .legend-clear,
+  .dock-clear,
+  .boot-sub {
+    font-weight: 800;
+  }
+  .site-pop-count,
+  .clock-time em,
+  .feat-number,
+  .detail-number {
+    font-size: 14px;
+  }
+
+  /* Red rules: a 1px line has nothing left after the upscale. */
+  .g-error,
+  .toast,
+  .chip-status.tone-precon,
+  .dock-filter.is-set,
+  .compass-btn.is-turned,
+  .feat-card.is-active,
+  .tray-chip.is-active,
+  .ctl-sat.is-on,
+  .detail-site {
+    border-width: 3px;
+  }
+  .lg-active {
+    border-width: 3px;
+  }
+  /* The selected row was a 1px ring around a 200px box: almost entirely
+     edge, no interior, and by pixel count the largest red thing on the
+     screen. Measured through the panel's own upscale and sharpening it
+     came back 19% brand red and 17% pink — far and away the worst red on
+     the wall, and the reason the index looked pink beside pins that
+     looked right. Thickening it only makes a bigger ring. A solid bar
+     down the leading edge is the same signal built the way the pins are
+     built: one block of red wide enough to have a middle. */
+  .index-row.is-active {
+    box-shadow: none;
+    border-left: 7px solid var(--red);
+    padding-left: 5px;
+  }
+  .km-head {
+    border-width: 3px;
+  }
+
+  /* The compass N is a small glyph in the busiest corner of the screen;
+     drop the outline that was competing with it and let the fill read. */
+  .compass-n {
+    stroke: var(--red);
+    stroke-width: 1.5;
+  }
+}
